@@ -1,0 +1,49 @@
+package com.example.spring.finance.model;
+
+import com.example.spring.finance.model.enums.FlowType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Transaction {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String description;
+
+    @NotNull
+    @PositiveOrZero
+    private BigDecimal amount;
+
+    private LocalDateTime date;
+
+    @Enumerated(EnumType.STRING)
+    private FlowType type;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+}
