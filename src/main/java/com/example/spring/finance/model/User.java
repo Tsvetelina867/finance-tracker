@@ -32,5 +32,5 @@ public class User {
     private String password;
 
     private LocalDateTime createdAt = LocalDateTime.now();
-    public boolean enabled = true;
+
 }
