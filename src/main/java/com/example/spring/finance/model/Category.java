@@ -20,8 +20,4 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private FlowType type;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id")
-    private User user;
-
 }
