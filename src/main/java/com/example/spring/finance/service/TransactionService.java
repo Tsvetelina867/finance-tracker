@@ -1,17 +1,22 @@
 package com.example.spring.finance.service;
 
+import com.example.spring.finance.dtos.TransactionDTO;
+import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Account;
 import com.example.spring.finance.model.Category;
 import com.example.spring.finance.model.Transaction;
+import com.example.spring.finance.model.enums.FlowType;
 import com.example.spring.finance.repository.AccountRepository;
 import com.example.spring.finance.repository.CategoryRepository;
 import com.example.spring.finance.repository.TransactionRepository;
 import com.example.spring.finance.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -50,23 +55,54 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    public Transaction updateTransaction(Long id, Transaction updatedTransaction) {
+    public Transaction updateTransaction(Long id, TransactionDTO updatedTransactionDTO) {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
-        validateAndSetAccountAndCategory(transaction, updatedTransaction);
+        // Map DTO fields to the entity
+        transaction.setDescription(updatedTransactionDTO.getDescription());
+        transaction.setAmount(updatedTransactionDTO.getAmount());
+        transaction.setDate(updatedTransactionDTO.getDate());
+        transaction.setType(FlowType.valueOf(updatedTransactionDTO.getType())); // Assuming you have an Enum for type
 
-        transaction.setDescription(updatedTransaction.getDescription());
-        transaction.setAmount(updatedTransaction.getAmount());
-        transaction.setDate(updatedTransaction.getDate());
-        transaction.setType(updatedTransaction.getType());
+        // Fetch and set related entities if IDs are provided
+        if (updatedTransactionDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(updatedTransactionDTO.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            transaction.setCategory(category);
+        } else {
+            transaction.setCategory(null);
+        }
+
+        Account account = accountRepository.findById(updatedTransactionDTO.getAccountId())
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        transaction.setAccount(account);
 
         return transactionRepository.save(transaction);
     }
 
-    public List<Transaction> getTransactionsForCurrentUser() {
+
+    @Transactional
+    public List<TransactionDTO> getTransactionsForCurrentUser() {
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return transactionRepository.findByUserUsername(username);
+
+        List<Transaction> transactions = transactionRepository.findByUserUsername(username);
+
+        return transactions.stream()
+                .map(t -> new TransactionDTO(
+                        t.getId(),
+                        t.getDescription(),
+                        t.getAmount(),
+                        t.getDate(),
+                        t.getType().toString(),     
+                        t.getCategory().getId(),    // Assuming `getCategory()` returns a Category object, we fetch the ID
+                        t.getAccount().getId(),
+                                new UserDTO(
+                                    t.getUser().getId(),
+                                    t.getUser().getUsername(),
+                                    t.getUser().getEmail())))
+                .toList();
     }
 
     public void deleteTransaction(Long id) {
