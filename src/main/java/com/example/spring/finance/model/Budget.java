@@ -17,10 +17,14 @@ public class Budget {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String description;
 
     @NotNull
     @Positive
     private BigDecimal budgetLimit;
+
+    @Transient
+    private BigDecimal currentSpending = BigDecimal.ZERO;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
