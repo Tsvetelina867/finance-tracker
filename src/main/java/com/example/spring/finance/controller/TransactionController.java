@@ -31,6 +31,12 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTransactionsForCurrentUser());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TransactionDTO> getTransaction(@PathVariable Long id) {
+        return ResponseEntity.ok(transactionService.getTransactionById(id));
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDTO> updateTransaction(@PathVariable Long id, @RequestBody TransactionDTO updatedTransactionDTO) {
         Transaction updatedTransaction = transactionService.updateTransaction(id, updatedTransactionDTO);

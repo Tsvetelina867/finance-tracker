@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,13 +60,11 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
-        // Map DTO fields to the entity
         transaction.setDescription(updatedTransactionDTO.getDescription());
         transaction.setAmount(updatedTransactionDTO.getAmount());
         transaction.setDate(updatedTransactionDTO.getDate());
-        transaction.setType(FlowType.valueOf(updatedTransactionDTO.getType())); // Assuming you have an Enum for type
+        transaction.setType(FlowType.valueOf(updatedTransactionDTO.getType()));
 
-        // Fetch and set related entities if IDs are provided
         if (updatedTransactionDTO.getCategoryId() != null) {
             Category category = categoryRepository.findById(updatedTransactionDTO.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
@@ -96,7 +95,7 @@ public class TransactionService {
                         t.getAmount(),
                         t.getDate(),
                         t.getType().toString(),     
-                        t.getCategory().getId(),    // Assuming `getCategory()` returns a Category object, we fetch the ID
+                        t.getCategory().getId(),
                         t.getAccount().getId(),
                                 new UserDTO(
                                     t.getUser().getId(),
@@ -104,6 +103,25 @@ public class TransactionService {
                                     t.getUser().getEmail())))
                 .toList();
     }
+
+    public TransactionDTO getTransactionById(Long id) {
+        Optional<Transaction> transaction = transactionRepository.findById(id);
+            return transaction.map(t -> new TransactionDTO(
+                            t.getId(),
+                            t.getDescription(),
+                            t.getAmount(),
+                            t.getDate(),
+                            t.getType().toString(),
+                            t.getCategory().getId(),
+                            t.getAccount().getId(),
+                            new UserDTO(
+                                    t.getUser().getId(),
+                                    t.getUser().getUsername(),
+                                    t.getUser().getEmail())))
+                    .orElseThrow(() -> new RuntimeException("Transaction with ID " + id + " not found"));
+
+    }
+
 
     public void deleteTransaction(Long id) {
         this.transactionRepository.deleteById(id);
