@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -28,7 +29,7 @@ public class Transaction {
     @PositiveOrZero
     private BigDecimal amount;
 
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Enumerated(EnumType.STRING)
     private FlowType type;
