@@ -1,5 +1,7 @@
 package com.example.spring.finance.repository;
 
+import com.example.spring.finance.model.Account;
+import com.example.spring.finance.model.Category;
 import com.example.spring.finance.model.Transaction;
 import com.example.spring.finance.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +19,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     boolean existsByDescriptionAndAmountAndDateAndUser(String description, BigDecimal amount, LocalDate date, User user);
     @Query("SELECT MAX(t.date) FROM Transaction t WHERE t.description = :description AND t.user.id = :userId")
     Optional<LocalDate> findLastTransactionDateByReoccurringTransaction(@Param("description") String description, @Param("userId") Long userId);
+
+    @Query("SELECT COALESCE(SUM(t.amount), 0) " +
+                  "FROM Transaction t " +
+                  "WHERE t.category = :category " +
+                  "AND t.account = :account " +
+                  "AND t.date BETWEEN :startDate AND :endDate")
+    BigDecimal sumByCategoryAndAccountAndDateRange(Category category, Account account, LocalDate startDate, LocalDate endDate);
 }
