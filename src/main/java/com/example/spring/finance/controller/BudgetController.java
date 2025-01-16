@@ -5,6 +5,7 @@ import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Budget;
 import com.example.spring.finance.repository.BudgetRepository;
 import com.example.spring.finance.service.BudgetService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +36,11 @@ public class BudgetController {
     }
 
     @PostMapping
-    public ResponseEntity<Budget> createBudget(@RequestBody Budget budget) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(budgetService.addBudget(budget));
+    public ResponseEntity<Budget> createBudget(@RequestBody @Valid Budget budget) {
+        Budget createdBudget = budgetService.addBudget(budget);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBudget);
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<BudgetDTO> updateBudget(@PathVariable Long id, @RequestBody BudgetDTO updatedBudgetDTO) {
@@ -47,6 +50,8 @@ public class BudgetController {
                 budget.getDescription(),
                 budget.getBudgetLimit(),
                 budget.getCurrentSpending(),
+                budget.getStartDate(),
+                budget.getEndDate(),
                 budget.getCategory() != null ? budget.getCategory().getId() : null,
                 budget.getAccount().getId(),
                 new UserDTO(
@@ -56,6 +61,12 @@ public class BudgetController {
                 )
         );
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBudget(@PathVariable Long id) {
+        budgetService.deleteBudget(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

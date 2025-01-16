@@ -6,11 +6,9 @@ import com.example.spring.finance.model.Account;
 import com.example.spring.finance.model.Budget;
 import com.example.spring.finance.model.Category;
 import com.example.spring.finance.model.User;
-import com.example.spring.finance.repository.AccountRepository;
-import com.example.spring.finance.repository.BudgetRepository;
-import com.example.spring.finance.repository.CategoryRepository;
-import com.example.spring.finance.repository.TransactionRepository;
+import com.example.spring.finance.repository.*;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,12 +21,14 @@ public class BudgetService {
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
     private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
 
-    public BudgetService(BudgetRepository budgetRepository, TransactionRepository transactionRepository, CategoryRepository categoryRepository, AccountRepository accountRepository) {
+    public BudgetService(BudgetRepository budgetRepository, TransactionRepository transactionRepository, CategoryRepository categoryRepository, AccountRepository accountRepository, UserRepository userRepository) {
         this.budgetRepository = budgetRepository;
         this.transactionRepository = transactionRepository;
         this.categoryRepository = categoryRepository;
         this.accountRepository = accountRepository;
+        this.userRepository = userRepository;
     }
 
     public BigDecimal calculateBudgetProgress(Long budgetId) {
@@ -74,6 +74,8 @@ public class BudgetService {
         // Update fields from DTO
         budget.setDescription(updatedBudgetDTO.getDescription());
         budget.setBudgetLimit(updatedBudgetDTO.getBudgetLimit());
+        budget.setStartDate(updatedBudgetDTO.getStartDate());
+        budget.setEndDate(updatedBudgetDTO.getEndDate());
 
 
         // Ensure `currentSpending` is not manually updatable if it's calculated elsewhere
@@ -103,7 +105,25 @@ public class BudgetService {
     public Budget addBudget(Budget budget) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return budget;
+        budget.setUser(userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found")));
+
+        if (budget.getCategory() != null && budget.getCategory().getId() != null) {
+            Category category = categoryRepository.findById(budget.getCategory().getId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            budget.setCategory(category);
+        }
+
+        Account account = accountRepository.findById(budget.getAccount().getId())
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        budget.setAccount(account);
+
+
+        return budgetRepository.save(budget);
+    }
+
+    public void deleteBudget(Long id) {
+        this.budgetRepository.deleteById(id);
     }
 }
 

@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -32,7 +33,7 @@ public class Goal {
     private BigDecimal currentAmount = BigDecimal.ZERO;
 
     @Future
-    private LocalDateTime deadline;
+    private LocalDate deadline;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
