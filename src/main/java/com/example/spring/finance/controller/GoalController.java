@@ -1,11 +1,13 @@
 package com.example.spring.finance.controller;
 
+import com.example.spring.finance.dtos.GoalDTO;
+import com.example.spring.finance.dtos.UserDTO;
+import com.example.spring.finance.model.Goal;
 import com.example.spring.finance.service.GoalService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
@@ -28,6 +30,37 @@ public class GoalController {
     public ResponseEntity<Boolean> isGoalAchieved(@PathVariable Long goalId) {
         boolean achieved = goalService.isGoalAchieved(goalId);
         return ResponseEntity.ok(achieved);
+    }
+
+    @PostMapping
+    public ResponseEntity<Goal> createGoal(@RequestBody @Valid Goal goal) {
+        Goal createdGoal = goalService.addGoal(goal);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdGoal);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<GoalDTO> updateGoal(@PathVariable Long id, @RequestBody GoalDTO goalDTO) {
+        Goal goal = goalService.updateGoal(id, goalDTO);
+
+        GoalDTO responseDTO = new GoalDTO(
+                goal.getName(),
+                goal.getTargetAmount(),
+                goal.getCurrentAmount(),
+                goal.getDeadline(),
+                new UserDTO(
+                        goal.getUser().getId(),
+                        goal.getUser().getUsername(),
+                        goal.getUser().getEmail()
+                )
+        );
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGoal(@PathVariable Long id) {
+        this.goalService.deleteGoal(id);
+        return ResponseEntity.noContent().build();
     }
 }
 
