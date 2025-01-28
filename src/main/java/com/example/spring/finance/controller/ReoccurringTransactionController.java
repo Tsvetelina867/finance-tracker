@@ -1,8 +1,6 @@
 package com.example.spring.finance.controller;
 
-import com.example.spring.finance.dtos.ReoccurringTransactionDTO;
-import com.example.spring.finance.dtos.TransactionDTO;
-import com.example.spring.finance.dtos.UserDTO;
+import com.example.spring.finance.dtos.*;
 import com.example.spring.finance.model.ReoccurringTransaction;
 import com.example.spring.finance.service.ReoccurringTransactionService;
 import jakarta.validation.Valid;
@@ -52,10 +50,15 @@ public class ReoccurringTransactionController {
                 updatedReoccurringTransaction.getStartDate(),
                 updatedReoccurringTransaction.getEndDate(),
                 updatedReoccurringTransaction.getFrequency().toString(),
-                updatedReoccurringTransaction.getCategory() != null ? updatedReoccurringTransaction.getCategory().getId() : null,
-                updatedReoccurringTransaction.getAccount().getId(),
+                new CategoryDTO(
+                        updatedReoccurringTransaction.getCategory().getName(),
+                        updatedReoccurringTransaction.getCategory().getType().toString()
+                ),
+                new AccountDTO(
+                        updatedReoccurringTransaction.getAccount().getName(),
+                        updatedReoccurringTransaction.getAccount().getType().toString()
+                ),
                 new UserDTO(
-                        updatedReoccurringTransaction.getUser().getId(),
                         updatedReoccurringTransaction.getUser().getUsername(),
                         updatedReoccurringTransaction.getUser().getEmail()),
                 updatedReoccurringTransaction.getCurrency()

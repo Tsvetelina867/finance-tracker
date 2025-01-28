@@ -24,7 +24,6 @@ public class ExchangeRateService {
     public BigDecimal getExchangeRate(String fromCurrency, String toCurrency) {
         String url = String.format("%s?apikey=%s", config.getBaseUrl(), config.getApiKey());
 
-        // Correctly use ParameterizedTypeReference
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
