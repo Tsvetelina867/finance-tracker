@@ -21,11 +21,6 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping
-    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transaction));
-    }
-
     @GetMapping
     public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
         return ResponseEntity.ok(transactionService.getTransactionsForCurrentUser());
@@ -35,7 +30,14 @@ public class TransactionController {
     public ResponseEntity<TransactionDTO> getTransaction(@PathVariable Long id) {
         return ResponseEntity.ok(transactionService.getTransactionById(id));
     }
-
+    @GetMapping("/search")
+    public List<Transaction> searchTransactions(@RequestParam String keyword) {
+        return transactionService.searchTransactions(keyword);
+    }
+    @PostMapping
+    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transaction));
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDTO> updateTransaction(@PathVariable Long id, @RequestBody TransactionDTO updatedTransactionDTO) {

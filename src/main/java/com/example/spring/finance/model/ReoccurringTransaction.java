@@ -45,4 +45,7 @@ public class ReoccurringTransaction {
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @NotNull
+    private String currency;
 }

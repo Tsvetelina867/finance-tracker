@@ -53,6 +53,7 @@ public class TransactionService {
 
         validateAndSetAccountAndCategory(transaction, transaction);
 
+
         return transactionRepository.save(transaction);
     }
 
@@ -125,5 +126,9 @@ public class TransactionService {
 
     public void deleteTransaction(Long id) {
         this.transactionRepository.deleteById(id);
+    }
+
+    public List<Transaction> searchTransactions(String keyword) {
+        return transactionRepository.searchTransactions(keyword);
     }
 }
