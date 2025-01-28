@@ -48,4 +48,7 @@ public class Transaction {
 
     @CreatedDate
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @NotNull
+    private String currency;
 }

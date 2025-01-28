@@ -16,8 +16,8 @@ public class ReoccurringTransactionDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private String frequency;
-    private Long categoryId;
-    private Long accountId;
+    private CategoryDTO category;
+    private AccountDTO account;
     private UserDTO user;
     private String currency;
 }

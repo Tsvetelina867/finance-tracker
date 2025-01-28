@@ -16,10 +16,8 @@ public class BudgetDTO {
     private BigDecimal currentSpending;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Long categoryId;
-    private Long accountId;
+    private CategoryDTO category;
+    private AccountDTO account;
     private UserDTO user;
-
-
 
 }

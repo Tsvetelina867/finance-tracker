@@ -100,21 +100,15 @@ public class ReoccurringTransactionService {
     public ReoccurringTransaction addReoccurringTransaction(ReoccurringTransaction reoccurringTransaction) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // Set the user
         reoccurringTransaction.setUser(userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found")));
 
-        // Set the category if provided
-        if (reoccurringTransaction.getCategory() != null && reoccurringTransaction.getCategory().getId() != null) {
+        if (reoccurringTransaction.getCategory() != null) {
             Category category = categoryRepository.findById(reoccurringTransaction.getCategory().getId())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             reoccurringTransaction.setCategory(category);
         }
 
-        // Validate and set the account
-        if (reoccurringTransaction.getAccount() == null || reoccurringTransaction.getAccount().getId() == null) {
-            throw new RuntimeException("Account must be provided and must have a valid ID.");
-        }
         Account account = accountRepository.findById(reoccurringTransaction.getAccount().getId())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         reoccurringTransaction.setAccount(account);
@@ -123,12 +117,9 @@ public class ReoccurringTransactionService {
             throw new IllegalArgumentException("Currency must be provided for the recurring transaction.");
         }
 
-        // Convert the amount to the account's currency
         BigDecimal convertedAmount = convertToAccountCurrency(reoccurringTransaction);
         reoccurringTransaction.setAmount(convertedAmount);
 
-
-        // Save and return the transaction
         return reoccurringTransactionRepository.save(reoccurringTransaction);
     }
 
@@ -143,15 +134,16 @@ public class ReoccurringTransactionService {
         reoccurringTransaction.setFrequency(FrequencyType.valueOf(updatedReoccurringTransactionDTO.getFrequency()));
         reoccurringTransaction.setCurrency(updatedReoccurringTransactionDTO.getCurrency());
 
-        if (updatedReoccurringTransactionDTO.getCategoryId() != null) {
-            Category category = categoryRepository.findById(updatedReoccurringTransactionDTO.getCategoryId())
+        if (updatedReoccurringTransactionDTO.getCategory().getName() != null) {
+            Category category = categoryRepository.findByName(updatedReoccurringTransactionDTO.getCategory().getName())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
+            category.setType(FlowType.valueOf(updatedReoccurringTransactionDTO.getCategory().getType()));
             reoccurringTransaction.setCategory(category);
         } else {
             reoccurringTransaction.setCategory(null);
         }
 
-        Account account = accountRepository.findById(updatedReoccurringTransactionDTO.getAccountId())
+        Account account = accountRepository.findByName(updatedReoccurringTransactionDTO.getAccount().getName())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         reoccurringTransaction.setAccount(account);
 
@@ -168,11 +160,9 @@ public class ReoccurringTransactionService {
         String transactionCurrency = reoccurringTransaction.getCurrency();  // You can optionally store the transaction currency if needed
 
         if (!transactionCurrency.equals(accountCurrency)) {
-            // Perform the conversion using the exchange rates API
             BigDecimal exchangeRate = exchangeRateService.getExchangeRate(transactionCurrency, accountCurrency);
             return reoccurringTransaction.getAmount().multiply(exchangeRate);
         } else {
-            // If the currencies are the same, no conversion is needed
             return reoccurringTransaction.getAmount();
         }
     }

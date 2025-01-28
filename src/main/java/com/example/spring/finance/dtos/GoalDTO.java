@@ -16,4 +16,6 @@ public class GoalDTO {
     private BigDecimal currentAmount;
     private LocalDate deadline;
     private UserDTO user;
+    private AccountDTO account;
+    private CategoryDTO category;
 }

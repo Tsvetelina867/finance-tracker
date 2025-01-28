@@ -1,5 +1,7 @@
 package com.example.spring.finance.controller;
 
+import com.example.spring.finance.dtos.AccountDTO;
+import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.TransactionDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Transaction;
@@ -48,12 +50,18 @@ public class TransactionController {
                 updatedTransaction.getAmount(),
                 updatedTransaction.getDate(),
                 updatedTransaction.getType().toString(),
-                updatedTransaction.getCategory() != null ? updatedTransaction.getCategory().getId() : null,
-                updatedTransaction.getAccount().getId(),
+                new CategoryDTO(
+                        updatedTransaction.getCategory().getName(),
+                        updatedTransaction.getCategory().getType().toString()
+                ),
+                new AccountDTO(
+                        updatedTransaction.getAccount().getName(),
+                        updatedTransaction.getAccount().getType().toString()
+                ),
                 new UserDTO(
-                        updatedTransaction.getUser().getId(),
                         updatedTransaction.getUser().getUsername(),
-                        updatedTransaction.getUser().getEmail())
+                        updatedTransaction.getUser().getEmail()),
+                updatedTransaction.getCurrency()
         );
         return ResponseEntity.ok(responseDTO);
     }

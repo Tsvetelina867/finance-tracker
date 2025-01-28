@@ -1,9 +1,12 @@
 package com.example.spring.finance.service;
 
+import com.example.spring.finance.dtos.AccountDTO;
+import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.TransactionDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Account;
 import com.example.spring.finance.model.Category;
+import com.example.spring.finance.model.ReoccurringTransaction;
 import com.example.spring.finance.model.Transaction;
 import com.example.spring.finance.model.enums.FlowType;
 import com.example.spring.finance.repository.AccountRepository;
@@ -15,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,12 +29,14 @@ public class TransactionService {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
+    private final ExchangeRateService exchangeRateService;
 
-    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, AccountRepository accountRepository, CategoryRepository categoryRepository) {
+    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, AccountRepository accountRepository, CategoryRepository categoryRepository, ExchangeRateService exchangeRateService) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.accountRepository = accountRepository;
         this.categoryRepository = categoryRepository;
+        this.exchangeRateService = exchangeRateService;
     }
     private void validateAndSetAccountAndCategory(Transaction transaction, Transaction inputTransaction) {
         Account account = accountRepository.findById(inputTransaction.getAccount().getId())
@@ -52,6 +58,8 @@ public class TransactionService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found")));
 
         validateAndSetAccountAndCategory(transaction, transaction);
+        BigDecimal convertedAmount = convertToAccountCurrency(transaction);
+        transaction.setAmount(convertedAmount);
 
 
         return transactionRepository.save(transaction);
@@ -65,21 +73,28 @@ public class TransactionService {
         transaction.setAmount(updatedTransactionDTO.getAmount());
         transaction.setDate(updatedTransactionDTO.getDate());
         transaction.setType(FlowType.valueOf(updatedTransactionDTO.getType()));
+        transaction.setCurrency(updatedTransactionDTO.getCurrency());
 
-        if (updatedTransactionDTO.getCategoryId() != null) {
-            Category category = categoryRepository.findById(updatedTransactionDTO.getCategoryId())
+        if (updatedTransactionDTO.getCategory() != null && updatedTransactionDTO.getCategory().getName() != null) {
+            Category category = categoryRepository.findByName(updatedTransactionDTO.getCategory().getName())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
+            category.setType(FlowType.valueOf(updatedTransactionDTO.getCategory().getType()));
             transaction.setCategory(category);
         } else {
             transaction.setCategory(null);
         }
 
-        Account account = accountRepository.findById(updatedTransactionDTO.getAccountId())
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        transaction.setAccount(account);
+        if (updatedTransactionDTO.getAccount() != null && updatedTransactionDTO.getAccount().getName() != null) {
+            Account account = accountRepository.findByName(updatedTransactionDTO.getAccount().getName())
+                    .orElseThrow(() -> new RuntimeException("Account not found"));
+            transaction.setAccount(account);
+        } else {
+            throw new RuntimeException("Account cannot be null.");
+        }
 
         return transactionRepository.save(transaction);
     }
+
 
 
     @Transactional
@@ -95,13 +110,19 @@ public class TransactionService {
                         t.getDescription(),
                         t.getAmount(),
                         t.getDate(),
-                        t.getType().toString(),     
-                        t.getCategory().getId(),
-                        t.getAccount().getId(),
-                                new UserDTO(
-                                    t.getUser().getId(),
-                                    t.getUser().getUsername(),
-                                    t.getUser().getEmail())))
+                        t.getType().toString(),
+                        new CategoryDTO(
+                                t.getCategory().getName(),
+                                t.getCategory().getType().toString()
+                        ),
+                        new AccountDTO(
+                                t.getAccount().getName(),
+                                t.getAccount().getType().toString()
+                        ),
+                        new UserDTO(
+                                t.getUser().getUsername(),
+                                t.getUser().getEmail()),
+                        t.getCurrency()))
                 .toList();
     }
 
@@ -113,12 +134,18 @@ public class TransactionService {
                             t.getAmount(),
                             t.getDate(),
                             t.getType().toString(),
-                            t.getCategory().getId(),
-                            t.getAccount().getId(),
+                            new CategoryDTO(
+                                    t.getCategory().getName(),
+                                    t.getCategory().getType().toString()
+                            ),
+                            new AccountDTO(
+                                    t.getAccount().getName(),
+                                    t.getAccount().getType().toString()
+                            ),
                             new UserDTO(
-                                    t.getUser().getId(),
                                     t.getUser().getUsername(),
-                                    t.getUser().getEmail())))
+                                    t.getUser().getEmail()),
+                            t.getCurrency()))
                     .orElseThrow(() -> new RuntimeException("Transaction with ID " + id + " not found"));
 
     }
@@ -130,5 +157,17 @@ public class TransactionService {
 
     public List<Transaction> searchTransactions(String keyword) {
         return transactionRepository.searchTransactions(keyword);
+    }
+
+    public BigDecimal convertToAccountCurrency(Transaction transaction) {
+        String accountCurrency = transaction.getAccount().getCurrency();
+        String transactionCurrency = transaction.getCurrency();  // You can optionally store the transaction currency if needed
+
+        if (!transactionCurrency.equals(accountCurrency)) {
+            BigDecimal exchangeRate = exchangeRateService.getExchangeRate(transactionCurrency, accountCurrency);
+            return transaction.getAmount().multiply(exchangeRate);
+        } else {
+            return transaction.getAmount();
+        }
     }
 }

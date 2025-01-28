@@ -1,5 +1,7 @@
 package com.example.spring.finance.controller;
 
+import com.example.spring.finance.dtos.AccountDTO;
+import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.GoalDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Goal;
@@ -48,10 +50,18 @@ public class GoalController {
                 goal.getCurrentAmount(),
                 goal.getDeadline(),
                 new UserDTO(
-                        goal.getUser().getId(),
                         goal.getUser().getUsername(),
                         goal.getUser().getEmail()
+                ),
+                new AccountDTO(
+                        goal.getAccount().getName(),
+                        goal.getAccount().getType().toString()
+                ),
+                new CategoryDTO(
+                        goal.getCategory().getName(),
+                        goal.getCategory().getType().toString()
                 )
+
         );
 
         return ResponseEntity.ok(responseDTO);
