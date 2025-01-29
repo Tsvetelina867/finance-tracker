@@ -24,18 +24,24 @@ public class AuthService {
 
     public String loginUser(String username, String password) {
         Optional<User> userOptional = userRepository.findByUsername(username);
-        if (userRepository.findByUsername(username).isEmpty()) {
-            return "Invalid username or password";
+
+        if (userOptional.isEmpty()) {
+            return "Invalid username or password"; // Username doesn't exist
         }
 
         User user = userOptional.get();
+
+        // Check if the plain password matches the encoded password in the database
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            return "Invalid username or password";
+            return "Invalid username or password"; // Invalid password
         }
 
+        // Generate JWT token
         String token = jwtUtil.generateToken(user.getUsername());
-        return "Bearer " + token;
+        return "Bearer " + token; // Return token with Bearer prefix
     }
+
+
 
     public String registerUser(RegistrationRequest registrationRequest) {
         if (userRepository.findByUsername(registrationRequest.getUsername()).isPresent()) {
