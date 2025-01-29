@@ -39,6 +39,14 @@ public class Goal {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "account_id")
+    private Account account;
+
     public BigDecimal getProgress() {
         return this.currentAmount.divide(this.targetAmount, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
     }

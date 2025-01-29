@@ -10,14 +10,14 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @AllArgsConstructor
-public class BudgetDTO {
+public class ReoccurringTransactionDTO {
     private String description;
-    private BigDecimal budgetLimit;
-    private BigDecimal currentSpending;
+    private BigDecimal amount;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String frequency;
     private CategoryDTO category;
     private AccountDTO account;
     private UserDTO user;
-
+    private String currency;
 }

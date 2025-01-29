@@ -26,4 +26,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                   "AND t.account = :account " +
                   "AND t.date BETWEEN :startDate AND :endDate")
     BigDecimal sumByCategoryAndAccountAndDateRange(Category category, Account account, LocalDate startDate, LocalDate endDate);
+
+    @Query("SELECT t FROM Transaction t WHERE t.description LIKE %?1% OR t.account.name LIKE %?1% OR t.category.name LIKE %?1%")
+    List<Transaction> searchTransactions(String keyword);
 }

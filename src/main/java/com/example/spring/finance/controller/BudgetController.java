@@ -1,6 +1,8 @@
 package com.example.spring.finance.controller;
 
+import com.example.spring.finance.dtos.AccountDTO;
 import com.example.spring.finance.dtos.BudgetDTO;
+import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Budget;
 import com.example.spring.finance.repository.BudgetRepository;
@@ -52,10 +54,15 @@ public class BudgetController {
                 budget.getCurrentSpending(),
                 budget.getStartDate(),
                 budget.getEndDate(),
-                budget.getCategory() != null ? budget.getCategory().getId() : null,
-                budget.getAccount().getId(),
+                new CategoryDTO(
+                        budget.getCategory().getName(),
+                        budget.getCategory().getType().toString()
+                ),
+                new AccountDTO(
+                        budget.getAccount().getName(),
+                        budget.getAccount().getType().toString()
+                ),
                 new UserDTO(
-                        budget.getUser().getId(),
                         budget.getUser().getUsername(),
                         budget.getUser().getEmail()
                 )
