@@ -24,9 +24,13 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
-        return ResponseEntity.ok(transactionService.getTransactionsForCurrentUser());
+    public ResponseEntity<List<TransactionDTO>> getTransactions(
+            @RequestParam Long accountId,  // Require account ID
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        return ResponseEntity.ok(transactionService.getTransactionsForAccount(accountId, startDate, endDate));
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<TransactionDTO> getTransaction(@PathVariable Long id) {
@@ -56,6 +60,8 @@ public class TransactionController {
                 ),
                 new AccountDTO(
                         updatedTransaction.getAccount().getName(),
+                        updatedTransaction.getAccount().getBalance(),
+                        updatedTransaction.getAccount().getCurrency(),
                         updatedTransaction.getAccount().getType().toString()
                 ),
                 new UserDTO(

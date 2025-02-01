@@ -29,4 +29,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT t FROM Transaction t WHERE t.description LIKE %?1% OR t.account.name LIKE %?1% OR t.category.name LIKE %?1%")
     List<Transaction> searchTransactions(String keyword);
+
+    List<Transaction> findByAccountIdAndDateBetween(Long accountId, LocalDate startDate, LocalDate endDate);
 }

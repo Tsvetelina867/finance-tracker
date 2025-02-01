@@ -1,0 +1,50 @@
+/* Navbar.css */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333333;
+}
+
+.navbar-left {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+  align-items: center; /* Vertically center items */
+}
+
+.navbar-right {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+}
+
+.navbar-left button,
+.navbar-right button {
+  padding: 10px 15px; /* Added padding to make buttons look consistent */
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  width: auto; /* Prevent buttons from stretching */
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.navbar .switch-account-btn {
+  background-color: #FF9800; /* Orange for Switch Account */
+  color: white;
+}
+
+.navbar .profile-btn {
+  background-color: #4CAF50; /* Green for Profile */
+  color: white;
+}
+
+.navbar .navbar-right button {
+  background-color: #f44336; /* Red for Logout */
+  color: white;
+}
+
+.navbar .navbar-left button:hover,
+.navbar .navbar-right button:hover {
+  opacity: 0.8; /* Adding hover effect */
+}

@@ -1,0 +1,52 @@
+import React, { useState, useEffect } from 'react';
+import { fetchRecurringTransactions } from '../api/recurringTransactionsApi'; // Import here
+import '../styles/RecurringTransactionsSection.css';
+
+const RecurringTransactionsSection = ({ currentAccount }) => {
+  const [recurringTransactions, setRecurringTransactions] = useState([]);
+
+  useEffect(() => {
+    if (currentAccount) {
+      fetchRecurringTransactions();
+    }
+  }, [currentAccount]);
+
+  const fetchRecurringTransactions = async () => {
+    try {
+      const data = await fetchRecurringTransactions(currentAccount.id);  // Pass account ID
+      setRecurringTransactions(data);
+    } catch (error) {
+      console.error('Error fetching recurring transactions:', error);
+    }
+  };
+
+  return (
+    <div className="recurring-transactions-section">
+      <h2>Recurring Transactions</h2>
+
+      <ul className="recurring-transaction-list">
+        {recurringTransactions.length > 0 ? (
+          recurringTransactions.map((transaction) => (
+            <li key={transaction.id}>
+              <div className="transaction-details">
+                <span>{transaction.description}</span>
+                <span>{transaction.amount} {currentAccount.currency}</span>
+                <span>Next: {transaction.nextPaymentDate}</span>
+                <span>Frequency: {transaction.frequency}</span>
+              </div>
+              <div className="transaction-actions">
+                <button>Edit</button>
+                <button>Delete</button>
+              </div>
+            </li>
+          ))
+        ) : (
+          <p>No recurring transactions set.</p>
+        )}
+      </ul>
+      <button className="add-recurring-btn">Add New Recurring Transaction</button>
+    </div>
+  );
+};
+
+export default RecurringTransactionsSection;
