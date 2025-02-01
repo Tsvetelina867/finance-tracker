@@ -60,6 +60,8 @@ public class BudgetController {
                 ),
                 new AccountDTO(
                         budget.getAccount().getName(),
+                        budget.getAccount().getBalance(),
+                        budget.getAccount().getCurrency(),
                         budget.getAccount().getType().toString()
                 ),
                 new UserDTO(

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-public class ReoccurringTransaction {
+public class RecurringTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

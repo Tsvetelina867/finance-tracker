@@ -55,6 +55,8 @@ public class GoalController {
                 ),
                 new AccountDTO(
                         goal.getAccount().getName(),
+                        goal.getAccount().getBalance(),
+                        goal.getAccount().getCurrency(),
                         goal.getAccount().getType().toString()
                 ),
                 new CategoryDTO(
