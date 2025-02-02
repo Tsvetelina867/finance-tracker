@@ -12,15 +12,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/finance/goals")
+@CrossOrigin(origins = "http://localhost:3000")
 public class GoalController {
     private final GoalService goalService;
 
     public GoalController(GoalService goalService) {
         this.goalService = goalService;
     }
+
+    @GetMapping("{accountId}")
+    public ResponseEntity<List<GoalDTO>> getGoalsByAccountId(@PathVariable Long accountId) {
+        List<GoalDTO> goals = goalService.getGoalsByAccountId(accountId);
+        return ResponseEntity.ok(goals);
+    }
+
 
     @GetMapping("/{goalId}/progress")
     public ResponseEntity<BigDecimal> getGoalProgress(@PathVariable Long goalId) {

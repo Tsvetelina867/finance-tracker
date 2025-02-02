@@ -9,6 +9,7 @@ const Profile = () => {
   const [updatedPassword, setUpdatedPassword] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(true); // Loading state for profile data
 
   const [accounts, setAccounts] = useState([]);
   const [newAccount, setNewAccount] = useState({ name: '', balance: '', currency: '' });
@@ -18,10 +19,12 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const res = await fetchUserProfile();
-        setProfileData(res);
-        setUpdatedUsername(res.username); // Pre-fill username field
+        setProfileData(res || { username: '', email: '' }); // Ensure profileData is never undefined
+        setUpdatedUsername(res?.username || ''); // Pre-fill username field safely
+        setLoading(false); // Set loading to false once data is fetched
       } catch (error) {
         console.error('Error fetching profile data:', error);
+        setLoading(false); // Set loading to false even if error occurs
       }
     };
 
@@ -45,7 +48,7 @@ const Profile = () => {
         password: updatedPassword || null, // Only update password if provided
       };
       await updateUserProfile(updateData);
-      setProfileData({ ...profileData, username: updatedUsername });
+      setProfileData((prevData) => ({ ...prevData, username: updatedUsername }));
       setMessage('Profile updated successfully!');
       setIsEditing(false);
     } catch (error) {
@@ -89,6 +92,10 @@ const Profile = () => {
     }
   };
 
+  if (loading) {
+    return <p>Loading your profile...</p>; // Show loading message while fetching data
+  }
+
   return (
     <div className="profile-container">
       <h1>Profile</h1>
@@ -116,8 +123,8 @@ const Profile = () => {
         </div>
       ) : (
         <div className="profile-details">
-          <p><strong>Username:</strong> {profileData.username}</p>
-          <p><strong>Email:</strong> {profileData.email}</p>
+          <p><strong>Username:</strong> {profileData.username || 'N/A'}</p>
+          <p><strong>Email:</strong> {profileData.email || 'N/A'}</p>
           <button onClick={() => setIsEditing(true)}>Edit Profile</button>
         </div>
       )}

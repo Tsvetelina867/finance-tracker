@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
 import { fetchBudgetData } from '../api/budgetApi';
-import { fetchGoalsData } from '../api/goalsApi';
-import { fetchTransactionsData } from '../api/transactionsApi';
+import { fetchGoalsData, fetchGoalsByAccountId } from '../api/goalsApi';
+import { fetchTransactionsByDateRange } from '../api/transactionsApi';
 import { fetchRecurringTransactions } from '../api/recurringTransactionsApi';
 import { fetchAccountData, fetchAllAccounts } from '../api/accountApi';
 import Navbar from '../components/Navbar';
-import TransactionsSection, {fetchTransactions} from '../components/TransactionSection';
+import TransactionsSection from '../components/TransactionSection';
 import RecurringTransactionsSection from '../components/RecurringTransactionsSection';
+import BudgetProgress from '../components/BudgetProgress';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
   const [accounts, setAccounts] = useState([]);
   const [currentAccount, setCurrentAccount] = useState(null);
   const [budgetData, setBudgetData] = useState(null);
-  const [goalsData, setGoalsData] = useState(null);
+  const [goalsData, setGoalsData] = useState([]);
   const [transactionsData, setTransactionsData] = useState([]);
   const [recurringTransactionsData, setRecurringTransactionsData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,8 +44,9 @@ const Dashboard = () => {
   };
 
   const fetchTransactions = async () => {
+    if (!currentAccount) return;
     try {
-      const transactionsRes = await fetchTransactions(currentAccount?.id, startDate, endDate);
+      const transactionsRes = await fetchTransactionsByDateRange(currentAccount.id, startDate, endDate);
       setTransactionsData(transactionsRes);
     } catch (error) {
       console.error('Error fetching transactions:', error);
@@ -56,24 +58,41 @@ const Dashboard = () => {
       try {
         const allAccountsRes = await fetchAllAccounts();
         setAccounts(allAccountsRes);
-        setCurrentAccount(allAccountsRes[0]);
-        const budgetRes = await fetchBudgetData();
-        const goalsRes = await fetchGoalsData();
-        const recurringRes = await fetchRecurringTransactions();
-
-        setBudgetData(budgetRes);
-        setGoalsData(goalsRes);
-        setRecurringTransactionsData(recurringRes);
-        fetchTransactions();
+        setCurrentAccount(allAccountsRes[0]);  // Set the first account by default
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching accounts:', error);
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [currentAccount, startDate, endDate]);
+  }, []); // Fetch accounts only once on component mount
+
+  useEffect(() => {
+    if (!currentAccount) return;
+    const fetchData = async () => {
+      try {
+        const goalsRes = await fetchGoalsByAccountId(currentAccount.id);
+        const budgetRes = await fetchBudgetData(currentAccount.id);
+        const recurringRes = await fetchRecurringTransactions(currentAccount.id);
+
+        setGoalsData(goalsRes);
+        setBudgetData(budgetRes);
+        setRecurringTransactionsData(recurringRes);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [currentAccount]); // Fetch data only when currentAccount changes
+
+  useEffect(() => {
+    fetchTransactions(); // Fetch transactions when startDate or endDate changes
+  }, [startDate, endDate, currentAccount]); // Dependencies: `startDate`, `endDate`, `currentAccount`
 
   if (loading) {
     return <div>Loading...</div>;
@@ -103,10 +122,8 @@ const Dashboard = () => {
           <div className="widget">
             <h2>Total Spending</h2>
             <p>${transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0)}</p>
-             <TransactionsSection currentAccount={currentAccount} />
+            <TransactionsSection currentAccount={currentAccount} />
           </div>
-
-
 
           <div className="widget">
             <h2>Recurring Spending</h2>
@@ -119,11 +136,22 @@ const Dashboard = () => {
           <div className="widget">
             <h2>Budget Progress</h2>
             <p>{budgetData?.progress || 0}%</p>
+            <BudgetProgress budget={budgetData} />
           </div>
 
           <div className="widget">
-            <h2>Goals Progress</h2>
-            <p>{goalsData?.activeGoals ? goalsData.activeGoals.length : 0} Active Goals</p>
+            <h2>Goal Progress</h2>
+            {loading ? <p>Loading...</p> : goalsData.length === 0 ? (
+              <p>No active goals</p>
+            ) : (
+              <ul>
+                {goalsData.map(goal => (
+                  <li key={goal.id}>
+                    <strong>{goal.name}</strong>: {((goal.currentAmount / goal.targetAmount) * 100).toFixed(2)}%
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
