@@ -105,7 +105,9 @@ public class TransactionService {
                             t.getType().toString(),
                             new CategoryDTO(
                                     t.getCategory().getName(),
-                                    t.getCategory().getType().toString()
+                                    t.getCategory().getType() != null
+                                            ? t.getCategory().getType().toString()
+                                            : "UNKNOWN"
                             ),
                             new AccountDTO(
                                     t.getAccount().getName(),
@@ -142,16 +144,18 @@ public class TransactionService {
         }
     }
     private TransactionDTO convertToDTO(Transaction transaction) {
+        Category category = transaction.getCategory();
+        String categoryName = (category != null) ? category.getName() : "Unknown";
+        String categoryType = (category != null && category.getType() != null)
+                ? category.getType().toString()
+                : "UNKNOWN";
         return new TransactionDTO(
                 transaction.getId(),
                 transaction.getDescription(),
                 transaction.getAmount(),
                 transaction.getDate(),
                 transaction.getType().toString(),
-                new CategoryDTO(
-                        transaction.getCategory().getName(),
-                        transaction.getCategory().getType().toString()
-                ),
+                new CategoryDTO(categoryName, categoryType),
                 new AccountDTO(
                         transaction.getAccount().getName(),
                         transaction.getAccount().getBalance(),

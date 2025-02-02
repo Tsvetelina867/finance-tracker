@@ -8,20 +8,20 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
   useEffect(() => {
     const getRecurringTransactions = async () => {
       try {
-        if (currentAccount && currentAccount.id && recurringTransactions.length === 0) {
-          const data = await fetchRecurringTransactions(currentAccount.id); // Fetch only if not already fetched
-          setRecurringTransactions(data || []); // Ensure it defaults to an empty array if undefined or null
+        if (currentAccount && currentAccount.id) {
+          const data = await fetchRecurringTransactions(currentAccount.id);
+          setRecurringTransactions(data || []);
         }
       } catch (error) {
         console.error('Error fetching recurring transactions:', error);
-        setRecurringTransactions([]); // Set to empty array in case of error
+        setRecurringTransactions([]);
       }
     };
 
     if (currentAccount) {
-      getRecurringTransactions(); // Fetch transactions when currentAccount changes
+      getRecurringTransactions();
     }
-  }, [currentAccount, recurringTransactions]);
+  }, [currentAccount]);
 
 
   return (

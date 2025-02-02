@@ -16,9 +16,13 @@ const TransactionsSection = ({ currentAccount }) => {
   const fetchTransactions = async () => {
     try {
       const data = await fetchTransactionsByDateRange(currentAccount.id, startDate, endDate);
+      console.log('Fetched Transactions:', data);
+
+      // Ensure the fetched data is an array before setting state
       setTransactions(data);
     } catch (error) {
       console.error('Error fetching transactions:', error);
+      setTransactions([]);
     }
   };
 
@@ -35,7 +39,7 @@ const TransactionsSection = ({ currentAccount }) => {
       </div>
 
       <ul className="transaction-list">
-        {transactions.length > 0 ? (
+        {transactions && transactions.length > 0 ? (
           transactions.map((transaction) => (
             <li key={transaction.id}>
               {transaction.date} - {transaction.description}: {transaction.amount} {currentAccount.currency}
