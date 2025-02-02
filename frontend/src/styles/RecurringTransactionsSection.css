@@ -1,0 +1,74 @@
+.recurring-transactions-section {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.recurring-transactions-section h2 {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.recurring-transaction-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recurring-transaction-list li {
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recurring-transaction-list li:hover {
+  background-color: #f1f1f1;
+}
+
+.transaction-details {
+  display: flex;
+  gap: 15px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.transaction-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.transaction-actions button {
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.transaction-actions button:hover {
+  background-color: #45a049;
+}
+
+.add-recurring-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-recurring-btn:hover {
+  background-color: #45a049;
+}

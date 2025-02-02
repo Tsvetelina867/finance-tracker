@@ -6,19 +6,18 @@ import com.example.spring.finance.dtos.TransactionDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Account;
 import com.example.spring.finance.model.Category;
-import com.example.spring.finance.model.ReoccurringTransaction;
 import com.example.spring.finance.model.Transaction;
 import com.example.spring.finance.model.enums.FlowType;
 import com.example.spring.finance.repository.AccountRepository;
 import com.example.spring.finance.repository.CategoryRepository;
 import com.example.spring.finance.repository.TransactionRepository;
 import com.example.spring.finance.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -96,36 +95,6 @@ public class TransactionService {
     }
 
 
-
-    @Transactional
-    public List<TransactionDTO> getTransactionsForCurrentUser() {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        List<Transaction> transactions = transactionRepository.findByUserUsername(username);
-
-        return transactions.stream()
-                .map(t -> new TransactionDTO(
-                        t.getId(),
-                        t.getDescription(),
-                        t.getAmount(),
-                        t.getDate(),
-                        t.getType().toString(),
-                        new CategoryDTO(
-                                t.getCategory().getName(),
-                                t.getCategory().getType().toString()
-                        ),
-                        new AccountDTO(
-                                t.getAccount().getName(),
-                                t.getAccount().getType().toString()
-                        ),
-                        new UserDTO(
-                                t.getUser().getUsername(),
-                                t.getUser().getEmail()),
-                        t.getCurrency()))
-                .toList();
-    }
-
     public TransactionDTO getTransactionById(Long id) {
         Optional<Transaction> transaction = transactionRepository.findById(id);
             return transaction.map(t -> new TransactionDTO(
@@ -140,6 +109,8 @@ public class TransactionService {
                             ),
                             new AccountDTO(
                                     t.getAccount().getName(),
+                                    t.getAccount().getBalance(),
+                                    t.getAccount().getCurrency(),
                                     t.getAccount().getType().toString()
                             ),
                             new UserDTO(
@@ -169,5 +140,41 @@ public class TransactionService {
         } else {
             return transaction.getAmount();
         }
+    }
+    private TransactionDTO convertToDTO(Transaction transaction) {
+        return new TransactionDTO(
+                transaction.getId(),
+                transaction.getDescription(),
+                transaction.getAmount(),
+                transaction.getDate(),
+                transaction.getType().toString(),
+                new CategoryDTO(
+                        transaction.getCategory().getName(),
+                        transaction.getCategory().getType().toString()
+                ),
+                new AccountDTO(
+                        transaction.getAccount().getName(),
+                        transaction.getAccount().getBalance(),
+                        transaction.getAccount().getCurrency(),
+                        transaction.getAccount().getType().toString()
+                ),
+                new UserDTO(
+                        transaction.getUser().getUsername(),
+                        transaction.getUser().getEmail()
+                ),
+                transaction.getCurrency()
+        );
+    }
+
+
+
+    public List<TransactionDTO> getTransactionsForAccount(Long accountId, String startDate, String endDate) {
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
+
+        return transactionRepository.findByAccountIdAndDateBetween(accountId, start, end)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }

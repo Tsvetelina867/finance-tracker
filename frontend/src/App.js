@@ -4,11 +4,13 @@ import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-ro
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
 import { ToastContainer } from 'react-toastify';
 import PrivateRoute from './components/PrivateRoute';
+import "./App.css";
 
 const App = () => {
-   const isAuthenticated = !!localStorage.getItem('token'); // Check if token exists in localStorage
+   const isAuthenticated = !!localStorage.getItem('token');
 
      return (
        <Router>
@@ -21,6 +23,7 @@ const App = () => {
              path="/dashboard"
              element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
            />
+           <Route path="/profile" element={<Profile />} />
 
          </Routes>
        </Router>

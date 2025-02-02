@@ -1,0 +1,104 @@
+.profile-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.account-form input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.account-form button {
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.account-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.account-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.account-list button {
+  margin-left: 5px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.account-list button:first-of-type {
+  background-color: #ffc107;
+}
+
+.account-list button:last-of-type {
+  background-color: #dc3545;
+  color: white;
+}
+
+.profile-container h1 {
+  margin-bottom: 20px;
+}
+
+.profile-details p {
+  font-size: 1.2rem;
+}
+
+.edit-form label {
+  display: block;
+  margin-top: 10px;
+}
+
+.edit-form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:first-of-type {
+  background-color: #28a745;
+  color: white;
+}
+
+button:last-of-type {
+  background-color: #dc3545;
+  color: white;
+  margin-left: 10px;
+}
+
+.message {
+  color: green;
+  font-weight: bold;
+  margin-bottom: 10px;
+}

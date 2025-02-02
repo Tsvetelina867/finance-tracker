@@ -34,7 +34,7 @@ public class Account {
     @NotNull
     private AccountType type;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 

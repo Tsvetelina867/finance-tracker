@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ReoccurringTransactionDTO {
+public class RecurringTransactionDTO {
     private String description;
     private BigDecimal amount;
     private LocalDate startDate;

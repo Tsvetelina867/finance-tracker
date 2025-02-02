@@ -1,16 +1,22 @@
 package com.example.spring.finance.service;
 
+import com.example.spring.finance.dtos.AccountDTO;
+import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.GoalDTO;
+import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Account;
 import com.example.spring.finance.model.Category;
 import com.example.spring.finance.model.Goal;
 import com.example.spring.finance.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GoalService {
@@ -83,6 +89,25 @@ public class GoalService {
 
     public void deleteGoal(Long id) {
         this.goalRepository.deleteById(id);
+    }
+
+    public List<GoalDTO> getGoalsByAccountId(Long accountId) {
+        List<Goal> goals = goalRepository.findByAccountId(accountId);
+
+        if (goals.isEmpty()) {
+            throw new EntityNotFoundException("No goals found for this account.");
+        }
+
+        return goals.stream().map(goal -> new GoalDTO(
+                goal.getName(),
+                goal.getTargetAmount(),
+                goal.getCurrentAmount(),
+                goal.getDeadline(),
+                new UserDTO(goal.getUser().getUsername(), goal.getUser().getEmail()),
+                new AccountDTO(goal.getAccount().getName(), goal.getAccount().getBalance(),
+                        goal.getAccount().getCurrency(), goal.getAccount().getType().toString()),
+                new CategoryDTO(goal.getCategory().getName(), goal.getCategory().getType().toString())
+        )).collect(Collectors.toList());
     }
 }
 
