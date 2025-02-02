@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
 import { fetchBudgetData } from '../api/budgetApi';
-import { fetchGoalsData, fetchGoalsByAccountId } from '../api/goalsApi';
+import { fetchGoalsByAccountId } from '../api/goalsApi';
 import { fetchTransactionsByDateRange } from '../api/transactionsApi';
 import { fetchRecurringTransactions } from '../api/recurringTransactionsApi';
-import { fetchAccountData, fetchAllAccounts } from '../api/accountApi';
+import { fetchAllAccounts } from '../api/accountApi';
 import Navbar from '../components/Navbar';
 import TransactionsSection from '../components/TransactionSection';
 import RecurringTransactionsSection from '../components/RecurringTransactionsSection';
@@ -58,16 +58,22 @@ const Dashboard = () => {
       try {
         const allAccountsRes = await fetchAllAccounts();
         setAccounts(allAccountsRes);
-        setCurrentAccount(allAccountsRes[0]);  // Set the first account by default
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching accounts:', error);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Fetch accounts only once on component mount
+  }, []);
+
+  // New useEffect to set the first account when accounts are loaded
+  useEffect(() => {
+    if (accounts.length > 0) {
+      setCurrentAccount(accounts[0]);
+    }
+  }, [accounts]);
 
   useEffect(() => {
     if (!currentAccount) return;
@@ -88,11 +94,18 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [currentAccount]); // Fetch data only when currentAccount changes
+  }, [currentAccount]);
+
+  // New useEffect to fetch transactions when currentAccount is set
+  useEffect(() => {
+    if (currentAccount) {
+      fetchTransactions();
+    }
+  }, [currentAccount]);
 
   useEffect(() => {
-    fetchTransactions(); // Fetch transactions when startDate or endDate changes
-  }, [startDate, endDate, currentAccount]); // Dependencies: `startDate`, `endDate`, `currentAccount`
+    fetchTransactions();
+  }, [startDate, endDate]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -121,7 +134,9 @@ const Dashboard = () => {
         <div className="dashboard-left">
           <div className="widget">
             <h2>Total Spending</h2>
-            <p>${transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0)}</p>
+            <p>
+              ${Array.isArray(transactionsData) ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0) : 0}
+            </p>
             <TransactionsSection currentAccount={currentAccount} />
           </div>
 

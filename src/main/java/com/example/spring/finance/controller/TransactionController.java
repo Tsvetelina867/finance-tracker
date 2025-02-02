@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/finance/transactions")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class TransactionController {
     @Autowired
     private TransactionService transactionService;
@@ -24,16 +24,27 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @GetMapping
+    @GetMapping("/{accountId}")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<List<TransactionDTO>> getTransactions(
-            @RequestParam Long accountId,  // Require account ID
+            @PathVariable Long accountId,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate) {
-        return ResponseEntity.ok(transactionService.getTransactionsForAccount(accountId, startDate, endDate));
+        System.out.println("Fetching transactions for Account ID: " + accountId);
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End Date: " + endDate);
+
+        List<TransactionDTO> transactions = transactionService.getTransactionsForAccount(accountId, startDate, endDate);
+
+        return ResponseEntity.ok()
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .header("Pragma", "no-cache")
+                .header("Expires", "0")
+                .body(transactions);
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/single")
     public ResponseEntity<TransactionDTO> getTransaction(@PathVariable Long id) {
         return ResponseEntity.ok(transactionService.getTransactionById(id));
     }

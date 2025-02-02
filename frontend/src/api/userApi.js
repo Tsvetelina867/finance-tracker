@@ -15,7 +15,7 @@ export const fetchUserProfile = async () => {
   try {
     const response = await axios.get('http://localhost:8080/api/user/profile', {
         headers: {
-            'Authorization': `${jwtToken}`, // Only prepend 'Bearer ' here
+            'Authorization': `${jwtToken}`,
         },
         withCredentials: true,
     });
