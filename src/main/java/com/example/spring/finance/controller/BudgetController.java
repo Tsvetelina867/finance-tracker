@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/finance/budgets")
+@CrossOrigin(origins = "http://localhost:3000")
 public class BudgetController {
     private final BudgetService budgetService;
 
@@ -24,6 +25,13 @@ public class BudgetController {
     public BudgetController(BudgetService budgetService) {
         this.budgetService = budgetService;
     }
+
+    @GetMapping("/{accountId}")
+    public ResponseEntity<BudgetDTO> getBudgetForAccount(@PathVariable Long accountId) {
+        BudgetDTO budget = budgetService.getBudgetByAccountId(accountId);
+        return ResponseEntity.ok(budget);
+    }
+
 
     @GetMapping("/{budgetId}/progress")
     public ResponseEntity<BigDecimal> getBudgetProgress(@PathVariable Long budgetId) {

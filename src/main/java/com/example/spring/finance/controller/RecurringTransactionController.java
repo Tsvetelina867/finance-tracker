@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/finance/recurring-transactions")
+@CrossOrigin(origins = "http://localhost:3000")
 public class RecurringTransactionController {
     private final RecurringTransactionService recurringTransactionService;
 

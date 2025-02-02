@@ -1,6 +1,8 @@
 package com.example.spring.finance.service;
 
+import com.example.spring.finance.dtos.AccountDTO;
 import com.example.spring.finance.dtos.BudgetDTO;
+import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Account;
 import com.example.spring.finance.model.Budget;
@@ -8,6 +10,7 @@ import com.example.spring.finance.model.Category;
 import com.example.spring.finance.model.User;
 import com.example.spring.finance.model.enums.FlowType;
 import com.example.spring.finance.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -117,6 +120,37 @@ public class BudgetService {
 
     public void deleteBudget(Long id) {
         this.budgetRepository.deleteById(id);
+    }
+
+    public BudgetDTO getBudgetByAccountId(Long accountId) {
+        Optional<Budget> budgetOpt = budgetRepository.findByAccountId(accountId);
+
+        if (budgetOpt.isEmpty()) {
+            throw new EntityNotFoundException("No budget found for this account.");
+        }
+
+        Budget budget = budgetOpt.get();
+        return new BudgetDTO(
+                budget.getDescription(),
+                budget.getBudgetLimit(),
+                budget.getCurrentSpending(),
+                budget.getStartDate(),
+                budget.getEndDate(),
+                new CategoryDTO(
+                        budget.getCategory().getName(),
+                        budget.getCategory().getType().toString()
+                ),
+                new AccountDTO(
+                        budget.getAccount().getName(),
+                        budget.getAccount().getBalance(),
+                        budget.getAccount().getCurrency(),
+                        budget.getAccount().getType().toString()
+                ),
+                new UserDTO(
+                        budget.getUser().getUsername(),
+                        budget.getUser().getEmail()
+                )
+        );
     }
 }
 

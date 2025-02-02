@@ -26,18 +26,22 @@ const Login = () => {
         password,
       });
 
-      localStorage.setItem('token', response.data.token);
-      toast.success('Login successful! Redirecting...', { position: "top-center" });
+      if (response.data && response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        toast.success('Login successful! Redirecting...', { position: "top-center" });
 
-      console.log('User logged in:', response.data);
-
-      // Redirect to the dashboard after a successful login
-      navigate('/dashboard');
+        console.log('User logged in:', response.data);
+        navigate('/dashboard');
+      } else {
+        // Handle the case where there's no token in the response
+        toast.error('No token received. Please try again.', { position: "top-center" });
+      }
     } catch (err) {
       console.error('Login error:', err);
       toast.error('Invalid username or password. Please try again.', { position: "top-center" });
     }
   };
+
 
   return (
     <div className="login-container">

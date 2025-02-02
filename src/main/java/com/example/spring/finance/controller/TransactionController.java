@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/finance/transactions")
+@CrossOrigin(origins = "http://localhost:3000")
 public class TransactionController {
     @Autowired
     private TransactionService transactionService;
