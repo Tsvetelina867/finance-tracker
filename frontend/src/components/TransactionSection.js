@@ -16,7 +16,7 @@ const TransactionsSection = ({ currentAccount }) => {
   const fetchTransactions = async () => {
     try {
       const data = await fetchTransactionsByDateRange(currentAccount.id, startDate, endDate);
-      console.log('Fetched Transactions:', data);
+
 
       // Ensure the fetched data is an array before setting state
       setTransactions(data);

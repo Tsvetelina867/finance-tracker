@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BudgetService {
@@ -121,6 +123,41 @@ public class BudgetService {
     public void deleteBudget(Long id) {
         this.budgetRepository.deleteById(id);
     }
+    public List<BudgetDTO> getBudgetsByAccountId(Long accountId) {
+        List<Budget> budgets = budgetRepository.findAllByAccountId(accountId);
+
+        if (budgets.isEmpty()) {
+            throw new EntityNotFoundException("No budgets found for this account.");
+        }
+
+        return budgets.stream().map(budget -> {
+            BigDecimal totalSpending = transactionRepository.sumByCategoryAndAccountAndDateRange(
+                    budget.getCategory(),
+                    budget.getAccount(),
+                    budget.getStartDate(),
+                    budget.getEndDate()
+            );
+
+            if (totalSpending == null) {
+                totalSpending = BigDecimal.ZERO;
+            }
+
+
+
+            return new BudgetDTO(
+                    budget.getId(),
+                    budget.getDescription(),
+                    budget.getBudgetLimit(),
+                    totalSpending, // Current spending
+                    budget.getStartDate(),
+                    budget.getEndDate(),
+                    new CategoryDTO(budget.getCategory().getName(), budget.getCategory().getType().toString()),
+                    new AccountDTO(budget.getAccount().getName(), budget.getAccount().getBalance(), budget.getAccount().getCurrency(), budget.getAccount().getType().toString()),
+                    new UserDTO(budget.getUser().getUsername(), budget.getUser().getEmail())
+            );
+        }).collect(Collectors.toList());
+    }
+
 
     public BudgetDTO getBudgetByAccountId(Long accountId) {
         Optional<Budget> budgetOpt = budgetRepository.findByAccountId(accountId);
@@ -131,6 +168,7 @@ public class BudgetService {
 
         Budget budget = budgetOpt.get();
         return new BudgetDTO(
+                budget.getId(),
                 budget.getDescription(),
                 budget.getBudgetLimit(),
                 budget.getCurrentSpending(),
@@ -150,6 +188,7 @@ public class BudgetService {
                         budget.getUser().getUsername(),
                         budget.getUser().getEmail()
                 )
+
         );
     }
 }

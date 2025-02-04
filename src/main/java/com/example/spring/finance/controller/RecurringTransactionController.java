@@ -6,9 +6,12 @@ import com.example.spring.finance.service.RecurringTransactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -23,22 +26,24 @@ public class RecurringTransactionController {
 
     // Get recurring transactions for a specific account
     @GetMapping("/{accountId}")
-    public ResponseEntity<List<TransactionDTO>> processRecurringTransactions(@RequestParam Long accountId) {
-        List<TransactionDTO> transactions = recurringTransactionService.processRecurringTransactions(accountId);
+    public ResponseEntity<List<RecurringTransactionDTO>> processRecurringTransactions(@PathVariable Long accountId) {
+        List<RecurringTransactionDTO> transactions = recurringTransactionService.processRecurringTransactions(accountId);
         return ResponseEntity.ok(transactions);
     }
 
     // Catch up on recurring transactions within a date range, optional filters for frequency and category
     @GetMapping("/catch-up")
-    public ResponseEntity<List<TransactionDTO>> catchUpRecurringTransactions(
+    public ResponseEntity<List<RecurringTransactionDTO>> catchUpRecurringTransactions(
             @RequestParam Long accountId,
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
             @RequestParam(required = false) String frequency,
             @RequestParam(required = false) String category) {
-        List<TransactionDTO> transactions = recurringTransactionService.catchUpRecurringTransactions(accountId, startDate, endDate, frequency, category);
+        System.out.println("Received filters: frequency=" + frequency + ", category=" + category);
+        List<RecurringTransactionDTO> transactions = recurringTransactionService.catchUpRecurringTransactions(accountId, startDate, endDate, frequency, category);
         return ResponseEntity.ok(transactions);
     }
+
 
     // Create a new recurring transaction
     @PostMapping

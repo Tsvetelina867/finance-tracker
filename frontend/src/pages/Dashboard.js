@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
-import { fetchBudgetData } from '../api/budgetApi';
+import { fetchBudgetDetails } from '../api/budgetApi';
 import { fetchGoalsByAccountId } from '../api/goalsApi';
 import { fetchTransactionsByDateRange } from '../api/transactionsApi';
 import { fetchRecurringTransactions } from '../api/recurringTransactionsApi';
@@ -15,7 +15,7 @@ import '../styles/Dashboard.css';
 const Dashboard = () => {
   const [accounts, setAccounts] = useState([]);
   const [currentAccount, setCurrentAccount] = useState(null);
-  const [budgetData, setBudgetData] = useState(null);
+  const [budgetData, setBudgetData] = useState([]);
   const [goalsData, setGoalsData] = useState([]);
   const [transactionsData, setTransactionsData] = useState([]);
   const [recurringTransactionsData, setRecurringTransactionsData] = useState([]);
@@ -80,7 +80,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const goalsRes = await fetchGoalsByAccountId(currentAccount.id);
-        const budgetRes = await fetchBudgetData(currentAccount.id);
+        const budgetRes = await fetchBudgetDetails(currentAccount.id);
         const recurringRes = await fetchRecurringTransactions(currentAccount.id);
 
         setGoalsData(goalsRes);
@@ -96,6 +96,7 @@ const Dashboard = () => {
     fetchData();
   }, [currentAccount]);
 
+
   // New useEffect to fetch transactions when currentAccount is set
   useEffect(() => {
     if (currentAccount) {
@@ -110,6 +111,8 @@ const Dashboard = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
+
 
   return (
     <div className="dashboard-container">
@@ -149,9 +152,16 @@ const Dashboard = () => {
 
         <div className="dashboard-right">
           <div className="widget">
-            <h2>Budget Progress</h2>
-            <p>{budgetData?.progress || 0}%</p>
-            <BudgetProgress budget={budgetData} />
+          <h2>Budget Progress</h2>
+            {budgetData ? (
+              <div>
+                <h3>{budgetData.description}</h3>
+                <p>{budgetData.progress || 0}%</p>
+                <BudgetProgress budget={budgetData} />
+              </div>
+            ) : (
+              <p>No budgets available</p>
+            )}
           </div>
 
           <div className="widget">

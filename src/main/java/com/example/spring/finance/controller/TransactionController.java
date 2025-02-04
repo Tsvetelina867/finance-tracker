@@ -30,9 +30,6 @@ public class TransactionController {
             @PathVariable Long accountId,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate) {
-        System.out.println("Fetching transactions for Account ID: " + accountId);
-        System.out.println("Start Date: " + startDate);
-        System.out.println("End Date: " + endDate);
 
         List<TransactionDTO> transactions = transactionService.getTransactionsForAccount(accountId, startDate, endDate);
 

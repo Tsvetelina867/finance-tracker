@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-//TODO: go to application.properties and change secret key
+    //TODO: go to application.properties and change secret key
     @Value("${jwt.secret}")
     private String secretKey;
 

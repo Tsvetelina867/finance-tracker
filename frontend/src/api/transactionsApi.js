@@ -1,7 +1,6 @@
 export const fetchTransactionsByDateRange = async (accountId, startDate, endDate) => {
   try {
-    const token = localStorage.getItem('token');
-     console.log('token in transaction:', token); // Get token from localStorage
+    const token = localStorage.getItem('token'); // Get token from localStorage
     if (!token) throw new Error('No token found'); // Error if token is missing
 
     const response = await fetch(`http://localhost:8080/api/finance/transactions/${accountId}?startDate=${startDate}&endDate=${endDate}`, {
@@ -20,7 +19,6 @@ export const fetchTransactionsByDateRange = async (accountId, startDate, endDate
     }
 
     const data = await response.json();
-    console.log('Response data:', data);
 
     return data || [];
   } catch (error) {

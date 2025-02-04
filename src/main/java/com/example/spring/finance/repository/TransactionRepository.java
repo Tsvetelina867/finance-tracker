@@ -16,7 +16,16 @@ import java.util.Optional;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     @Query("SELECT t FROM Transaction t WHERE t.user.username = :username")
     List<Transaction> findByUserUsername(@Param("username") String username);
-    boolean existsByDescriptionAndAmountAndDateAndUser(String description, BigDecimal amount, LocalDate date, User user);
+    @Query("SELECT COUNT(t) > 0 FROM Transaction t WHERE t.description = :description " +
+            "AND t.amount = :amount " +
+            "AND t.date BETWEEN :startDate AND :endDate " +
+            "AND t.user = :user")
+    boolean existsByDescriptionAndAmountAndDateBetweenAndUser(@Param("description") String description,
+                                                              @Param("amount") BigDecimal amount,
+                                                              @Param("startDate") LocalDate startDate,
+                                                              @Param("endDate") LocalDate endDate,
+                                                              @Param("user") User user);
+
     @Query("SELECT MAX(t.date) FROM Transaction t WHERE t.description = :description AND t.user.id = :userId")
     Optional<LocalDate> findLastTransactionDateByReoccurringTransaction(@Param("description") String description, @Param("userId") Long userId);
 
