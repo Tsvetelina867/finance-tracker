@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
-import { fetchBudgetData } from '../api/budgetApi';
-import { fetchGoalsData, fetchGoalsByAccountId } from '../api/goalsApi';
+import { fetchBudgetDetails } from '../api/budgetApi';
+import { fetchGoalsByAccountId } from '../api/goalsApi';
 import { fetchTransactionsByDateRange } from '../api/transactionsApi';
 import { fetchRecurringTransactions } from '../api/recurringTransactionsApi';
-import { fetchAccountData, fetchAllAccounts } from '../api/accountApi';
+import { fetchAllAccounts } from '../api/accountApi';
 import Navbar from '../components/Navbar';
 import TransactionsSection from '../components/TransactionSection';
 import RecurringTransactionsSection from '../components/RecurringTransactionsSection';
@@ -15,7 +15,7 @@ import '../styles/Dashboard.css';
 const Dashboard = () => {
   const [accounts, setAccounts] = useState([]);
   const [currentAccount, setCurrentAccount] = useState(null);
-  const [budgetData, setBudgetData] = useState(null);
+  const [budgetData, setBudgetData] = useState([]);
   const [goalsData, setGoalsData] = useState([]);
   const [transactionsData, setTransactionsData] = useState([]);
   const [recurringTransactionsData, setRecurringTransactionsData] = useState([]);
@@ -58,23 +58,29 @@ const Dashboard = () => {
       try {
         const allAccountsRes = await fetchAllAccounts();
         setAccounts(allAccountsRes);
-        setCurrentAccount(allAccountsRes[0]);  // Set the first account by default
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching accounts:', error);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Fetch accounts only once on component mount
+  }, []);
+
+  // New useEffect to set the first account when accounts are loaded
+  useEffect(() => {
+    if (accounts.length > 0) {
+      setCurrentAccount(accounts[0]);
+    }
+  }, [accounts]);
 
   useEffect(() => {
     if (!currentAccount) return;
     const fetchData = async () => {
       try {
         const goalsRes = await fetchGoalsByAccountId(currentAccount.id);
-        const budgetRes = await fetchBudgetData(currentAccount.id);
+        const budgetRes = await fetchBudgetDetails(currentAccount.id);
         const recurringRes = await fetchRecurringTransactions(currentAccount.id);
 
         setGoalsData(goalsRes);
@@ -88,15 +94,25 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [currentAccount]); // Fetch data only when currentAccount changes
+  }, [currentAccount]);
+
+
+  // New useEffect to fetch transactions when currentAccount is set
+  useEffect(() => {
+    if (currentAccount) {
+      fetchTransactions();
+    }
+  }, [currentAccount]);
 
   useEffect(() => {
-    fetchTransactions(); // Fetch transactions when startDate or endDate changes
-  }, [startDate, endDate, currentAccount]); // Dependencies: `startDate`, `endDate`, `currentAccount`
+    fetchTransactions();
+  }, [startDate, endDate]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
+
+
 
   return (
     <div className="dashboard-container">
@@ -121,7 +137,9 @@ const Dashboard = () => {
         <div className="dashboard-left">
           <div className="widget">
             <h2>Total Spending</h2>
-            <p>${transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0)}</p>
+            <p>
+              ${Array.isArray(transactionsData) ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0) : 0}
+            </p>
             <TransactionsSection currentAccount={currentAccount} />
           </div>
 
@@ -134,9 +152,16 @@ const Dashboard = () => {
 
         <div className="dashboard-right">
           <div className="widget">
-            <h2>Budget Progress</h2>
-            <p>{budgetData?.progress || 0}%</p>
-            <BudgetProgress budget={budgetData} />
+          <h2>Budget Progress</h2>
+            {budgetData ? (
+              <div>
+                <h3>{budgetData.description}</h3>
+                <p>{budgetData.progress || 0}%</p>
+                <BudgetProgress budget={budgetData} />
+              </div>
+            ) : (
+              <p>No budgets available</p>
+            )}
           </div>
 
           <div className="widget">

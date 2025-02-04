@@ -32,7 +32,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF if necessary
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Public endpoints
+                        .requestMatchers("/api/auth/**").permitAll() // Allow public endpoints
+                        .requestMatchers("/api/finance/recurring-transactions/**").authenticated() // Public endpoints
                         .anyRequest().authenticated() // Secure other requests
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

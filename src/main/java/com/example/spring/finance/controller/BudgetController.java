@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,12 +27,16 @@ public class BudgetController {
         this.budgetService = budgetService;
     }
 
-    @GetMapping("/{accountId}")
+    @GetMapping("/{accountId}/single")
     public ResponseEntity<BudgetDTO> getBudgetForAccount(@PathVariable Long accountId) {
         BudgetDTO budget = budgetService.getBudgetByAccountId(accountId);
         return ResponseEntity.ok(budget);
     }
-
+    @GetMapping("/{accountId}")
+    public ResponseEntity<List<BudgetDTO>> getBudgetsForAccount(@PathVariable Long accountId) {
+        List<BudgetDTO> budgets = budgetService.getBudgetsByAccountId(accountId);
+        return ResponseEntity.ok(budgets);
+    }
 
     @GetMapping("/{budgetId}/progress")
     public ResponseEntity<BigDecimal> getBudgetProgress(@PathVariable Long budgetId) {
@@ -57,6 +62,7 @@ public class BudgetController {
         Budget budget = budgetService.updateBudget(id, updatedBudgetDTO);
 
         BudgetDTO responseDTO = new BudgetDTO(
+                budget.getId(),
                 budget.getDescription(),
                 budget.getBudgetLimit(),
                 budget.getCurrentSpending(),

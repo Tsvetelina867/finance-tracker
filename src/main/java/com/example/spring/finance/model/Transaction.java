@@ -34,21 +34,20 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private FlowType type;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     @CreatedDate
     private LocalDateTime createdAt = LocalDateTime.now();
-
     @NotNull
-    private String currency;
+    private String currency = "USD";
 }

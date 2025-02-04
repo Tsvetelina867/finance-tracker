@@ -1,20 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';  // Import useState and useEffect
+import { fetchBudgetDetails } from '../api/budgetApi';
 import '../styles/BudgetProgress.css';
 
-const BudgetProgress = ({ budget }) => {
-  if (!budget) return <p>No budget data available</p>;
+// Assuming you have a component like BudgetProgress for rendering budget progress
 
-  const progress = (budget.currentSpending / budget.budgetLimit) * 100;
+const BudgetProgress = ({ currentAccount }) => {
+  const [budgetData, setBudgetData] = useState(null); // Declare state for budget data
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!currentAccount) return;
+      try {
+        const budgetRes = await fetchBudgetDetails(currentAccount.id);  // Fetch budget details
+        console.log("Fetched budget details:", budgetRes);  // Log the fetched data
+        setBudgetData(budgetRes);  // Set the budget data
+      } catch (error) {
+        console.error("Error fetching budget details:", error);
+      }
+    };
+
+    fetchData();  // Call the fetch function when the component is mounted or currentAccount changes
+  }, [currentAccount]); // Run this effect when currentAccount changes
+
+  if (!budgetData) {
+    return <div>Loading...</div>;  // Show loading state if budget data is not available
+  }
+
+  // Render the budget progress data
   return (
-    <div className="budget-progress">
-      <h3>Budget Progress</h3>
-      <p>Limit: {budget.budgetLimit} {budget.currency}</p>
-      <p>Spent: {budget.currentSpending} {budget.currency}</p>
-      <div className="progress-bar">
-        <div className="progress" style={{ width: `${progress}%` }}></div>
-      </div>
-      <p>Remaining: {budget.budgetLimit - budget.currentSpending} {budget.currency}</p>
+    <div className="budget-progress-container">
+      <h2>{budgetData.description}</h2>
+      <p>Budget Limit: {budgetData.budgetLimit} {budgetData.account.currency}</p>
+      <p>Current Spending: {budgetData.currentSpending} {budgetData.account.currency}</p>
+      <p>Progress: {budgetData.progress}%</p>
+      <p>{budgetData.isExceeded ? "Budget Exceeded" : "Within Budget"}</p>
     </div>
   );
 };
