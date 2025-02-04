@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchRecurringTransactions } from '../api/recurringTransactionsApi'; // Import here
+import { fetchRecurringTransactions } from '../api/recurringTransactionsApi.js'; // Import here
 import '../styles/RecurringTransactionsSection.css';
 
 const RecurringTransactionsSection = ({ currentAccount }) => {
@@ -22,6 +22,9 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
       getRecurringTransactions();
     }
   }, [currentAccount]);
+  if (recurringTransactions.length === 0) {
+    return <p>No recurring transactions set.</p>;
+  }
 
 
   return (
@@ -31,10 +34,12 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
       <ul className="recurring-transaction-list">
         {recurringTransactions.length > 0 ? (
           recurringTransactions.map((transaction) => (
-            <li key={transaction.id}>
+            <li key={transaction.id || `transaction-${transaction.description}`}>
               <div className="transaction-details">
                 <span>{transaction.description}</span>
-                <span>{transaction.amount} {currentAccount.currency}</span>
+                <span>
+                  {transaction.amount} {currentAccount.currency}
+                </span>
                 <span>Next: {transaction.nextPaymentDate}</span>
                 <span>Frequency: {transaction.frequency}</span>
               </div>

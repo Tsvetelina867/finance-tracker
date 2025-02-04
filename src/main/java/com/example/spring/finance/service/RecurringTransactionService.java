@@ -1,7 +1,6 @@
 package com.example.spring.finance.service;
 
-import com.example.spring.finance.dtos.RecurringTransactionDTO;
-import com.example.spring.finance.dtos.TransactionDTO;
+import com.example.spring.finance.dtos.*;
 import com.example.spring.finance.model.Account;
 import com.example.spring.finance.model.Category;
 import com.example.spring.finance.model.RecurringTransaction;
@@ -29,88 +28,124 @@ public class RecurringTransactionService {
     private final ExchangeRateService exchangeRateService;
 
     public RecurringTransactionService(TransactionRepository transactionRepository,
-                                       RecurringTransactionRepository recurringTransactionRepository, // Fixed spelling
+                                       RecurringTransactionRepository recurringTransactionRepository,
                                        UserRepository userRepository,
                                        CategoryRepository categoryRepository,
                                        AccountRepository accountRepository,
                                        ExchangeRateService exchangeRateService) {
         this.transactionRepository = transactionRepository;
-        this.recurringTransactionRepository = recurringTransactionRepository; // Fixed spelling
+        this.recurringTransactionRepository = recurringTransactionRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.accountRepository = accountRepository;
         this.exchangeRateService = exchangeRateService;
     }
 
-    public List<TransactionDTO> processRecurringTransactions(Long accountId) {
+    public List<RecurringTransactionDTO> processRecurringTransactions(Long accountId) {
         return processRecurringTransactions(accountId, LocalDate.now(), LocalDate.now());
     }
 
-    public List<TransactionDTO> catchUpRecurringTransactions(Long accountId, LocalDate startDate, LocalDate endDate, String frequency, String category) {
+    public List<RecurringTransactionDTO> catchUpRecurringTransactions(Long accountId, LocalDate startDate, LocalDate endDate, String frequency, String category) {
         return processRecurringTransactions(accountId, startDate, endDate, frequency, category);
     }
 
-    private List<TransactionDTO> processRecurringTransactions(Long accountId, LocalDate startDate, LocalDate endDate) {
+    private List<RecurringTransactionDTO> processRecurringTransactions(Long accountId, LocalDate startDate, LocalDate endDate) {
         return processRecurringTransactions(accountId, startDate, endDate, null, null);
     }
 
-    private List<TransactionDTO> processRecurringTransactions(Long accountId, LocalDate startDate, LocalDate endDate, String frequencyFilter, String categoryFilter) {
-        List<RecurringTransaction> recurringTransactions = recurringTransactionRepository.findByAccountId(accountId); // Filter by account
+    public List<RecurringTransactionDTO> processRecurringTransactions(Long accountId, LocalDate startDate, LocalDate endDate, String frequencyFilter, String categoryFilter) {
 
-        List<Transaction> generatedTransactions = new ArrayList<>();
+        List<RecurringTransaction> recurringTransactions = recurringTransactionRepository.findByAccountId(accountId);
+        System.out.println("Found " + recurringTransactions.size() + " recurring transactions.");
+
+        List<RecurringTransactionDTO> generatedRecurringTransactions = new ArrayList<>(recurringTransactions.stream()
+                .map(recurringTransaction -> getRecurringTransactionDTO(recurringTransaction, LocalDate.now()))
+                .toList());
 
         for (RecurringTransaction recurringTransaction : recurringTransactions) {
+            System.out.println("Processing recurring transaction: " + recurringTransaction.getDescription());
+
+            // Apply frequency filter
             if (frequencyFilter != null && !recurringTransaction.getFrequency().toString().equals(frequencyFilter)) {
+                System.out.println("Skipping transaction due to frequency filter.");
                 continue;
             }
+
+            // Apply category filter
             if (categoryFilter != null && recurringTransaction.getCategory() != null &&
                     !recurringTransaction.getCategory().getName().equals(categoryFilter)) {
+                System.out.println("Skipping transaction due to category filter.");
                 continue;
             }
 
             LocalDate currentDate = recurringTransaction.getStartDate();
-            endDate = (recurringTransaction.getEndDate() != null && recurringTransaction.getEndDate().isBefore(endDate)) ?
-                    recurringTransaction.getEndDate() : endDate;
+            if (recurringTransaction.getEndDate() != null && recurringTransaction.getEndDate().isBefore(endDate)) {
+                endDate = recurringTransaction.getEndDate();
+            }
+            System.out.println("Final End Date for this transaction: " + endDate);
 
             while (!currentDate.isAfter(endDate)) {
-                boolean transactionExists = transactionRepository.existsByDescriptionAndAmountAndDateAndUser(
+                System.out.println("Processing for currentDate: " + currentDate);
+
+                boolean transactionExists = recurringTransactionRepository.existsByDescriptionAndAmountAndUser(
                         recurringTransaction.getDescription(),
                         recurringTransaction.getAmount(),
-                        currentDate,
                         recurringTransaction.getUser()
                 );
 
                 if (!transactionExists) {
-                    Transaction transaction = getTransaction(recurringTransaction, currentDate);
-                    generatedTransactions.add(transaction);
+                    RecurringTransactionDTO transaction = getRecurringTransactionDTO(recurringTransaction, currentDate);
+                    generatedRecurringTransactions.add(transaction);
                 }
 
-                switch (recurringTransaction.getFrequency()) {
-                    case DAILY -> currentDate = currentDate.plusDays(1);
-                    case WEEKLY -> currentDate = currentDate.plusWeeks(1);
-                    case MONTHLY -> currentDate = currentDate.plusMonths(1);
-                    case ANNUALLY -> currentDate = currentDate.plusYears(1);
-                }
+                System.out.println("Transaction Frequency: " + recurringTransaction.getFrequency());
+
+                currentDate = switch (recurringTransaction.getFrequency()) {
+                    case DAILY -> currentDate.plusDays(1);
+                    case WEEKLY -> currentDate.plusWeeks(1);
+                    case MONTHLY -> currentDate.plusMonths(1);
+                    case ANNUALLY -> currentDate.plusYears(1);
+                };
+
+                System.out.println("Next date: " + currentDate);
             }
         }
 
-        transactionRepository.saveAll(generatedTransactions);
-        return generatedTransactions.stream()
-                .map(TransactionDTO::new)
-                .collect(Collectors.toList());
+        System.out.println("Generated " + generatedRecurringTransactions.size() + " recurring transactions.");
+        return generatedRecurringTransactions;
     }
 
-    private static Transaction getTransaction(RecurringTransaction recurringTransaction, LocalDate currentDate) {
-        Transaction transaction = new Transaction();
-        transaction.setDescription(recurringTransaction.getDescription());
-        transaction.setAmount(recurringTransaction.getAmount());
-        transaction.setDate(currentDate);
-        transaction.setType(FlowType.EXPENSE);
-        transaction.setCategory(recurringTransaction.getCategory());
-        transaction.setAccount(recurringTransaction.getAccount());
-        transaction.setUser(recurringTransaction.getUser());
-        return transaction;
+
+    // Helper method to map RecurringTransaction to DTO
+    private RecurringTransactionDTO getRecurringTransactionDTO(RecurringTransaction recurringTransaction, LocalDate date) {
+        Category category = recurringTransaction.getCategory();
+        String categoryName = (category != null) ? category.getName() : "Unknown";
+        String categoryType = (category != null && category.getType() != null)
+                ? category.getType().toString()
+                : "UNKNOWN";
+        return new RecurringTransactionDTO(
+                recurringTransaction.getDescription(),
+                recurringTransaction.getAmount(),
+                recurringTransaction.getStartDate(),
+                recurringTransaction.getEndDate(),
+                recurringTransaction.getFrequency().toString(),
+                new CategoryDTO(categoryName, categoryType),
+                new AccountDTO(
+                        recurringTransaction.getAccount().getName(),
+                        recurringTransaction.getAccount().getBalance(),
+                        recurringTransaction.getAccount().getCurrency(),
+                        recurringTransaction.getAccount().getType().toString()
+                ),
+                new UserDTO(
+                        recurringTransaction.getUser().getUsername(),
+                        recurringTransaction.getUser().getEmail()
+                ),
+                recurringTransaction.getAccount().getCurrency()
+        );
     }
+
+
+
 
     public RecurringTransaction addRecurringTransaction(RecurringTransaction recurringTransaction) { // Fixed spelling
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

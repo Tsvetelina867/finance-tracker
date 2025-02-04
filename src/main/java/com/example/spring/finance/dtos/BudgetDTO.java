@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class BudgetDTO {
+    private Long id;
     private String description;
     private BigDecimal budgetLimit;
     private BigDecimal currentSpending;
