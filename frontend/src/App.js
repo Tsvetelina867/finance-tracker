@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import { ToastContainer } from 'react-toastify';
 import PrivateRoute from './components/PrivateRoute';
+import TransactionsManagement from './pages/TransactionsManagement';
 import "./App.css";
 
 const App = () => {
@@ -24,6 +25,8 @@ const App = () => {
              element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
            />
            <Route path="/profile" element={<Profile />} />
+           <Route path="/transactions-management" element={<TransactionsManagement />}
+                   />
 
          </Routes>
        </Router>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
 import { fetchBudgetDetails } from '../api/budgetApi';
-import { fetchGoalsByAccountId } from '../api/goalsApi';
+import { fetchGoalsWithDetails } from '../api/goalsApi';
 import { fetchTransactionsByDateRange } from '../api/transactionsApi';
 import { fetchRecurringTransactions } from '../api/recurringTransactionsApi';
 import { fetchAllAccounts } from '../api/accountApi';
@@ -10,6 +10,7 @@ import Navbar from '../components/Navbar';
 import TransactionsSection from '../components/TransactionSection';
 import RecurringTransactionsSection from '../components/RecurringTransactionsSection';
 import BudgetProgress from '../components/BudgetProgress';
+import GoalsProgress from '../components/GoalsProgress';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
@@ -79,7 +80,7 @@ const Dashboard = () => {
     if (!currentAccount) return;
     const fetchData = async () => {
       try {
-        const goalsRes = await fetchGoalsByAccountId(currentAccount.id);
+        const goalsRes = await fetchGoalsWithDetails(currentAccount.id);
         const budgetRes = await fetchBudgetDetails(currentAccount.id);
         const recurringRes = await fetchRecurringTransactions(currentAccount.id);
 
@@ -128,6 +129,7 @@ const Dashboard = () => {
         onConfirm={confirmLogout}
       />
 
+
       <div className="dashboard-header">
         <h2>{currentAccount?.name}</h2>
         <h2>Balance: {currentAccount?.balance} {currentAccount?.currency}</h2>
@@ -135,19 +137,30 @@ const Dashboard = () => {
 
       <div className="dashboard-main">
         <div className="dashboard-left">
-          <div className="widget">
-            <h2>Total Spending</h2>
-            <p>
-              ${Array.isArray(transactionsData) ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0) : 0}
-            </p>
-            <TransactionsSection currentAccount={currentAccount} />
-          </div>
+          <div className="widget-container">
+                <div className="widget total-spending-widget">
+                  <h2 className="widget-title">Total Spending</h2>
+                  <p className="total-spending-amount">
+                    ${Array.isArray(transactionsData)
+                      ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0).toFixed(2)
+                      : 0}
+                  </p>
+                </div>
 
-          <div className="widget">
+                <div className="widget transactions-widget">
+                  <h2 className="widget-title">Transaction History</h2>
+                  <TransactionsSection currentAccount={currentAccount} />
+                </div>
+              </div>
+
+          <div className="widget-recurring">
             <h2>Recurring Spending</h2>
-            <p>${recurringTransactionsData.reduce((acc, transaction) => acc + transaction.amount, 0)}</p>
+            <p>
+              ${recurringTransactionsData.reduce((acc, transaction) => acc + transaction.amount, 0)}
+            </p>
             <RecurringTransactionsSection currentAccount={currentAccount} />
           </div>
+
         </div>
 
         <div className="dashboard-right">
@@ -166,17 +179,11 @@ const Dashboard = () => {
 
           <div className="widget">
             <h2>Goal Progress</h2>
-            {loading ? <p>Loading...</p> : goalsData.length === 0 ? (
-              <p>No active goals</p>
-            ) : (
-              <ul>
-                {goalsData.map(goal => (
-                  <li key={goal.id}>
-                    <strong>{goal.name}</strong>: {((goal.currentAmount / goal.targetAmount) * 100).toFixed(2)}%
-                  </li>
-                ))}
-              </ul>
-            )}
+              {loading ? <p>Loading...</p> : goalsData.length === 0 ? (
+                <p>No active goals</p>
+              ) : (
+                <GoalsProgress goals={goalsData} />
+              )}
           </div>
         </div>
       </div>

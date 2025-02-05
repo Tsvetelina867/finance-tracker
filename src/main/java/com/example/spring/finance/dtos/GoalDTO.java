@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class GoalDTO {
+    private Long id;
     private String name;
     private BigDecimal targetAmount;
     private BigDecimal currentAmount;
