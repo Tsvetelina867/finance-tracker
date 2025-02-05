@@ -1,8 +1,7 @@
 // src/components/Navbar.js
-
 import "../styles/Navbar.css";
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
   const navigate = useNavigate();
@@ -22,8 +21,6 @@ const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
   return (
     <div className="navbar">
       <div className="navbar-left">
-        <h2>{currentAccount?.name}</h2>
-        <p>{currentAccount?.balance} {currentAccount?.currency}</p>
         {/* Account Switch Dropdown */}
         <div className="account-dropdown">
           <button className="switch-account-btn" onClick={() => setShowAccountDropdown(!showAccountDropdown)}>
@@ -39,8 +36,14 @@ const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
             </ul>
           )}
         </div>
+
+        {/* Profile and Manage Transactions buttons next to each other */}
         <button className="profile-btn" onClick={() => navigate('/profile')}>Profile</button>
+        <Link to="/transactions-management">
+          <button className="manage-transactions-button">Manage Transactions</button>
+        </Link>
       </div>
+
       <div className="navbar-right">
         <button onClick={handleLogout}>Logout</button>
       </div>

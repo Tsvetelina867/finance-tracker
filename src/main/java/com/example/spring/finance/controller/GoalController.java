@@ -54,6 +54,7 @@ public class GoalController {
         Goal goal = goalService.updateGoal(id, goalDTO);
 
         GoalDTO responseDTO = new GoalDTO(
+                goal.getId(),
                 goal.getName(),
                 goal.getTargetAmount(),
                 goal.getCurrentAmount(),

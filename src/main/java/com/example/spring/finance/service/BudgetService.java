@@ -57,6 +57,7 @@ public class BudgetService {
         return progress.min(BigDecimal.valueOf(100));
     }
 
+
     public boolean isBudgetExceeded(Long budgetId) {
         Budget budget = budgetRepository.findById(budgetId)
                 .orElseThrow(() -> new IllegalArgumentException("Budget not found with id: " + budgetId));
