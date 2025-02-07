@@ -104,18 +104,21 @@ public class TransactionService {
                             t.getDate(),
                             t.getType().toString(),
                             new CategoryDTO(
+                                    t.getCategory().getId(),
                                     t.getCategory().getName(),
                                     t.getCategory().getType() != null
                                             ? t.getCategory().getType().toString()
                                             : "UNKNOWN"
                             ),
                             new AccountDTO(
+                                    t.getAccount().getId(),
                                     t.getAccount().getName(),
                                     t.getAccount().getBalance(),
                                     t.getAccount().getCurrency(),
                                     t.getAccount().getType().toString()
                             ),
                             new UserDTO(
+                                    t.getUser().getId(),
                                     t.getUser().getUsername(),
                                     t.getUser().getEmail()),
                             t.getCurrency()))
@@ -155,14 +158,16 @@ public class TransactionService {
                 transaction.getAmount(),
                 transaction.getDate(),
                 transaction.getType().toString(),
-                new CategoryDTO(categoryName, categoryType),
+                new CategoryDTO(category.getId(), categoryName, categoryType),
                 new AccountDTO(
+                        transaction.getAccount().getId(),
                         transaction.getAccount().getName(),
                         transaction.getAccount().getBalance(),
                         transaction.getAccount().getCurrency(),
                         transaction.getAccount().getType().toString()
                 ),
                 new UserDTO(
+                        transaction.getUser().getId(),
                         transaction.getUser().getUsername(),
                         transaction.getUser().getEmail()
                 ),

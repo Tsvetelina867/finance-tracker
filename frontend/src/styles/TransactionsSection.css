@@ -5,15 +5,6 @@
   background: linear-gradient(135deg, #f5f5f5, #ffffff);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
-
-.transactions-section h3 {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #333;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
 .date-filter {
   display: flex;
   gap: 20px;
@@ -87,6 +78,14 @@
   transform: translateY(2px);
 }
 
+.transactions-section h3 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
 .transaction-list {
   list-style: none;
   padding: 0;
@@ -99,11 +98,13 @@
   background-color: #ffffff;
   border-radius: 12px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* Stack the content vertically */
+  justify-content: flex-start;
+  align-items: flex-start; /* Align text at the start of the list item */
   font-size: 1.1rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   transition: background-color 0.2s ease, box-shadow 0.3s ease;
+  max-width: 700px;
 }
 
 .transaction-list li:hover {
@@ -111,15 +112,51 @@
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-.transaction-list li span {
-  font-weight: 600;
+.transaction-details {
+  margin-bottom: 10px;
+}
+
+.transaction-details span {
+  display: block;  /* Align each span to be on its own line */
+  font-size: 14px;
   color: #333;
 }
 
-.transaction-list li .amount {
-  color: #4caf50;
-  font-weight: 700;
-  letter-spacing: 1px;
+.description {
+  font-weight: bold;
+  font-size: 16px;
+  color: #2d2d2d;
+}
+
+.amount {
+  color: #2e8b57; /* Green for amount */
+}
+
+.date,
+.category {
+  font-size: 12px;
+  color: #888;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.button-container button {
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button-container button:hover {
+  background-color: #0056b3;
 }
 
 .transaction-list p {
@@ -127,17 +164,4 @@
   color: #888;
   text-align: center;
   margin-top: 20px;
-}
-
-.transaction-list li .amount,
-.transaction-list li span {
-  transition: color 0.3s ease;
-}
-
-.transaction-list li:hover .amount {
-  color: #388e3c; /* Darker green for amount on hover */
-}
-
-.transaction-list li:hover span {
-  color: #2c2c2c; /* Darker text on hover */
 }

@@ -111,6 +111,7 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
                   <span>{transaction.amount} {currentAccount.currency}</span>
                   <span>Next: {nextPaymentDate.toLocaleDateString()}</span> {/* Display formatted next payment date */}
                   <span>Frequency: {transaction.frequency}</span>
+                  <span>Category: {transaction.category.name}</span>
                 </div>
               </li>
             );

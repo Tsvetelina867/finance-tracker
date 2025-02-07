@@ -64,16 +64,18 @@ public class TransactionController {
                 updatedTransaction.getDate(),
                 updatedTransaction.getType().toString(),
                 new CategoryDTO(
+                        updatedTransaction.getCategory().getId(),
                         updatedTransaction.getCategory().getName(),
                         updatedTransaction.getCategory().getType().toString()
                 ),
                 new AccountDTO(
+                        updatedTransaction.getAccount().getId(),
                         updatedTransaction.getAccount().getName(),
                         updatedTransaction.getAccount().getBalance(),
                         updatedTransaction.getAccount().getCurrency(),
                         updatedTransaction.getAccount().getType().toString()
                 ),
-                new UserDTO(
+                new UserDTO(updatedTransaction.getUser().getId(),
                         updatedTransaction.getUser().getUsername(),
                         updatedTransaction.getUser().getEmail()),
                 updatedTransaction.getCurrency()

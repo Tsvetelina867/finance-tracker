@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecurringTransactionDTO {
+    private Long id;
     private String description;
     private BigDecimal amount;
     private LocalDate startDate;

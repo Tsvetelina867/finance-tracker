@@ -45,6 +45,18 @@ export const fetchRecurringTransactions = async (accountId, frequency = null, ca
     return []; // Return an empty array in case of an error
   }
 };
+
+const API_BASE_URL = "http://localhost:8080/api/finance";
+const getToken = () => localStorage.getItem("token");
+
+const requestHeaders = () => ({
+  "Authorization": `${getToken()}`,
+  "Content-Type": "application/json",
+  "Cache-Control": "no-cache, no-store, must-revalidate",
+  "Pragma": "no-cache",
+  "Expires": "0",
+});
+
 // src/api/recurringTransactionsApi.js
 export const fetchPastRecurringTransactions = async (accountId, startDate, endDate, frequency = null, category = null) => {
   try {
@@ -72,7 +84,7 @@ export const fetchPastRecurringTransactions = async (accountId, startDate, endDa
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `${token}`,
         'Cache-Control': 'no-cache, no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0',
@@ -92,4 +104,49 @@ export const fetchPastRecurringTransactions = async (accountId, startDate, endDa
     return []; // Return an empty array in case of an error
   }
 };
+
+export const addRecurringTransaction = async (transaction) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/recurring-transactions`, {
+      method: "POST",
+      headers: requestHeaders(),
+      body: JSON.stringify(transaction),
+    });
+    if (!response.ok) throw new Error("Failed to add recurring transaction");
+    return await response.json();
+  } catch (error) {
+    console.error("Error adding recurring transaction:", error);
+    return null;
+  }
+};
+
+export const updateRecurringTransaction = async (transactionId, transaction) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/recurring-transactions/${transactionId}`, {
+      method: "PUT",
+      headers: requestHeaders(),
+      body: JSON.stringify(transaction),
+    });
+    if (!response.ok) throw new Error("Failed to update recurring transaction");
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating recurring transaction:", error);
+    return null;
+  }
+};
+
+export const deleteRecurringTransaction = async (transactionId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/recurring-transactions/${transactionId}`, {
+      method: "DELETE",
+      headers: requestHeaders(),
+    });
+    if (!response.ok) throw new Error("Failed to delete recurring transaction");
+    return true;
+  } catch (error) {
+    console.error("Error deleting recurring transaction:", error);
+    return false;
+  }
+};
+
 

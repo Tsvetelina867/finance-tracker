@@ -25,6 +25,7 @@ public class AccountService {
         Optional<Account> accountOpt = accountRepository.findByUser_Username(username).stream().findFirst();
 
         return accountOpt.map(acc -> new AccountDTO(
+                acc.getId(),
                         acc.getName(),
                         acc.getBalance(),
                         acc.getCurrency(),
