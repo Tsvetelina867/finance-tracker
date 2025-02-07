@@ -38,7 +38,12 @@ const TransactionsSection = ({ currentAccount }) => {
         {transactions && transactions.length > 0 ? (
           transactions.map((transaction) => (
             <li key={transaction.id}>
-              {new Date(transaction.date).toLocaleDateString()} - {transaction.description}: {transaction.amount} {currentAccount.currency}
+              <div className="transaction-details">
+                        <span className="description">{transaction.description}</span>
+                        <span className="amount">{transaction.amount} {transaction.currency || currentAccount.currency}</span>
+                        <span className="date">{new Date(transaction.date).toLocaleDateString()}</span>
+                        <span className="category">/{transaction.category.name}/</span>
+                      </div>
             </li>
           ))
         ) : (

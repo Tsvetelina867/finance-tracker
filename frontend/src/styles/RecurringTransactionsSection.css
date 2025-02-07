@@ -33,6 +33,7 @@
   justify-content: space-between;
   align-items: center;
   transition: all 0.3s ease;
+  max-width: 820px;
 }
 
 .recurring-transaction-list li:hover {

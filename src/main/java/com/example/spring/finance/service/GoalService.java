@@ -120,10 +120,10 @@ public class GoalService {
                 goal.getTargetAmount(),
                 goal.getCurrentAmount(),
                 goal.getDeadline(),
-                new UserDTO(goal.getUser().getUsername(), goal.getUser().getEmail()),
-                new AccountDTO(goal.getAccount().getName(), goal.getAccount().getBalance(),
+                new UserDTO(goal.getUser().getId(), goal.getUser().getUsername(), goal.getUser().getEmail()),
+                new AccountDTO(goal.getAccount().getId(), goal.getAccount().getName(), goal.getAccount().getBalance(),
                         goal.getAccount().getCurrency(), goal.getAccount().getType().toString()),
-                new CategoryDTO(goal.getCategory().getName(), goal.getCategory().getType().toString())
+                new CategoryDTO(goal.getCategory().getId(), goal.getCategory().getName(), goal.getCategory().getType().toString())
         )).collect(Collectors.toList());
     }
 }

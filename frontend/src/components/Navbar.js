@@ -39,9 +39,13 @@ const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
 
         {/* Profile and Manage Transactions buttons next to each other */}
         <button className="profile-btn" onClick={() => navigate('/profile')}>Profile</button>
-        <Link to="/transactions-management">
+        <Link
+          to="/transactions-management"
+          state={{ currentAccount }}
+        >
           <button className="manage-transactions-button">Manage Transactions</button>
         </Link>
+
       </div>
 
       <div className="navbar-right">

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
 import { fetchBudgetDetails } from '../api/budgetApi';
 import { fetchGoalsWithDetails } from '../api/goalsApi';
 import { fetchTransactionsByDateRange } from '../api/transactionsApi';
 import { fetchRecurringTransactions } from '../api/recurringTransactionsApi';
-import { fetchAllAccounts } from '../api/accountApi';
+import { fetchAllAccounts, fetchAccountData } from '../api/accountApi';
 import Navbar from '../components/Navbar';
 import TransactionsSection from '../components/TransactionSection';
 import RecurringTransactionsSection from '../components/RecurringTransactionsSection';
@@ -59,6 +59,13 @@ const Dashboard = () => {
       try {
         const allAccountsRes = await fetchAllAccounts();
         setAccounts(allAccountsRes);
+
+        const currentAccountRes = await fetchAccountData();
+        if (currentAccountRes) {
+          setCurrentAccount(currentAccountRes);
+        } else if (allAccountsRes.length > 0) {
+          setCurrentAccount(allAccountsRes[0]);  // Set the first account if no current account is found
+        }
       } catch (error) {
         console.error('Error fetching accounts:', error);
       } finally {
@@ -69,14 +76,8 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // New useEffect to set the first account when accounts are loaded
   useEffect(() => {
-    if (accounts.length > 0) {
-      setCurrentAccount(accounts[0]);
-    }
-  }, [accounts]);
-
-  useEffect(() => {
+  console.log("current acc when fetching: ", currentAccount);
     if (!currentAccount) return;
     const fetchData = async () => {
       try {
@@ -97,23 +98,17 @@ const Dashboard = () => {
     fetchData();
   }, [currentAccount]);
 
-
-  // New useEffect to fetch transactions when currentAccount is set
-  useEffect(() => {
-    if (currentAccount) {
-      fetchTransactions();
-    }
-  }, [currentAccount]);
-
   useEffect(() => {
     fetchTransactions();
   }, [startDate, endDate]);
 
+  useEffect(() => {
+    fetchTransactions();
+  }, [currentAccount]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
-
-
 
   return (
     <div className="dashboard-container">
@@ -129,29 +124,28 @@ const Dashboard = () => {
         onConfirm={confirmLogout}
       />
 
-
       <div className="dashboard-header">
-        <h2>{currentAccount?.name}</h2>
+        <h2>Account: {currentAccount?.name}</h2>
         <h2>Balance: {currentAccount?.balance} {currentAccount?.currency}</h2>
       </div>
 
       <div className="dashboard-main">
         <div className="dashboard-left">
           <div className="widget-container">
-                <div className="widget total-spending-widget">
-                  <h2 className="widget-title">Total Spending</h2>
-                  <p className="total-spending-amount">
-                    ${Array.isArray(transactionsData)
-                      ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0).toFixed(2)
-                      : 0}
-                  </p>
-                </div>
+            <div className="widget total-spending-widget">
+              <h2 className="widget-title">Total Spending</h2>
+              <p className="total-spending-amount">
+                ${Array.isArray(transactionsData)
+                  ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0).toFixed(2)
+                  : 0}
+              </p>
+            </div>
 
-                <div className="widget transactions-widget">
-                  <h2 className="widget-title">Transaction History</h2>
-                  <TransactionsSection currentAccount={currentAccount} />
-                </div>
-              </div>
+            <div className="widget transactions-widget">
+              <h2 className="widget-title">Transaction History</h2>
+              <TransactionsSection currentAccount={currentAccount} />
+            </div>
+          </div>
 
           <div className="widget-recurring">
             <h2>Recurring Spending</h2>
@@ -160,12 +154,11 @@ const Dashboard = () => {
             </p>
             <RecurringTransactionsSection currentAccount={currentAccount} />
           </div>
-
         </div>
 
         <div className="dashboard-right">
           <div className="widget">
-          <h2>Budget Progress</h2>
+            <h2>Budget Progress</h2>
             {budgetData ? (
               <div>
                 <h3>{budgetData.description}</h3>
@@ -179,11 +172,11 @@ const Dashboard = () => {
 
           <div className="widget">
             <h2>Goal Progress</h2>
-              {loading ? <p>Loading...</p> : goalsData.length === 0 ? (
-                <p>No active goals</p>
-              ) : (
-                <GoalsProgress goals={goalsData} />
-              )}
+            {loading ? <p>Loading...</p> : goalsData.length === 0 ? (
+              <p>No active goals</p>
+            ) : (
+              <GoalsProgress goals={goalsData} />
+            )}
           </div>
         </div>
       </div>

@@ -152,9 +152,9 @@ public class BudgetService {
                     totalSpending, // Current spending
                     budget.getStartDate(),
                     budget.getEndDate(),
-                    new CategoryDTO(budget.getCategory().getName(), budget.getCategory().getType().toString()),
-                    new AccountDTO(budget.getAccount().getName(), budget.getAccount().getBalance(), budget.getAccount().getCurrency(), budget.getAccount().getType().toString()),
-                    new UserDTO(budget.getUser().getUsername(), budget.getUser().getEmail())
+                    new CategoryDTO(budget.getCategory().getId(), budget.getCategory().getName(), budget.getCategory().getType().toString()),
+                    new AccountDTO(budget.getAccount().getId(), budget.getAccount().getName(), budget.getAccount().getBalance(), budget.getAccount().getCurrency(), budget.getAccount().getType().toString()),
+                    new UserDTO(budget.getUser().getId(), budget.getUser().getUsername(), budget.getUser().getEmail())
             );
         }).collect(Collectors.toList());
     }
@@ -176,16 +176,19 @@ public class BudgetService {
                 budget.getStartDate(),
                 budget.getEndDate(),
                 new CategoryDTO(
+                        budget.getCategory().getId(),
                         budget.getCategory().getName(),
                         budget.getCategory().getType().toString()
                 ),
                 new AccountDTO(
+                        budget.getAccount().getId(),
                         budget.getAccount().getName(),
                         budget.getAccount().getBalance(),
                         budget.getAccount().getCurrency(),
                         budget.getAccount().getType().toString()
                 ),
                 new UserDTO(
+                        budget.getUser().getId(),
                         budget.getUser().getUsername(),
                         budget.getUser().getEmail()
                 )
