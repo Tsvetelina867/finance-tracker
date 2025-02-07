@@ -39,7 +39,6 @@ public class RecurringTransactionController {
             @RequestParam LocalDate endDate,
             @RequestParam(required = false) String frequency,
             @RequestParam(required = false) String category) {
-        System.out.println("Received filters: frequency=" + frequency + ", category=" + category);
         List<RecurringTransactionDTO> transactions = recurringTransactionService.catchUpRecurringTransactions(accountId, startDate, endDate, frequency, category);
         return ResponseEntity.ok(transactions);
     }
@@ -59,22 +58,26 @@ public class RecurringTransactionController {
             @RequestBody RecurringTransactionDTO updatedRecurringTransactionDTO) {
         RecurringTransaction updatedRecurringTransaction = recurringTransactionService.updateRecurringTransaction(id, updatedRecurringTransactionDTO);
         RecurringTransactionDTO responseDTO = new RecurringTransactionDTO(
+                updatedRecurringTransaction.getId(),
                 updatedRecurringTransaction.getDescription(),
                 updatedRecurringTransaction.getAmount(),
                 updatedRecurringTransaction.getStartDate(),
                 updatedRecurringTransaction.getEndDate(),
                 updatedRecurringTransaction.getFrequency().toString(),
                 new CategoryDTO(
+                        updatedRecurringTransaction.getCategory().getId(),
                         updatedRecurringTransaction.getCategory().getName(),
                         updatedRecurringTransaction.getCategory().getType().toString()
                 ),
                 new AccountDTO(
+                        updatedRecurringTransaction.getAccount().getId(),
                         updatedRecurringTransaction.getAccount().getName(),
                         updatedRecurringTransaction.getAccount().getBalance(),
                         updatedRecurringTransaction.getAccount().getCurrency(),
                         updatedRecurringTransaction.getAccount().getType().toString()
                 ),
                 new UserDTO(
+                        updatedRecurringTransaction.getUser().getId(),
                         updatedRecurringTransaction.getUser().getUsername(),
                         updatedRecurringTransaction.getUser().getEmail()),
                 updatedRecurringTransaction.getCurrency()

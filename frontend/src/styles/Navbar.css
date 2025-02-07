@@ -9,7 +9,7 @@
 
 .navbar-left {
   display: flex;
-  gap: 10px; /* Space between buttons */
+  gap: 15px; /* Space between buttons */
   align-items: center; /* Vertically center items */
 }
 
@@ -37,6 +37,21 @@
 .navbar .profile-btn {
   background-color: #4CAF50; /* Green for Profile */
   color: white;
+}
+
+.manage-transactions-button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.manage-transactions-button:hover {
+  background-color: #45a049;
 }
 
 .navbar .navbar-right button {

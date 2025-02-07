@@ -9,16 +9,13 @@ const TransactionsSection = ({ currentAccount }) => {
 
   useEffect(() => {
     if (currentAccount) {
-      fetchTransactions();
+      fetchTransactions(); // Call on initial load
     }
-  }, [currentAccount, startDate, endDate]);
+  }, [currentAccount]); // Trigger on mount only
 
   const fetchTransactions = async () => {
     try {
       const data = await fetchTransactionsByDateRange(currentAccount.id, startDate, endDate);
-
-
-      // Ensure the fetched data is an array before setting state
       setTransactions(data);
     } catch (error) {
       console.error('Error fetching transactions:', error);
@@ -28,7 +25,6 @@ const TransactionsSection = ({ currentAccount }) => {
 
   return (
     <div className="transactions-section">
-      <h2>Transaction History</h2>
 
       <div className="date-filter">
         <label>From:</label>
@@ -42,7 +38,12 @@ const TransactionsSection = ({ currentAccount }) => {
         {transactions && transactions.length > 0 ? (
           transactions.map((transaction) => (
             <li key={transaction.id}>
-              {transaction.date} - {transaction.description}: {transaction.amount} {currentAccount.currency}
+              <div className="transaction-details">
+                        <span className="description">{transaction.description}</span>
+                        <span className="amount">{transaction.amount} {transaction.currency || currentAccount.currency}</span>
+                        <span className="date">{new Date(transaction.date).toLocaleDateString()}</span>
+                        <span className="category">/{transaction.category.name}/</span>
+                      </div>
             </li>
           ))
         ) : (

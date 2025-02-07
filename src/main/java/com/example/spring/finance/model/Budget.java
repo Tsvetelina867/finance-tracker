@@ -23,7 +23,7 @@ public class Budget {
     @Positive
     private BigDecimal budgetLimit;
 
-    @Transient
+    @NotNull
     private BigDecimal currentSpending = BigDecimal.ZERO;
 
     @ManyToOne

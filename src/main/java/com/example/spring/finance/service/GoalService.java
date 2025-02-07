@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,21 @@ public class GoalService {
 
         return goal.getCurrentAmount().compareTo(goal.getTargetAmount()) >= 0;
     }
+    public String getGoalStatus(Long goalId) {
+        Goal goal = goalRepository.findById(goalId)
+                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
+
+        if (goal.getCurrentAmount().compareTo(goal.getTargetAmount()) >= 0 && LocalDate.now().isAfter(goal.getDeadline())) {
+            return "Achieved";
+        }
+
+        if (goal.getDeadline().isBefore(LocalDate.now())) {
+            return "Failed";
+        }
+
+        return "In Progress";
+    }
+
 
     public Goal addGoal(Goal goal) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -99,14 +115,15 @@ public class GoalService {
         }
 
         return goals.stream().map(goal -> new GoalDTO(
+                goal.getId(),
                 goal.getName(),
                 goal.getTargetAmount(),
                 goal.getCurrentAmount(),
                 goal.getDeadline(),
-                new UserDTO(goal.getUser().getUsername(), goal.getUser().getEmail()),
-                new AccountDTO(goal.getAccount().getName(), goal.getAccount().getBalance(),
+                new UserDTO(goal.getUser().getId(), goal.getUser().getUsername(), goal.getUser().getEmail()),
+                new AccountDTO(goal.getAccount().getId(), goal.getAccount().getName(), goal.getAccount().getBalance(),
                         goal.getAccount().getCurrency(), goal.getAccount().getType().toString()),
-                new CategoryDTO(goal.getCategory().getName(), goal.getCategory().getType().toString())
+                new CategoryDTO(goal.getCategory().getId(), goal.getCategory().getName(), goal.getCategory().getType().toString())
         )).collect(Collectors.toList());
     }
 }

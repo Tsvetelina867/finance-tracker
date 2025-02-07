@@ -54,21 +54,25 @@ public class GoalController {
         Goal goal = goalService.updateGoal(id, goalDTO);
 
         GoalDTO responseDTO = new GoalDTO(
+                goal.getId(),
                 goal.getName(),
                 goal.getTargetAmount(),
                 goal.getCurrentAmount(),
                 goal.getDeadline(),
                 new UserDTO(
+                        goal.getUser().getId(),
                         goal.getUser().getUsername(),
                         goal.getUser().getEmail()
                 ),
                 new AccountDTO(
+                        goal.getAccount().getId(),
                         goal.getAccount().getName(),
                         goal.getAccount().getBalance(),
                         goal.getAccount().getCurrency(),
                         goal.getAccount().getType().toString()
                 ),
                 new CategoryDTO(
+                        goal.getCategory().getId(),
                         goal.getCategory().getName(),
                         goal.getCategory().getType().toString()
                 )
