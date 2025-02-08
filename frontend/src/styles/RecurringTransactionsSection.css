@@ -1,5 +1,6 @@
 /* src/styles/RecurringTransactionsSection.css */
-.recurring-transactions-section {
+.recurring-transactions-section .recurring-transactions-section {
+  width: 850px;
   margin-top: 30px;
   padding: 25px;
   border-radius: 12px;
@@ -8,57 +9,128 @@
   font-family: 'Arial', sans-serif;
 }
 
-.recurring-transactions-section h2 {
+.recurring-transactions-section .recurring-transactions-section h2 {
   font-size: 1.8rem;
   margin-bottom: 15px;
   color: #333;
   font-weight: 600;
 }
 
-.recurring-transaction-list {
+.recurring-transactions-section .recurring-transaction-list {
   list-style: none;
   padding: 0;
   margin: 0;
   overflow-y: auto;
+  max-height: 700px; /* Prevent overflowing content */
+}
+
+.recurring-transactions-section .recurring-transaction-list,
+.recurring-transactions-section .past-recurring-transaction-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   max-height: 400px; /* Prevent overflowing content */
+  overflow-y: auto;
 }
 
-.recurring-transaction-list li {
-  padding: 15px;
-  margin-bottom: 12px;
-  background-color: #f8f8f8;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+.recurring-transactions-section .recurring-transaction-list li {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 30px; /* Increased gap between items for more space */
+  padding: 20px 30px; /* Increased padding for better spacing */
+  margin-bottom: 20px; /* Increased margin for separation */
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   transition: all 0.3s ease;
-  max-width: 820px;
+  width: 800px;
+  white-space: normal;
 }
 
-.recurring-transaction-list li:hover {
+.recurring-transactions-section .recurring-transaction-list li:hover {
   background-color: #f0f0f0;
-  transform: translateY(-3px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.transaction-details {
+.recurring-transactions-section .transaction-details-past {
   display: flex;
-  gap: 20px;
-  font-size: 1rem;
-  color: #555;
+  align-items: center;
+  gap: 25px;
+  flex-wrap: wrap; /* Allow items to move to the next line if needed */
+  width: 100%;
 }
 
-.transaction-details span {
-  text-align: left;
+.recurring-transactions-section .transaction-details-past span {
+  min-width: 130px; /* Ensure consistent spacing */
+  word-wrap: break-word;
+  font-size: 1.2rem;
 }
 
-.transaction-details span:first-child {
+.recurring-transactions-section .transaction-details-past span:first-child {
   font-weight: 600;
   color: #333;
+  max-width: 250px; /* Limit description width */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.view-past-transactions-btn {
+.recurring-transactions-section .transaction-details-past {
+  background-color: #f9f9f9;
+  padding: 18px 25px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Transaction Details Styling */
+.recurring-transactions-section .transaction-details {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.recurring-transactions-section .transaction-details span {
+  min-width: 140px; /* Increased width for better spacing */
+  word-wrap: break-word;
+  font-size: 1.1rem;
+}
+
+.recurring-transactions-section .transaction-details span:first-child {
+  font-weight: 600;
+  color: #333;
+  max-width: 250px; /* Increased max-width for description */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recurring-transactions-section .transaction-amount {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #4caf50;
+  margin-left: 25px; /* Move amount further away */
+}
+
+.recurring-transactions-section .transaction-category {
+  background-color: #f0f4f8;
+  padding: 8px 15px; /* Increased padding for category box */
+  border-radius: 6px;
+  color: gray;
+  font-weight: 500;
+}
+
+/* Adjust the visibility of the Next Payment and End Date */
+.recurring-transactions-section .transaction-date {
+  font-size: 1.1rem;
+  color: #555;
+  min-width: 180px; /* Make these details wider */
+}
+
+
+.recurring-transactions-section .view-past-transactions-btn {
   margin-top: 20px;
   padding: 12px 25px;
   background-color: #4caf50;
@@ -70,24 +142,24 @@
   transition: background-color 0.3s ease;
 }
 
-.view-past-transactions-btn:hover {
+.recurring-transactions-section .view-past-transactions-btn:hover {
   background-color: #45a049;
   transform: translateY(-2px);
 }
 
-.date-picker-container {
+.recurring-transactions-section .date-picker-container {
   margin-top: 20px;
   display: flex;
   gap: 15px;
   justify-content: space-between;
 }
 
-.date-picker-container label {
+.recurring-transactions-section .date-picker-container label {
   font-size: 1rem;
   color: #555;
 }
 
-.date-picker-container input {
+.recurring-transactions-section .date-picker-container input {
   padding: 10px;
   font-size: 1rem;
   border-radius: 6px;
@@ -96,12 +168,12 @@
   transition: border-color 0.3s ease;
 }
 
-.date-picker-container input:focus {
+.recurring-transactions-section .date-picker-container input:focus {
   border-color: #4caf50;
   outline: none;
 }
 
-.submit-date-range-btn {
+.recurring-transactions-section .submit-date-range-btn {
   padding: 12px 25px;
   background-color: #4caf50;
   color: white;
@@ -112,43 +184,26 @@
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.submit-date-range-btn:hover {
+.recurring-transactions-section .submit-date-range-btn:hover {
   background-color: #45a049;
   transform: translateY(-2px);
 }
 
-.error-message {
+.recurring-transactions-section .error-message {
   margin-top: 15px;
   color: #e74c3c;
   font-weight: 600;
   font-size: 1rem;
 }
 
-.past-transactions-section {
+.recurring-transactions-section .past-transactions-section {
   margin-top: 25px;
   border-top: 2px solid #ccc;
   padding-top: 20px;
 }
 
-.past-recurring-transaction-list {
+.recurring-transactions-section .past-recurring-transaction-list {
   list-style: none;
   padding: 0;
   margin: 0;
-}
-
-.past-recurring-transaction-list li {
-  padding: 12px;
-  margin-bottom: 12px;
-  background-color: #f8f8f8;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.past-recurring-transaction-list li:hover {
-  background-color: #f0f0f0;
-  transform: translateY(-2px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }

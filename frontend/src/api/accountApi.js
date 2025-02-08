@@ -13,6 +13,7 @@ export const fetchAccountData = async () => {
 export const fetchAllAccounts = async () => {
   try {
     const response = await axios.get('/accounts'); // Endpoint to fetch all accounts for the logged-in user
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching all accounts:', error);
@@ -21,15 +22,15 @@ export const fetchAllAccounts = async () => {
 };
 
 export const addAccount = async (accountData) => {
-    const response = await axios.post('/api/accounts', accountData);
+    const response = await axios.post('/accounts', accountData);
     return response.data;
 };
 
 export const updateAccount = async (accountId, updatedData) => {
-  const response = await axios.put(`/api/accounts/${accountId}`, updatedData);
+  const response = await axios.put(`accounts/${accountId}`, updatedData);
   return response.data;
 };
 
 export const deleteAccount = async (accountId) => {
-  await axios.delete(`/api/accounts/${accountId}`);
+  await axios.delete(`accounts/${accountId}`);
 };

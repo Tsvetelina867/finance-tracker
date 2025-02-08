@@ -1,5 +1,5 @@
 .transactions-management {
-  max-height: 700px;  /* Keeps the modal height limited */
+  max-height: 700px;
   width: 800px;
   margin: auto;
   padding: 20px;
@@ -7,10 +7,10 @@
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 40px;
-  overflow-y: auto;  /* Allows vertical scrolling if the content exceeds the max height */
+  overflow-y: auto;
 }
 
-.back-button {
+.transactions-management .back-button {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -25,112 +25,117 @@
   transition: background-color 0.3s;
 }
 
-.back-button:hover {
+.transactions-management .back-button:hover {
   background-color: #ddd;
 }
 
-.small-button {
-  font-size: 16px; /* Smaller font size */
-  padding: 5px 6px; /* Smaller padding */
+.transactions-management .small-button {
+  font-size: 16px;
+  padding: 5px 6px;
 }
 
-h1 {
+.transactions-management h1 {
   padding: 15px;
   text-align: center;
 }
 
-.transaction-list li, .recurring-transaction-list li {
+.transactions-management .transaction-list li,
+.transactions-management .recurring-transaction-list li {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   background: #f9f9f9;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 10px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: background 0.3s, transform 0.3s;
-  max-width: 700px;
+  max-width: 750px;
   margin-left: 10px;
 }
 
-.transaction-list li:hover, .recurring-transaction-list li:hover {
+.transactions-management .transaction-list li:hover,
+.transactions-management .recurring-transaction-list li:hover {
   background: #e0f7fa;
   transform: scale(1.02);
 }
 
-.transaction-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.transaction-header {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.transaction-details {
+.transactions-management .transaction-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 5px; /* Slight margin between date and amount */
+  width: 100%;
 }
 
-.transaction-date {
+.transactions-management .transaction-header {
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+  flex: 1;
+}
+
+.transactions-management .transaction-details {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.transactions-management .transaction-date {
   font-size: 14px;
   color: #888;
 }
 
-.transaction-amount {
+.transactions-management .transaction-amount {
   font-size: 16px;
   color: #007bff;
   font-weight: bold;
 }
 
-.transaction-frequency {
+.transactions-management .transaction-frequency {
   font-size: 14px;
   color: #777;
-  margin-top: 5px; /* Space for the frequency in recurring transactions */
 }
 
-.button-container {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-start;
-}
-
-button {
-  background: #007bff;
+.transactions-management .button-container button.edit-button {
+  background: #28a745;
   color: white;
   border: none;
   padding: 8px 12px;
   cursor: pointer;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 16px;
   min-width: 100px;
   transition: background 0.3s;
 }
 
-button:hover {
-  background: #0056b3;
+.transactions-management .button-container button.edit-button:hover {
+  background: #218838;
 }
 
-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+.transactions-management .button-container button.delete-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  min-width: 100px;
+  transition: background 0.3s;
 }
 
-/* Optional: Style for a cleaner tab selection (for regular and recurring) */
-.tabs {
+.transactions-management .button-container button.delete-button:hover {
+  background: #c82333;
+}
+
+.transactions-management .tabs {
   display: flex;
   justify-content: space-around;
   margin-bottom: 20px;
 }
 
-.tabs button {
+.transactions-management .tabs button {
   flex: 1;
   padding: 10px;
   border: none;
@@ -140,7 +145,7 @@ button:disabled {
   background: #f0f0f0;
 }
 
-.tabs button.active {
+.transactions-management .tabs button.active {
   background: #007bff;
   color: white;
   font-weight: bold;

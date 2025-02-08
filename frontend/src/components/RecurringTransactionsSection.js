@@ -11,25 +11,6 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
   const [endDate, setEndDate] = useState('');
   const [errorMessage, setErrorMessage] = useState(''); // For error messages
 
-  // Fetch active recurring transactions
-  useEffect(() => {
-    const getRecurringTransactions = async () => {
-      try {
-        if (currentAccount && currentAccount.id) {
-          const data = await fetchRecurringTransactions(currentAccount.id);
-          setRecurringTransactions(data || []);
-        }
-      } catch (error) {
-        console.error('Error fetching recurring transactions:', error);
-        setRecurringTransactions([]);
-      }
-    };
-
-    if (currentAccount) {
-      getRecurringTransactions();
-    }
-  }, [currentAccount]);
-
   // Utility function to calculate the next payment date
   const calculateNextPaymentDate = (startDate, frequency) => {
     let nextDate = new Date(startDate);
@@ -52,28 +33,62 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
     return nextDate;
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const parsedDate = new Date(dateString);
+    if (isNaN(parsedDate)) {
+      console.warn('Invalid Date:', dateString); // Debugging
+      return 'Invalid Date';
+    }
+    return parsedDate.toLocaleDateString();
+  };
+
+  // Utility function to check if a transaction is active
+  const isActiveTransaction = (transaction) => {
+    const nextPaymentDate = calculateNextPaymentDate(transaction.startDate, transaction.frequency);
+    return nextPaymentDate > new Date(); // Active if next payment date is in the future
+  };
+
+  // Fetch active recurring transactions
+  useEffect(() => {
+    const getRecurringTransactions = async () => {
+      try {
+        if (currentAccount && currentAccount.id) {
+          const data = await fetchRecurringTransactions(currentAccount.id);
+          setRecurringTransactions(data.filter(isActiveTransaction) || []); // Filter only active transactions
+        }
+      } catch (error) {
+        console.error('Error fetching recurring transactions:', error);
+        setRecurringTransactions([]);
+      }
+    };
+
+    if (currentAccount) {
+      getRecurringTransactions();
+    }
+  }, [currentAccount]);
+
   // Handle fetching and displaying past recurring transactions
   const handleShowPastTransactions = async () => {
-    // Only proceed if both dates are selected
     if (!startDate || !endDate) {
       setErrorMessage('Please select both start and end dates.');
       return;
     }
 
     try {
-      // Clear previous error message
       setErrorMessage('');
-      console.log('Fetching past transactions with', startDate, endDate); // Debugging line
       const data = await fetchPastRecurringTransactions(currentAccount.id, startDate, endDate);
 
-      // Set the state for past transactions
-      if (data && data.length > 0) {
-        setPastTransactions(data); // Set fetched data
+      // Filter out active transactions (if any were fetched)
+      const pastTransactionsData = data.filter(transaction => !isActiveTransaction(transaction));
+
+      if (pastTransactionsData.length > 0) {
+        setPastTransactions(pastTransactionsData);
       } else {
-        setPastTransactions([]); // No transactions found, set to empty array
+        setPastTransactions([]); // No past transactions found, set to empty array
       }
 
-      setShowPastTransactions(true); // Ensure past transactions are shown after fetching
+      setShowPastTransactions(true);
     } catch (error) {
       console.error('Error fetching past recurring transactions:', error);
       setErrorMessage('There was an error fetching past transactions.');
@@ -108,12 +123,14 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
               <li key={transaction.id || `transaction-${transaction.description}`}>
                 <div className="transaction-details">
                   <span>{transaction.description}</span>
-                  <span>{transaction.amount} {currentAccount.currency}</span>
-                  <span>Next: {nextPaymentDate.toLocaleDateString()}</span> {/* Display formatted next payment date */}
-                  <span>Frequency: {transaction.frequency}</span>
-                  <span>Category: {transaction.category.name}</span>
+                  <span className="transaction-amount">{transaction.amount} {currentAccount.currency}</span>
+                  <span className="transaction-date"><strong>Next Payment:</strong> {nextPaymentDate.toLocaleDateString()}</span>
+                  <span className="transaction-date"><strong>End Date:</strong> {formatDate(transaction.endDate)}</span>
+                  <span>{transaction.frequency}</span>
+                  <span className="transaction-category"><strong>Category:</strong> {transaction.category.name}</span>
                 </div>
               </li>
+
             );
           })
         ) : (
@@ -159,10 +176,10 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
             <ul className="past-recurring-transaction-list">
               {pastTransactions.map((transaction) => (
                 <li key={transaction.id || `transaction-${transaction.description}`}>
-                  <div className="transaction-details">
+                  <div className="transaction-details-past">
                     <span>{transaction.description}</span>
                     <span>{transaction.amount} {currentAccount.currency}</span>
-                    <span>Date: {transaction.transactionDate}</span>
+                    <span>End Date: {formatDate(transaction.endDate)}</span>
                     <span>Frequency: {transaction.frequency}</span>
                   </div>
                 </li>
