@@ -6,7 +6,7 @@
   text-align: center;
 }
 
-.progress-bar {
+.budget-progress-container .progress-bar {
   height: 20px;
   background: #ddd;
   border-radius: 10px;
@@ -14,7 +14,7 @@
   margin: 10px 0;
 }
 
-.progress {
+.budget-progress-container .progress {
   height: 100%;
   background: #28a745;
 }

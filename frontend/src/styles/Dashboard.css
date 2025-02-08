@@ -11,7 +11,7 @@ body, html {
 }
 
 /* src/styles/Dashboard.css */
-.modal-overlay {
+.dashboard-container .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -23,14 +23,14 @@ body, html {
   align-items: center;
 }
 
-.modal-content {
+.dashboard-container .modal-content {
   background-color: white;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
 }
 
-.modal-content button {
+.dashboard-container .modal-content button {
   margin: 10px;
   padding: 10px 20px;
   border: none;
@@ -39,10 +39,9 @@ body, html {
   border-radius: 5px;
 }
 
-.modal-content button:hover {
+.dashboard-container .modal-content button:hover {
   background-color: #e5941d;
 }
-
 
 .dashboard-container {
   display: flex;
@@ -53,7 +52,7 @@ body, html {
   background-color: #f9f9f9;
 }
 
-.dashboard-header {
+.dashboard-container .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -64,29 +63,29 @@ body, html {
   flex-shrink: 0; /* Prevent header from shrinking */
 }
 
-.dashboard-header h2 {
+.dashboard-container .dashboard-header h2 {
   margin: 0;
   font-size: 24px;
   color: #333;
 }
 
-.dashboard-main {
+.dashboard-container .dashboard-main {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
   flex: 1; /* Make sure it takes up remaining space */
 }
 
-.dashboard-left, .dashboard-right {
+.dashboard-container .dashboard-left, .dashboard-container .dashboard-right {
   width: 48%; /* 48% width to make them side by side */
 }
 
-.transactions-navigation {
+.dashboard-container .transactions-navigation {
   margin-top: 20px;
   text-align: center;
 }
 
-.transactions-button {
+.dashboard-container .transactions-button {
   padding: 12px 24px;
   font-size: 1.2rem;
   background-color: #4caf50;
@@ -97,12 +96,13 @@ body, html {
   transition: background-color 0.3s;
 }
 
-.transactions-button:hover {
+.dashboard-container .transactions-button:hover {
   background-color: #45a049;
 }
+
 /* src/styles/RecurringWidget.css */
 
-.widget-recurring {
+.dashboard-container .widget-recurring {
   padding: 20px;
   border-radius: 12px;
   background-color: #ffffff;
@@ -113,19 +113,19 @@ body, html {
   transition: transform 0.3s ease;
 }
 
-.widget-recurring:hover {
+.dashboard-container .widget-recurring:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-.widget-recurring h2 {
+.dashboard-container .widget-recurring h2 {
   font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 10px;
   color: #333;
 }
 
-.widget-recurring p {
+.dashboard-container .widget-recurring p {
   font-size: 2rem;
   font-weight: 600;
   color: #4caf50;
@@ -133,19 +133,19 @@ body, html {
   text-align: center;
 }
 
-.widget-recurring .recurring-transactions-section {
+.dashboard-container .widget-recurring .recurring-transactions-section {
   background-color: #f9f9f9;
   border-radius: 8px;
   padding: 15px;
 }
 
-.widget-recurring .recurring-transactions-section h2 {
+.dashboard-container .widget-recurring .recurring-transactions-section h2 {
   font-size: 1.6rem;
   margin-bottom: 10px;
   color: #333;
 }
 
-.widget-recurring .view-past-transactions-btn {
+.dashboard-container .widget-recurring .view-past-transactions-btn {
   margin-top: 15px;
   padding: 10px 20px;
   background-color: #4caf50;
@@ -157,19 +157,19 @@ body, html {
   transition: background-color 0.3s ease;
 }
 
-.widget-recurring .view-past-transactions-btn:hover {
+.dashboard-container .widget-recurring .view-past-transactions-btn:hover {
   background-color: #45a049;
   transform: translateY(-2px);
 }
 
-.widget-recurring .date-picker-container {
+.dashboard-container .widget-recurring .date-picker-container {
   margin-top: 20px;
   display: flex;
   gap: 15px;
   justify-content: space-between;
 }
 
-.widget-recurring .submit-date-range-btn {
+.dashboard-container .widget-recurring .submit-date-range-btn {
   padding: 10px 20px;
   background-color: #4caf50;
   color: white;
@@ -180,26 +180,28 @@ body, html {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.widget-recurring .submit-date-range-btn:hover {
+.dashboard-container .widget-recurring .submit-date-range-btn:hover {
   background-color: #45a049;
   transform: translateY(-2px);
 }
 
-.widget {
+.dashboard-container .widget {
   background-color: #ffffff;
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-.widget-container {
+
+.dashboard-container .widget-container {
   background-color: #f5f5f5;  /* Soft light background for the whole section */
   border-radius: 16px;  /* Round corners for the section */
   padding: 30px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);  /* Soft shadow around the whole section */
   margin-bottom: 30px;
 }
-.widget-title {
+
+.dashboard-container .widget-title {
   font-size: 1.6rem;
   font-weight: 600;
   color: #333;
@@ -208,12 +210,12 @@ body, html {
   letter-spacing: 1px;
 }
 
-.total-spending-widget {
+.dashboard-container .total-spending-widget {
   background-color: #eafaf0; /* Light greenish background */
   border-left: 6px solid #4caf50; /* Accent border on the left */
 }
 
-.total-spending-amount {
+.dashboard-container .total-spending-amount {
   font-size: 2.2rem;
   font-weight: 700;
   color: #4caf50;
@@ -221,19 +223,18 @@ body, html {
   letter-spacing: 1px;
 }
 
-.transactions-widget {
+.dashboard-container .transactions-widget {
   background-color: #f9f9f9; /* Slightly off-white background */
   border-left: 6px solid #2196f3; /* Accent border in blue */
 }
 
-.widget p {
+.dashboard-container .widget p {
   font-size: 1.2rem;
   color: #555;
 }
 
-
 /* Transaction List Design - kept as per your provided CSS */
-.transaction-list li {
+.dashboard-container .transaction-list li {
   padding: 15px 20px;
   margin-bottom: 15px;
   background-color: #ffffff;
@@ -246,39 +247,39 @@ body, html {
   transition: background-color 0.2s ease, box-shadow 0.3s ease;
 }
 
-.transaction-list li:hover {
+.dashboard-container .transaction-list li:hover {
   background-color: #f9f9f9;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-.transaction-list li span {
+.dashboard-container .transaction-list li span {
   font-weight: 600;
   color: #333;
 }
 
-.transaction-list li .amount {
+.dashboard-container .transaction-list li .amount {
   color: #4caf50;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
 /* Additional Hover Effects for Amounts and Text */
-.transaction-list li:hover .amount {
+.dashboard-container .transaction-list li:hover .amount {
   color: #388e3c;
 }
 
-.transaction-list li:hover span {
+.dashboard-container .transaction-list li:hover span {
   color: #2c2c2c;
 }
 
 /* Styling for when we add graphs later */
-.dashboard-graphs {
+.dashboard-container .dashboard-graphs {
   display: flex;
   justify-content: space-between;
   margin-top: 40px;
 }
 
-.dashboard-graph {
+.dashboard-container .dashboard-graph {
   width: 48%;
   background-color: #fff;
   padding: 20px;
