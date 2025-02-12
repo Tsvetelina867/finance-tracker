@@ -3,6 +3,7 @@ package com.example.spring.finance.service;
 import com.example.spring.finance.dtos.AccountDTO;
 import com.example.spring.finance.model.Account;
 import com.example.spring.finance.model.User;
+import com.example.spring.finance.model.enums.AccountType;
 import com.example.spring.finance.repository.AccountRepository;
 import com.example.spring.finance.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,7 @@ public class AccountService {
         account.setBalance(accountDTO.getBalance());
         account.setCurrency(accountDTO.getCurrency());
         account.setUser(user);
+        account.setType(AccountType.valueOf(accountDTO.getType().toUpperCase()));
 
         return accountRepository.save(account);
     }
@@ -57,6 +59,7 @@ public class AccountService {
         account.setName(accountDTO.getName());
         account.setBalance(accountDTO.getBalance());
         account.setCurrency(accountDTO.getCurrency());
+        account.setType(AccountType.valueOf(accountDTO.getType().toUpperCase()));
 
         return accountRepository.save(account);
     }

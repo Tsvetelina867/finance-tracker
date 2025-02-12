@@ -23,23 +23,4 @@ public class UserService {
     }
 
 
-    public User updateUser(String username, UserUpdateDTO userUpdateDTO) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-
-            // Update name if provided
-            if (userUpdateDTO.getUsername() != null && !userUpdateDTO.getUsername().isEmpty()) {
-                user.setUsername(userUpdateDTO.getUsername());
-            }
-
-            // Update password if provided
-            if (userUpdateDTO.getPassword() != null && !userUpdateDTO.getPassword().isEmpty()) {
-                user.setPassword(passwordEncoder.encode(userUpdateDTO.getPassword()));
-            }
-
-            return userRepository.save(user);
-        }
-        return null;
-    }
 }

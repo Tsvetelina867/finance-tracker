@@ -139,7 +139,6 @@ const RecurringTransactionModal = ({ isOpen, onClose, onSave, transaction, curre
             setSelectedCategory(category);
           }}
         >
-          <option value="">Select a category</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}

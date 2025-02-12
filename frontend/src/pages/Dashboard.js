@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
   const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [visibleBudgets, setVisibleBudgets] = useState([]);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -41,6 +42,7 @@ const Dashboard = () => {
   };
 
   const handleAccountChange = (selectedAccount) => {
+    localStorage.setItem('selectedAccount', JSON.stringify(selectedAccount)); // ✅ Save to localStorage
     setCurrentAccount(selectedAccount);
   };
 
@@ -58,13 +60,21 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const allAccountsRes = await fetchAllAccounts();
-        setAccounts(allAccountsRes);
+        setAccounts(allAccountsRes); // Update accounts state
 
-        const currentAccountRes = await fetchAccountData();
-        if (currentAccountRes) {
-          setCurrentAccount(currentAccountRes);
-        } else if (allAccountsRes.length > 0) {
-          setCurrentAccount(allAccountsRes[0]);  // Set the first account if no current account is found
+        const savedAccount = localStorage.getItem('selectedAccount');
+        if (savedAccount) {
+          setCurrentAccount(JSON.parse(savedAccount)); // ✅ Load from localStorage
+        } else {
+          const allAccountsRes = await fetchAllAccounts();
+          setAccounts(allAccountsRes);
+
+          const currentAccountRes = await fetchAccountData();
+          if (currentAccountRes) {
+            setCurrentAccount(currentAccountRes);
+          } else if (allAccountsRes.length > 0) {
+            setCurrentAccount(allAccountsRes[0]);
+          }
         }
       } catch (error) {
         console.error('Error fetching accounts:', error);
@@ -76,12 +86,23 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+
   useEffect(() => {
-  console.log("current acc when fetching: ", currentAccount);
     if (!currentAccount) return;
     const fetchData = async () => {
       try {
         const goalsRes = await fetchGoalsWithDetails(currentAccount.id);
+        const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
+
+              // Merge backend goals with local storage goals to update the state
+              const updatedGoals = goalsRes.map(goal => {
+                const storedGoal = storedGoals.find(stored => stored.id === goal.id);
+                if (storedGoal) {
+                  return { ...goal, isAchieved: storedGoal.isAchieved };
+                }
+                return goal;
+              });
+              setGoalsData(updatedGoals);
         const budgetRes = await fetchBudgetDetails(currentAccount.id);
         const recurringRes = await fetchRecurringTransactions(currentAccount.id);
 
@@ -106,7 +127,17 @@ const Dashboard = () => {
     fetchTransactions();
   }, [currentAccount]);
 
-  if (loading) {
+  useEffect(() => {
+    const showOnDashboard = JSON.parse(localStorage.getItem("showOnDashboard")) || {};
+    // Filter the budgets to only show the ones that have showOnDashboard set to true
+    const filteredBudgets = (budgetData || []).filter(budget => showOnDashboard[budget.id] === true);
+
+
+    setVisibleBudgets(filteredBudgets);
+  }, [budgetData]);
+
+
+if (loading) {
     return <div>Loading...</div>;
   }
 
@@ -159,16 +190,13 @@ const Dashboard = () => {
         <div className="dashboard-right">
           <div className="widget">
             <h2>Budget Progress</h2>
-            {budgetData ? (
-              <div>
-                <h3>{budgetData.description}</h3>
-                <p>{budgetData.progress || 0}%</p>
-                <BudgetProgress budget={budgetData} />
-              </div>
+            {visibleBudgets.length > 0 ? (
+              <BudgetProgress budget={visibleBudgets} currentAccount={currentAccount} />
             ) : (
-              <p>No budgets available</p>
+              <p>No budgets to display on dashboard.</p>
             )}
           </div>
+
 
           <div className="widget">
             <h2>Goal Progress</h2>
@@ -179,20 +207,6 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-      </div>
-
-      <div className="dashboard-transactions">
-        <h2>Recent Transactions</h2>
-        <div className="date-filters">
-          <label>Start Date: <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} /></label>
-          <label>End Date: <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} /></label>
-          <button onClick={fetchTransactions}>Filter</button>
-        </div>
-        <ul>
-          {transactionsData.map(transaction => (
-            <li key={transaction.id}>{transaction.description} - {transaction.amount} {currentAccount?.currency}</li>
-          ))}
-        </ul>
       </div>
     </div>
   );

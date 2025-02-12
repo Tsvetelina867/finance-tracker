@@ -9,7 +9,7 @@
 }
 
 /* Login form box */
-.login-box {
+.login-container .login-box {
   background: white;
   padding: 3rem;
   border-radius: 10px;
@@ -19,7 +19,7 @@
 }
 
 /* Form input fields */
-input {
+.login-container input {
   width: 90%;
   padding: 10px;
   margin: 10px 0;
@@ -29,14 +29,14 @@ input {
   transition: 0.3s;
 }
 
-input:focus {
+.login-container input:focus {
   border-color: #1e3c72;
   outline: none;
   box-shadow: 0 0 5px rgba(30, 60, 114, 0.5);
 }
 
 /* Submit button */
-button {
+.login-container button {
   width: 100%;
   padding: 10px;
   background: #1e3c72;
@@ -48,12 +48,12 @@ button {
   transition: 0.3s;
 }
 
-button:hover {
+.login-container button:hover {
   background: #2a5298;
 }
 
 /* Error message */
-.error {
+.login-container .error {
   color: red;
   font-size: 14px;
   margin-bottom: 10px;

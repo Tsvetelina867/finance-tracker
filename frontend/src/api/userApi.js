@@ -1,14 +1,19 @@
 import axios from 'axios';
 
+const jwtToken = localStorage.getItem('token'); // Should only get the token, not 'Bearer '
+console.log('JWT Token:', jwtToken);
+
 export const updateUserProfile = async (updateData) => {
   const response = await axios.put('http://localhost:8080/api/user/update', updateData, {
+  headers: {
+              'Authorization': `${jwtToken}`,
+          },
     withCredentials: true, // Allow sending credentials (cookies, etc.)
   });
   return response.data;
 };
 
-const jwtToken = localStorage.getItem('token'); // Should only get the token, not 'Bearer '
-console.log('JWT Token:', jwtToken); // Ensure no 'Bearer ' is stored
+// Ensure no 'Bearer ' is stored
 
 // Function to fetch user profile data from the backend
 export const fetchUserProfile = async () => {

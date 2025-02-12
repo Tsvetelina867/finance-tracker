@@ -69,7 +69,7 @@ const TransactionsManagement = () => {
       {activeTab === 'regular' && (
         <div className="regular-transactions-section">
           <h3>Regular Transactions</h3>
-          <button onClick={() => handleOpenTransactionModal()}>➕ Add Transaction</button>
+          <button className="add-button" onClick={() => handleOpenTransactionModal()}>➕ Add Transaction</button>
           <ul className="transaction-list">
             {transactions.length === 0 ? (
               <p>❌ No transactions found.</p>
@@ -78,7 +78,7 @@ const TransactionsManagement = () => {
                 <li key={transaction.id}>
                   <div className="transaction-content">
                     <div className="transaction-header">
-                      {new Date(transaction.date).toLocaleDateString()} - {transaction.description}
+                      {transaction.description}
                     </div>
                     <div className="transaction-details">
                       <span className="transaction-date">{new Date(transaction.date).toLocaleDateString()}</span>
@@ -86,10 +86,10 @@ const TransactionsManagement = () => {
                         {transaction.amount} {transaction.currency || currentAccount.currency}
                       </span>
                     </div>
-                  </div>
-                  <div className="button-container">
-                    <button onClick={() => handleOpenTransactionModal(transaction)}>✏️ Edit</button>
-                    <button onClick={() => deleteTransaction(transaction.id).then(fetchTransactions)}>🗑️ Delete</button>
+                    <div className="button-container">
+                      <button className="edit-button" onClick={() => handleOpenTransactionModal(transaction)}>✏️ Edit</button>
+                      <button className="delete-button" onClick={() => deleteTransaction(transaction.id).then(fetchTransactions)}>🗑️ Delete</button>
+                    </div>
                   </div>
                 </li>
               ))
@@ -98,11 +98,10 @@ const TransactionsManagement = () => {
         </div>
       )}
 
-      {/* Recurring Transactions Section */}
       {activeTab === 'recurring' && (
         <div className="recurring-transactions-section">
           <h3>Recurring Transactions</h3>
-          <button onClick={() => handleOpenRecurringModal()}>➕ Add Recurring Transaction</button>
+          <button className="add-button" onClick={() => handleOpenRecurringModal()}>➕ Add Recurring Transaction</button>
           <ul className="recurring-transaction-list">
             {recurringTransactions.length === 0 ? (
               <p>No recurring transactions available.</p>
@@ -119,15 +118,10 @@ const TransactionsManagement = () => {
                         {transaction.amount} {transaction.currency || currentAccount.currency}
                       </span>
                     </div>
-                    {transaction.frequency && (
-                      <div className="transaction-frequency">
-                        Frequency: {transaction.frequency}
-                      </div>
-                    )}
-                  </div>
-                  <div className="button-container">
-                    <button onClick={() => handleOpenRecurringModal(transaction)}>✏️ Edit</button>
-                    <button onClick={() => deleteRecurringTransaction(transaction.id).then(fetchRecurringTransactionsData)}>🗑️ Delete</button>
+                    <div className="button-container">
+                      <button className="edit-button" onClick={() => handleOpenRecurringModal(transaction)}>✏️ Edit</button>
+                      <button className="delete-button" onClick={() => deleteRecurringTransaction(transaction.id).then(fetchRecurringTransactionsData)}>🗑️ Delete</button>
+                    </div>
                   </div>
                 </li>
               ))

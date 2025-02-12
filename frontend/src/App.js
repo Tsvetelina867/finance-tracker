@@ -8,6 +8,8 @@ import Profile from './pages/Profile';
 import { ToastContainer } from 'react-toastify';
 import PrivateRoute from './components/PrivateRoute';
 import TransactionsManagement from './pages/TransactionsManagement';
+import BudgetModification from './pages/BudgetModification';
+import GoalDetails from './pages/GoalDetails';
 import "./App.css";
 
 const App = () => {
@@ -27,7 +29,8 @@ const App = () => {
            <Route path="/profile" element={<Profile />} />
            <Route path="/transactions-management" element={<TransactionsManagement />}
                    />
-
+            <Route path="/modify-budgets" element={<BudgetModification />}/>
+            <Route path="/goals/:goalId" element={<GoalDetails />} />
          </Routes>
        </Router>
      );
