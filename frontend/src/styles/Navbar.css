@@ -34,6 +34,30 @@
   color: white;
 }
 
+.navbar .dropdown-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  z-index: 1000;
+  width: 150px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar  .dropdown-menu li {
+  cursor: pointer;
+  padding: 5px 10px;
+  borderBottom: 1px solid #ddd;
+  transition: background 0.3s;
+}
+
+ .navbar .dropdown-menu li:hover {
+  background: #f0f0f0;
+}
+
+
 .navbar .profile-btn {
   background-color: #4CAF50; /* Green for Profile */
   color: white;
@@ -50,9 +74,6 @@
   transition: background-color 0.3s;
 }
 
-.navbar .manage-transactions-button:hover {
-  background-color: #45a049;
-}
 
 .navbar .navbar-right button {
   background-color: #f44336; /* Red for Logout */

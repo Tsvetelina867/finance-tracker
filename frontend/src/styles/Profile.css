@@ -31,6 +31,7 @@ body {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  max-width: 490px;
 }
 
 .profile-container .back-button:hover {

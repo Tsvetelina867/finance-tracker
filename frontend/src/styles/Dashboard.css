@@ -188,9 +188,11 @@ body, html {
 .dashboard-container .widget {
   background-color: #ffffff;
   padding: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .dashboard-container .widget-container {

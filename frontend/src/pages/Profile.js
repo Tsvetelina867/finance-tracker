@@ -96,7 +96,7 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      <button onClick={handleGoBack} className="back-button">Back to Dashboard</button> {/* Back to Dashboard button */}
+      <button onClick={handleGoBack} className="back-button">⬅️ Back to Dashboard</button> {/* Back to Dashboard button */}
       <h1>Profile</h1>
       <div className="profile-details">
         <p><strong>Username:</strong> {profileData.username || 'N/A'}</p>

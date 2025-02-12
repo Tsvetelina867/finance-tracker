@@ -1,12 +1,41 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/GoalCard.css';
 
 const GoalCard = ({ goal }) => {
+  const { id, name, targetAmount, currentAmount, progress, status, deadline, account  } = goal;
+
+  const navigate = useNavigate();
+
+  const goalStatus = status ? status.toLowerCase() : 'in-progress';
+  const progressPercentage = progress || 0;
+
+  const handleViewDetails = () => {
+    navigate(`/goals/${id}`);  // Navigate to goal details page
+  };
+
   return (
     <div className="goal-card">
-      <h3>{goal.name}</h3>
-      <p>Target: {goal.targetAmount} {goal.currency}</p>
-      <p>Progress: {goal.progress || 0}%</p>
-      <p>Status: {goal.isAchieved ? 'Achieved 🎉' : 'In Progress'}</p>
+      <div className={`goal-card-header ${goalStatus}`}>
+        <h3>{name}</h3>
+        <div className="goal-card-status">
+          <span className={`status-icon ${goalStatus}`} />
+          <span>{status || 'In Progress'}</span>
+        </div>
+      </div>
+
+      <div className="goal-card-body">
+        <p>Target: {targetAmount} {account.currency}</p>
+        <div className="progress-bar">
+          <div className="progress-fill" style={{ width: `${progressPercentage}%` }}></div>
+        </div>
+        <p>Progress: {progressPercentage}%</p>
+        <p>Deadline: {new Date(deadline).toLocaleDateString()}</p>
+      </div>
+
+      <div className="goal-card-footer">
+        <button className="details-btn" onClick={handleViewDetails}>View Details</button>
+      </div>
     </div>
   );
 };

@@ -69,7 +69,7 @@ const TransactionsManagement = () => {
       {activeTab === 'regular' && (
         <div className="regular-transactions-section">
           <h3>Regular Transactions</h3>
-          <button onClick={() => handleOpenTransactionModal()}>➕ Add Transaction</button>
+          <button className="add-button" onClick={() => handleOpenTransactionModal()}>➕ Add Transaction</button>
           <ul className="transaction-list">
             {transactions.length === 0 ? (
               <p>❌ No transactions found.</p>
@@ -101,7 +101,7 @@ const TransactionsManagement = () => {
       {activeTab === 'recurring' && (
         <div className="recurring-transactions-section">
           <h3>Recurring Transactions</h3>
-          <button onClick={() => handleOpenRecurringModal()}>➕ Add Recurring Transaction</button>
+          <button className="add-button" onClick={() => handleOpenRecurringModal()}>➕ Add Recurring Transaction</button>
           <ul className="recurring-transaction-list">
             {recurringTransactions.length === 0 ? (
               <p>No recurring transactions available.</p>
