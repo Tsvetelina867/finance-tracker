@@ -14,26 +14,49 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  padding: 5px 10px;
+  padding: 10px;
   max-width: 220px;
-  background-color: #f0f0f0;
+  background-color: #007bff;
   border: 1px solid #ccc;
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
-  color: #333;
+  color: white;
   transition: background-color 0.3s;
 }
 
 .transactions-management .back-button:hover {
-  background-color: #ddd;
+  background-color: #0056b3;
 }
 
 .transactions-management .small-button {
   font-size: 16px;
-  padding: 5px 6px;
+  padding: 10px 20px;
+}
+/* Add button style */
+.transactions-management .add-button {
+  background-color: #007bff; /* Blue background */
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 5px auto 10px; /* Center the button */
+  white-space: nowrap; /* Prevent text from wrapping into multiple lines */
+  display: block;
 }
 
+.transactions-management .add-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  transform: scale(1.05); /* Slightly enlarge the button */
+}
+
+.transactions-management .add-button:focus {
+  outline: none; /* Remove focus outline */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Light blue glow effect on focus */
+}
 .transactions-management h1 {
   padding: 15px;
   text-align: center;
@@ -50,7 +73,7 @@
   margin-bottom: 10px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   transition: background 0.3s, transform 0.3s;
-  max-width: 750px;
+  max-width: 730px;
   margin-left: 10px;
 }
 
@@ -97,6 +120,7 @@
   color: #777;
 }
 
+
 .transactions-management .button-container button.edit-button {
   background: #28a745;
   color: white;
@@ -107,6 +131,7 @@
   font-size: 16px;
   min-width: 100px;
   transition: background 0.3s;
+  margin-right: 10px;
 }
 
 .transactions-management .button-container button.edit-button:hover {

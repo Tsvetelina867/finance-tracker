@@ -48,13 +48,50 @@
 
 .modal button {
   width: 100%;
+  padding: 12px 0;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  color: black;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
   margin-top: 10px;
+  display: block; /* Ensure it appears as a block element */
 }
 
+.modal-content {
+  max-height: 80vh; /* Ensure content doesn't overflow the modal */
+  overflow-y: auto; /* Add scroll for overflow */
+}
+
+
+.modal button:hover {
+  transform: scale(1.05); /* Slightly enlarge the button */
+}
+
+/* Primary button style */
+.modal button:first-child {
+  background: #007bff; /* Blue background for the primary button */
+  color: white; /* White text */
+  border: 2px solid #0056b3; /* Add border to make the button more distinct */
+}
+
+.modal button:first-child:hover {
+  background: #0056b3; /* Darker blue on hover */
+  border-color: #003f7f; /* Darker border on hover */
+}
+
+/* Secondary button (last child) style */
 .modal button:last-child {
-  background: #dc3545;
+  background: #dc3545; /* Red background for the cancel button */
 }
 
 .modal button:last-child:hover {
-  background: #b02a37;
+  background: #b02a37; /* Darker red on hover */
 }
+
+.modal button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Blue glow on focus */
+}
+

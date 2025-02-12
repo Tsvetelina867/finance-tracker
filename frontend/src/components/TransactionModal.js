@@ -131,7 +131,7 @@ const TransactionModal = ({ isOpen, onClose, onSave, transaction, currentAccount
                     setSelectedCategory(category); // Set the full category object
                   }}
                 >
-                  <option value="">Select a category</option>
+
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}

@@ -1,39 +1,87 @@
-import React, { useState, useEffect } from 'react';  // Import useState and useEffect
-import { fetchBudgetDetails } from '../api/budgetApi';
+import React, { useEffect, useState } from 'react';
 import '../styles/BudgetProgress.css';
-
-// Assuming you have a component like BudgetProgress for rendering budget progress
+import { fetchBudgetDetails } from '../api/budgetApi';
 
 const BudgetProgress = ({ currentAccount }) => {
-  const [budgetData, setBudgetData] = useState(null); // Declare state for budget data
+  const [budgets, setBudgets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showOnDashboard, setShowOnDashboard] = useState({});
+  const accountId = currentAccount.id;
 
+  // Fetch showOnDashboard from localStorage once when the component mounts
   useEffect(() => {
-    const fetchData = async () => {
-      if (!currentAccount) return;
+    const savedShowOnDashboard = localStorage.getItem('showOnDashboard');
+    if (savedShowOnDashboard) {
+      setShowOnDashboard(JSON.parse(savedShowOnDashboard));
+    }
+  }, []);  // This effect runs only once when the component mounts
+
+  // Fetch budget details based on accountId and showOnDashboard
+  useEffect(() => {
+    if (!accountId) return;  // If accountId is not available, stop execution
+
+    const getBudgetDetails = async () => {
+      setLoading(true);
       try {
-        const budgetRes = await fetchBudgetDetails(currentAccount.id);  // Fetch budget details
-        console.log("Fetched budget details:", budgetRes);  // Log the fetched data
-        setBudgetData(budgetRes);  // Set the budget data
+        const fetchedBudgets = await fetchBudgetDetails(accountId);
+        console.log(fetchedBudgets);
+
+        if (fetchedBudgets) {
+          const visibleBudgets = fetchedBudgets.filter(budget => {
+            const shouldShow = showOnDashboard && showOnDashboard[budget.id];
+            return shouldShow === true;
+          });
+          setBudgets(visibleBudgets);
+        } else {
+          console.log('No budgets returned from API');
+        }
       } catch (error) {
-        console.error("Error fetching budget details:", error);
+        console.error('Error fetching budget details:', error);
       }
+      setLoading(false);
     };
 
-    fetchData();  // Call the fetch function when the component is mounted or currentAccount changes
-  }, [currentAccount]); // Run this effect when currentAccount changes
+    getBudgetDetails();  // Only fetch budgets if accountId exists
+  }, [accountId, showOnDashboard]);  // Add showOnDashboard as a dependency here
 
-  if (!budgetData) {
-    return <div>Loading...</div>;  // Show loading state if budget data is not available
+  if (loading) {
+    return <div>Loading budgets...</div>;
   }
 
-  // Render the budget progress data
   return (
     <div className="budget-progress-container">
-      <h2>{budgetData.description}</h2>
-      <p>Budget Limit: {budgetData.budgetLimit} {budgetData.account.currency}</p>
-      <p>Current Spending: {budgetData.currentSpending} {budgetData.account.currency}</p>
-      <p>Progress: {budgetData.progress}%</p>
-      <p>{budgetData.isExceeded ? "Budget Exceeded" : "Within Budget"}</p>
+      {budgets.length === 0 ? (
+        <div>No budgets available</div>
+      ) : (
+        budgets.map((budget) => {
+          const progress = ((budget.currentSpending / budget.budgetLimit) * 100).toFixed(2);
+          const remainingBudget = budget.budgetLimit - budget.currentSpending;
+          const isBudgetExceeded = progress > 100;
+
+          return (
+            <div key={budget.id} className="budget-card">
+              <h3>{budget.description}</h3>
+              <div className="budget-details">
+                <p>Budget Limit: {budget.budgetLimit} {currentAccount?.currency}</p>
+                <p>Current Spending: {budget.currentSpending} {currentAccount?.currency}</p>
+                <p className={isBudgetExceeded ? "exceeded" : "remaining"}>
+                  {isBudgetExceeded
+                    ? `Exceeded by ${Math.abs(remainingBudget).toFixed(2)} ${currentAccount?.currency}`
+                    : `Remaining: ${remainingBudget.toFixed(2)} ${currentAccount?.currency}`}
+                </p>
+              </div>
+              <div className="progress-bar">
+                <div
+                  className="progress-fill"
+                  style={{ width: `${progress}%`, backgroundColor: isBudgetExceeded ? '#ff6b6b' : '#4caf50' }}
+                  data-tooltip={`${progress}%`}
+                />
+              </div>
+              <p className="progress-status">{isBudgetExceeded ? "Budget Exceeded" : "Within Budget"}</p>
+            </div>
+          );
+        })
+      )}
     </div>
   );
 };
