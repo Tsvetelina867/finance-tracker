@@ -2,11 +2,21 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8080/api/finance/goals';
 
+const getToken = () => localStorage.getItem("token");
+
+const requestHeaders = () => ({
+  "Authorization": `${getToken()}`,
+  "Content-Type": "application/json",
+  "Cache-Control": "no-cache, no-store, must-revalidate",
+  "Pragma": "no-cache",
+  "Expires": "0",
+});
+
 export const fetchGoalsWithDetails = async (accountId) => {
   try {
     // Fetch all goals for the account
     const goalsResponse = await axios.get(`${API_BASE_URL}/account/${accountId}`, {
-      headers: { 'Authorization': `${localStorage.getItem('token')}` },
+      headers: requestHeaders(),
       withCredentials: true,
     });
 
@@ -18,19 +28,19 @@ export const fetchGoalsWithDetails = async (accountId) => {
         try {
           const [progressResponse, achievedResponse] = await Promise.all([
             axios.get(`${API_BASE_URL}/${goal.id}/progress`, {
-              headers: { 'Authorization': `${localStorage.getItem('token')}` },
+              headers: requestHeaders(),
               withCredentials: true,
             }),
             axios.get(`${API_BASE_URL}/${goal.id}/achieved`, {
-              headers: { 'Authorization': `${localStorage.getItem('token')}` },
+              headers: requestHeaders(),
               withCredentials: true,
-            })
+            }),
           ]);
 
           return {
             ...goal,
             progress: progressResponse.data,
-            isAchieved: achievedResponse.data
+            isAchieved: achievedResponse.data,
           };
         } catch (error) {
           console.error(`Error fetching details for goal ${goal.id}:`, error);
@@ -46,12 +56,12 @@ export const fetchGoalsWithDetails = async (accountId) => {
   }
 };
 
-const getGoalDetails = async (goalId) => {
+export const getGoalDetails = async (goalId) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/${goalId}`, {
-      headers: { 'Authorization': `${localStorage.getItem('token')}` },
-            withCredentials: true,
-          });
+      headers: requestHeaders(),
+      withCredentials: true,
+    });
 
     return response.data;
   } catch (error) {
@@ -60,66 +70,41 @@ const getGoalDetails = async (goalId) => {
   }
 };
 
-
-
-const getToken = () => localStorage.getItem("token");
-
-const requestHeaders = () => ({
-  "Authorization": `${getToken()}`,
-  "Content-Type": "application/json",
-  "Cache-Control": "no-cache, no-store, must-revalidate",
-  "Pragma": "no-cache",
-  "Expires": "0",
-});
-
-export const addGoal = async (budgetData) => {
+export const addGoal = async (goalData) => {
   try {
-    const token = localStorage.getItem('token'); // Assuming you're storing the token in localStorage
-    const response = await fetch('http://localhost:8080/api/finance/goals', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `${token}`,
-      },
-      body: JSON.stringify(budgetData),
+    const response = await axios.post(API_BASE_URL, goalData, {
+      headers: requestHeaders(),
+      withCredentials: true,
     });
 
-    if (!response.ok) {
-      throw new Error(`Failed to add goal: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error) {
-    console.error(error);
-    throw new Error('Error adding goal');
+    console.error("Error adding goal:", error);
+    throw new Error("Error adding goal");
   }
 };
 
-export const updateGoal = async (goalId, goal) => {
+export const updateGoal = async (goalId, goalData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/${goalId}`, {
-      method: "PUT",
+    const response = await axios.put(`${API_BASE_URL}/${goalId}`, goalData, {
       headers: requestHeaders(),
-      body: JSON.stringify(goal),
+      withCredentials: true,
     });
 
-    if (!response.ok) throw new Error("Failed to update goal");
-    return await response.json();
-
+    return response.data;
   } catch (error) {
     console.error("Error updating goal:", error);
-    return null;
+    throw new Error("Failed to update goal");
   }
 };
 
 export const deleteGoal = async (goalId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/${goalId}`, {
-      method: "DELETE",
+    const response = await axios.delete(`${API_BASE_URL}/${goalId}`, {
       headers: requestHeaders(),
+      withCredentials: true,
     });
-    if (!response.ok) throw new Error("Failed to delete goal");
+
     return true;
   } catch (error) {
     console.error("Error deleting goal:", error);
@@ -127,9 +112,27 @@ export const deleteGoal = async (goalId) => {
   }
 };
 
+
 export default {
+  fetchGoalsWithDetails,
   getGoalDetails,
-  updateGoal, // ✅ Add updateGoal to the default export
   addGoal,
+  updateGoal,
   deleteGoal,
 };
+
+export const fetchPastGoals = async () => {
+  const token = localStorage.getItem('token');
+
+  try {
+    const response = await axios.get(`${API_BASE_URL}/past`, {
+      headers: { 'Authorization': `${token}` }, // Ensure "Bearer" prefix
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching past goals:", error.response?.data || error);
+    return [];
+  }
+};
+

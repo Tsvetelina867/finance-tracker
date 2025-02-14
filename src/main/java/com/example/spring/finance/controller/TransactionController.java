@@ -65,8 +65,7 @@ public class TransactionController {
                 updatedTransaction.getType().toString(),
                 new CategoryDTO(
                         updatedTransaction.getCategory().getId(),
-                        updatedTransaction.getCategory().getName(),
-                        updatedTransaction.getCategory().getType().toString()
+                        updatedTransaction.getCategory().getName()
                 ),
                 new AccountDTO(
                         updatedTransaction.getAccount().getId(),

@@ -136,6 +136,10 @@ const Dashboard = () => {
     setVisibleBudgets(filteredBudgets);
   }, [budgetData]);
 
+  const handleGoalAdded = (newGoal) => {
+    setGoalsData((prevGoals) => [...prevGoals, newGoal]); // Update goals in Dashboard
+  };
+
 
 if (loading) {
     return <div>Loading...</div>;
@@ -203,7 +207,11 @@ if (loading) {
             {loading ? <p>Loading...</p> : goalsData.length === 0 ? (
               <p>No active goals</p>
             ) : (
-              <GoalsProgress goals={goalsData} />
+              <GoalsProgress
+                goals={goalsData}
+                currentAccount={currentAccount}
+                onGoalAdded={handleGoalAdded}
+              />
             )}
           </div>
         </div>

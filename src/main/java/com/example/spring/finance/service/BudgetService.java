@@ -81,29 +81,26 @@ public class BudgetService {
         budget.setStartDate(updatedBudgetDTO.getStartDate());
         budget.setEndDate(updatedBudgetDTO.getEndDate());
 
-
-        if (updatedBudgetDTO.getCurrentSpending() != null) {
-            throw new IllegalArgumentException("Current spending cannot be updated manually.");
-        }
-
         if (updatedBudgetDTO.getCategory() != null) {
-            Category category = categoryRepository.findByName(updatedBudgetDTO.getCategory().getName())
-                    .orElseThrow(() -> new RuntimeException("Category not found with name: " + updatedBudgetDTO.getCategory().getName()));
-            category.setType(FlowType.valueOf(updatedBudgetDTO.getCategory().getType()));
+            Category category = categoryRepository.findById(updatedBudgetDTO.getCategory().getId())
+                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + updatedBudgetDTO.getCategory().getId()));
             budget.setCategory(category);
         } else {
             budget.setCategory(null);
         }
 
-        Account account = accountRepository.findByName(updatedBudgetDTO.getAccount().getName())
-                .orElseThrow(() -> new RuntimeException("Account not found with name: " + updatedBudgetDTO.getAccount().getName()));
+        Account account = accountRepository.findById(updatedBudgetDTO.getAccount().getId())
+                .orElseThrow(() -> new RuntimeException("Account not found with ID: " + updatedBudgetDTO.getAccount().getId()));
+
         budget.setAccount(account);
 
         return budgetRepository.save(budget);
     }
 
 
+
     public Budget addBudget(Budget budget) {
+        System.out.println("Account from the request: " + budget.getAccount());  // Check if account is null here
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         budget.setUser(userRepository.findByUsername(username)
@@ -113,13 +110,17 @@ public class BudgetService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         budget.setCategory(category);
 
+        if (budget.getAccount() == null) {
+            throw new RuntimeException("Account must be provided for the budget");
+        }
+
         Account account = accountRepository.findById(budget.getAccount().getId())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         budget.setAccount(account);
 
-
         return budgetRepository.save(budget);
     }
+
 
     public void deleteBudget(Long id) {
         this.budgetRepository.deleteById(id);
@@ -128,7 +129,7 @@ public class BudgetService {
         List<Budget> budgets = budgetRepository.findAllByAccountId(accountId);
 
         if (budgets.isEmpty()) {
-            throw new EntityNotFoundException("No budgets found for this account.");
+            throw new EntityNotFoundException("No budgets found for account ID: " + accountId);
         }
 
         return budgets.stream().map(budget -> {
@@ -143,7 +144,23 @@ public class BudgetService {
                 totalSpending = BigDecimal.ZERO;
             }
 
+            // Handle null Category
+            CategoryDTO categoryDTO = null;
+            if (budget.getCategory() != null) {
+                categoryDTO = new CategoryDTO(
+                        budget.getCategory().getId(),
+                        budget.getCategory().getName()
+                );
+            }
 
+            // Handle null User and Account
+            UserDTO userDTO = (budget.getUser() != null) ?
+                    new UserDTO(budget.getUser().getId(), budget.getUser().getUsername(), budget.getUser().getEmail()) :
+                    null;
+
+            AccountDTO accountDTO = (budget.getAccount() != null) ?
+                    new AccountDTO(budget.getAccount().getId(), budget.getAccount().getName(), budget.getAccount().getBalance(), budget.getAccount().getCurrency(), budget.getAccount().getType().toString()) :
+                    null;
 
             return new BudgetDTO(
                     budget.getId(),
@@ -152,12 +169,13 @@ public class BudgetService {
                     totalSpending, // Current spending
                     budget.getStartDate(),
                     budget.getEndDate(),
-                    new CategoryDTO(budget.getCategory().getId(), budget.getCategory().getName(), budget.getCategory().getType().toString()),
-                    new AccountDTO(budget.getAccount().getId(), budget.getAccount().getName(), budget.getAccount().getBalance(), budget.getAccount().getCurrency(), budget.getAccount().getType().toString()),
-                    new UserDTO(budget.getUser().getId(), budget.getUser().getUsername(), budget.getUser().getEmail())
+                    categoryDTO,
+                    accountDTO,
+                    userDTO
             );
         }).collect(Collectors.toList());
     }
+
 
 
     public BudgetDTO getBudgetByAccountId(Long accountId) {
@@ -177,8 +195,7 @@ public class BudgetService {
                 budget.getEndDate(),
                 new CategoryDTO(
                         budget.getCategory().getId(),
-                        budget.getCategory().getName(),
-                        budget.getCategory().getType().toString()
+                        budget.getCategory().getName()
                 ),
                 new AccountDTO(
                         budget.getAccount().getId(),
@@ -195,6 +212,42 @@ public class BudgetService {
 
         );
     }
+
+    public BudgetDTO getBudgetById(Long id) {
+        Optional<Budget> budgetOpt = budgetRepository.findById(id);
+
+        if (budgetOpt.isEmpty()) {
+            throw new EntityNotFoundException("No budget found with this id.");
+        }
+
+        Budget budget = budgetOpt.get();
+        return new BudgetDTO(
+                budget.getId(),
+                budget.getDescription(),
+                budget.getBudgetLimit(),
+                budget.getCurrentSpending(),
+                budget.getStartDate(),
+                budget.getEndDate(),
+                new CategoryDTO(
+                        budget.getCategory().getId(),
+                        budget.getCategory().getName()
+                ),
+                new AccountDTO(
+                        budget.getAccount().getId(),
+                        budget.getAccount().getName(),
+                        budget.getAccount().getBalance(),
+                        budget.getAccount().getCurrency(),
+                        budget.getAccount().getType().toString()
+                ),
+                new UserDTO(
+                        budget.getUser().getId(),
+                        budget.getUser().getUsername(),
+                        budget.getUser().getEmail()
+                )
+
+        );
+    }
+
 }
 
 
