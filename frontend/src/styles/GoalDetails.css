@@ -29,8 +29,9 @@
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
   text-align: center;
   margin-top: 20px; /* Add some space between the button and the card */
+  margin-bottom: 20px;
   overflow-y: auto;  /* Allow scrolling if content overflows */
-  flex: 1; /* Allow the goal card to take the available space */
+  flex: unset; /* Allow the goal card to take the available space */
 }
 
 .goal-details-container .goal-info p {

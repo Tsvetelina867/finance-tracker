@@ -39,9 +39,6 @@ public class Goal {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "account_id")

@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +34,65 @@ public class GoalService {
         this.accountRepository = accountRepository;
     }
 
+    public List<GoalDTO> getGoalsByCategory(Long accountId) {
+        List<Goal> goals = goalRepository.findByAccountId(accountId);
+
+        if (goals.isEmpty()) {
+            throw new EntityNotFoundException("No goals found for this account.");
+        }
+
+        return goals.stream().map(goal -> new GoalDTO(
+                goal.getId(),
+                goal.getName(),
+                goal.getTargetAmount(),
+                goal.getCurrentAmount(),
+                goal.getDeadline(),
+                new UserDTO(goal.getUser().getId(), goal.getUser().getUsername(), goal.getUser().getEmail()),
+                new AccountDTO(goal.getAccount().getId(), goal.getAccount().getName(), goal.getAccount().getBalance(),
+                        goal.getAccount().getCurrency(), goal.getAccount().getType().toString())
+        )).collect(Collectors.toList());
+    }
+
+    public String getGoalStatus(Long goalId) {
+        Goal goal = goalRepository.findById(goalId)
+                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
+
+        BigDecimal progress = calculateGoalProgress(goalId);
+
+        if (progress.compareTo(BigDecimal.valueOf(80)) >= 0) {
+            return "Near Completion";
+        }
+
+        if (goal.getDeadline().isBefore(LocalDate.now())) {
+            return "Failed";
+        }
+
+        return "In Progress";
+    }
+
+    public String estimateCompletionTime(Long goalId) {
+        Goal goal = goalRepository.findById(goalId)
+                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
+
+        BigDecimal progress = calculateGoalProgress(goalId);
+        long daysRemaining = goal.getDeadline().toEpochDay() - LocalDate.now().toEpochDay();
+        BigDecimal requiredAmount = goal.getTargetAmount().subtract(goal.getCurrentAmount());
+        BigDecimal dailyContribution = requiredAmount.divide(BigDecimal.valueOf(daysRemaining), 2, RoundingMode.HALF_UP);
+
+        return "Estimated time to complete: " + dailyContribution.toString() + " per day";
+    }
+
+    public void boostGoalProgress(Long goalId, BigDecimal additionalContribution) {
+        Goal goal = goalRepository.findById(goalId)
+                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
+
+        goal.setCurrentAmount(goal.getCurrentAmount().add(additionalContribution));
+        goalRepository.save(goal);
+    }
+
+    public List<Goal> getPastGoals() {
+        return goalRepository.findByDeadlineBefore(LocalDate.now());
+    }
     public BigDecimal calculateGoalProgress(Long goalId) {
         Goal goal = goalRepository.findById(goalId)
                 .orElseThrow(() -> new IllegalArgumentException("Goal not found with id: " + goalId));
@@ -48,31 +108,12 @@ public class GoalService {
 
         return goal.getCurrentAmount().compareTo(goal.getTargetAmount()) >= 0;
     }
-    public String getGoalStatus(Long goalId) {
-        Goal goal = goalRepository.findById(goalId)
-                .orElseThrow(() -> new EntityNotFoundException("Goal not found"));
-
-        if (goal.getCurrentAmount().compareTo(goal.getTargetAmount()) >= 0 && LocalDate.now().isAfter(goal.getDeadline())) {
-            return "Achieved";
-        }
-
-        if (goal.getDeadline().isBefore(LocalDate.now())) {
-            return "Failed";
-        }
-
-        return "In Progress";
-    }
-
 
     public Goal addGoal(Goal goal) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         goal.setUser(userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found")));
-
-        Category category = categoryRepository.findById(goal.getCategory().getId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
-        goal.setCategory(category);
 
         Account account = accountRepository.findById(goal.getAccount().getId())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -94,11 +135,6 @@ public class GoalService {
             goal.setAccount(account);
         }
 
-        if (goalDTO.getCategory() != null) {
-            Category category = categoryRepository.findByName(goalDTO.getCategory().getName())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
-            goal.setCategory(category);
-        }
 
         return goalRepository.save(goal);
     }
@@ -122,9 +158,34 @@ public class GoalService {
                 goal.getDeadline(),
                 new UserDTO(goal.getUser().getId(), goal.getUser().getUsername(), goal.getUser().getEmail()),
                 new AccountDTO(goal.getAccount().getId(), goal.getAccount().getName(), goal.getAccount().getBalance(),
-                        goal.getAccount().getCurrency(), goal.getAccount().getType().toString()),
-                new CategoryDTO(goal.getCategory().getId(), goal.getCategory().getName(), goal.getCategory().getType().toString())
+                        goal.getAccount().getCurrency(), goal.getAccount().getType().toString())
         )).collect(Collectors.toList());
+    }
+
+    public GoalDTO getGoalById(Long id) {
+        Goal goal = goalRepository.findById(id).orElse(null);
+        if (goal != null) {
+            // Return the mapped DTO
+            return mapGoalToDTO(goal);
+        }
+        return null;  // Return null or throw an exception if goal is not found
+    }
+
+    // Mapping Goal entity to GoalDTO
+    private GoalDTO mapGoalToDTO(Goal goal) {
+        UserDTO userDTO = new UserDTO(goal.getUser().getId(), goal.getUser().getUsername(), goal.getUser().getEmail());  // Example mapping
+        AccountDTO accountDTO = new AccountDTO(goal.getAccount().getId(), goal.getAccount().getName(), goal.getAccount().getBalance(),
+                goal.getAccount().getCurrency(), goal.getAccount().getType().toString());  // Example mapping
+
+        return new GoalDTO(
+                goal.getId(),
+                goal.getName(),
+                goal.getTargetAmount(),
+                goal.getCurrentAmount(),
+                goal.getDeadline(),
+                userDTO,
+                accountDTO
+        );
     }
 }
 

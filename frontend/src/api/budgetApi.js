@@ -148,7 +148,6 @@ export const addBudget = async (budgetData) => {
     }
 
     const data = await response.json();
-    console.log("budget data ", data);
     return data;
   } catch (error) {
     console.error(error);

@@ -66,8 +66,7 @@ public class RecurringTransactionController {
                 updatedRecurringTransaction.getFrequency().toString(),
                 new CategoryDTO(
                         updatedRecurringTransaction.getCategory().getId(),
-                        updatedRecurringTransaction.getCategory().getName(),
-                        updatedRecurringTransaction.getCategory().getType().toString()
+                        updatedRecurringTransaction.getCategory().getName()
                 ),
                 new AccountDTO(
                         updatedRecurringTransaction.getAccount().getId(),

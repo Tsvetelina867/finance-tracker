@@ -77,7 +77,6 @@ public class TransactionService {
         if (updatedTransactionDTO.getCategory() != null && updatedTransactionDTO.getCategory().getName() != null) {
             Category category = categoryRepository.findByName(updatedTransactionDTO.getCategory().getName())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
-            category.setType(FlowType.valueOf(updatedTransactionDTO.getCategory().getType()));
             transaction.setCategory(category);
         } else {
             transaction.setCategory(null);
@@ -105,11 +104,8 @@ public class TransactionService {
                             t.getType().toString(),
                             new CategoryDTO(
                                     t.getCategory().getId(),
-                                    t.getCategory().getName(),
-                                    t.getCategory().getType() != null
-                                            ? t.getCategory().getType().toString()
-                                            : "UNKNOWN"
-                            ),
+                                    t.getCategory().getName())
+                            ,
                             new AccountDTO(
                                     t.getAccount().getId(),
                                     t.getAccount().getName(),
@@ -149,16 +145,14 @@ public class TransactionService {
     private TransactionDTO convertToDTO(Transaction transaction) {
         Category category = transaction.getCategory();
         String categoryName = (category != null) ? category.getName() : "Unknown";
-        String categoryType = (category != null && category.getType() != null)
-                ? category.getType().toString()
-                : "UNKNOWN";
+
         return new TransactionDTO(
                 transaction.getId(),
                 transaction.getDescription(),
                 transaction.getAmount(),
                 transaction.getDate(),
                 transaction.getType().toString(),
-                new CategoryDTO(category.getId(), categoryName, categoryType),
+                new CategoryDTO(category.getId(), categoryName),
                 new AccountDTO(
                         transaction.getAccount().getId(),
                         transaction.getAccount().getName(),

@@ -24,7 +24,6 @@ const BudgetProgress = ({ currentAccount }) => {
       setLoading(true);
       try {
         const fetchedBudgets = await fetchBudgetDetails(accountId);
-        console.log(fetchedBudgets);
 
         if (fetchedBudgets) {
           const visibleBudgets = fetchedBudgets.filter(budget => {

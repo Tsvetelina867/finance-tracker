@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import goalsApi from '../api/goalsApi';
+import goalsApi, { fetchPastGoals } from '../api/goalsApi';
 import '../styles/GoalDetails.css';
 
 const GoalDetails = () => {
@@ -9,8 +9,8 @@ const GoalDetails = () => {
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [updatedGoal, setUpdatedGoal] = useState({});
-  const [amountToAdd, setAmountToAdd] = useState(''); // Set to empty string initially
-  const [pastGoals, setPastGoals] = useState([]); // For storing past goals
+  const [amountToAdd, setAmountToAdd] = useState('');
+  const [pastGoals, setPastGoals] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,17 +32,18 @@ const GoalDetails = () => {
       }
     };
 
-    const fetchPastGoals = async () => {
+    const fetchPastGoalsData = async () => {
       try {
-        const goalsData = await goalsApi.getPastGoals(); // Replace with your actual API call
-        setPastGoals(goalsData);
+        const goalsData = await fetchPastGoals();
+        setPastGoals(goalsData || []);
       } catch (error) {
         console.error('Error fetching past goals', error);
+        setPastGoals([]);
       }
     };
 
     fetchGoalDetails();
-    fetchPastGoals();
+    fetchPastGoalsData();
   }, [goalId]);
 
   const handleBackClick = () => {
@@ -76,29 +77,31 @@ const GoalDetails = () => {
     const newAmount = goal.currentAmount + parseFloat(amountToAdd);
     const updatedGoal = { ...goal, currentAmount: newAmount };
 
-    // Update goal progress in local storage (or backend if needed)
     setGoal(updatedGoal);
     setUpdatedGoal(updatedGoal);
 
-    // Optionally, you can also update the goal on the backend
     goalsApi.updateGoal(goalId, updatedGoal)
       .then(() => console.log('Goal updated successfully'))
       .catch(error => console.error('Error updating goal:', error));
 
-    setAmountToAdd(''); // Reset amount field after adding funds
+    setAmountToAdd('');
   };
 
   const handleDeleteGoal = () => {
     goalsApi.deleteGoal(goalId)
       .then(() => {
         console.log('Goal deleted');
-        navigate('/dashboard'); // Redirect to dashboard after deletion
+        navigate('/dashboard');
       })
       .catch(error => console.error('Error deleting goal:', error));
   };
 
   if (loading) return <p>Loading...</p>;
   if (!goal) return <p>Goal not found.</p>;
+
+  // Cap progress percentage at 100%
+  const progressPercentage = Math.min(Math.round((goal.currentAmount / goal.targetAmount) * 100), 100);
+  const goalStatus = progressPercentage === 100 ? 'Achieved 🎉' : goal.isAchieved ? 'Achieved 🎉' : 'In Progress';
 
   return (
     <div className="goal-details-container">
@@ -130,13 +133,13 @@ const GoalDetails = () => {
             new Date(goal.deadline).toLocaleDateString()
           )}</p>
 
-          <p><strong>Status:</strong> {goal.isAchieved ? 'Achieved 🎉' : 'In Progress'}</p>
+          <p><strong>Status:</strong> {goalStatus}</p>
         </div>
 
         <div className="progress-container">
-          <label>Progress: {Math.round((goal.currentAmount / goal.targetAmount) * 100) || 0}%</label>
+          <label>Progress: {progressPercentage}%</label>
           <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${Math.round((goal.currentAmount / goal.targetAmount) * 100) || 0}%` }}></div>
+            <div className="progress-fill" style={{ width: `${progressPercentage}%` }}></div>
           </div>
         </div>
 
@@ -167,7 +170,7 @@ const GoalDetails = () => {
 
       <div className="past-goals-container">
         <h3>Past Goals</h3>
-        {pastGoals.length > 0 ? (
+        {Array.isArray(pastGoals) && pastGoals.length > 0 ? (
           <ul>
             {pastGoals.map((pastGoal) => (
               <li key={pastGoal.id}>

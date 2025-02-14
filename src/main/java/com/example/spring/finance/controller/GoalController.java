@@ -24,12 +24,46 @@ public class GoalController {
         this.goalService = goalService;
     }
 
-    @GetMapping("{accountId}")
+    @GetMapping("/past") // Make sure this is above "/{id}"
+    public ResponseEntity<List<Goal>> getPastGoals() {
+        List<Goal> pastGoals = goalService.getPastGoals();
+        return ResponseEntity.ok(pastGoals);
+    }
+
+    @GetMapping("/{goalId}/status")
+    public ResponseEntity<String> getGoalStatus(@PathVariable Long goalId) {
+        String status = goalService.getGoalStatus(goalId);
+        return ResponseEntity.ok(status);
+    }
+
+    @GetMapping("/{goalId}/estimate-completion")
+    public ResponseEntity<String> getEstimatedCompletionTime(@PathVariable Long goalId) {
+        String timeEstimate = goalService.estimateCompletionTime(goalId);
+        return ResponseEntity.ok(timeEstimate);
+    }
+
+    @PutMapping("/{goalId}/boost")
+    public ResponseEntity<Void> boostGoalProgress(@PathVariable Long goalId, @RequestParam BigDecimal contribution) {
+        goalService.boostGoalProgress(goalId, contribution);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("account/{accountId}")
     public ResponseEntity<List<GoalDTO>> getGoalsByAccountId(@PathVariable Long accountId) {
         List<GoalDTO> goals = goalService.getGoalsByAccountId(accountId);
         return ResponseEntity.ok(goals);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<GoalDTO> getGoalById(@PathVariable Long id) {
+        GoalDTO goalDTO = goalService.getGoalById(id);
+        if (goalDTO != null) {
+            return ResponseEntity.ok(goalDTO);  // Return DTO if goal is found
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // Return 404 if goal not found
+        }
+    }
 
     @GetMapping("/{goalId}/progress")
     public ResponseEntity<BigDecimal> getGoalProgress(@PathVariable Long goalId) {
@@ -70,11 +104,6 @@ public class GoalController {
                         goal.getAccount().getBalance(),
                         goal.getAccount().getCurrency(),
                         goal.getAccount().getType().toString()
-                ),
-                new CategoryDTO(
-                        goal.getCategory().getId(),
-                        goal.getCategory().getName(),
-                        goal.getCategory().getType().toString()
                 )
 
         );

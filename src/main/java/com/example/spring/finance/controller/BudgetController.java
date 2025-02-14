@@ -37,6 +37,12 @@ public class BudgetController {
         List<BudgetDTO> budgets = budgetService.getBudgetsByAccountId(accountId);
         return ResponseEntity.ok(budgets);
     }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<BudgetDTO> getBudgetById(@PathVariable Long id) {
+//        System.out.println("Fetching budget with ID: " + id);
+//        BudgetDTO budget = budgetService.getBudgetById(id);
+//        return ResponseEntity.ok(budget);
+//    }
 
     @GetMapping("/{budgetId}/progress")
     public ResponseEntity<BigDecimal> getBudgetProgress(@PathVariable Long budgetId) {
@@ -70,8 +76,7 @@ public class BudgetController {
                 budget.getEndDate(),
                 new CategoryDTO(
                         budget.getCategory().getId(),
-                        budget.getCategory().getName(),
-                        budget.getCategory().getType().toString()
+                        budget.getCategory().getName()
                 ),
                 new AccountDTO(
                         budget.getAccount().getId(),
