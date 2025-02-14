@@ -100,7 +100,6 @@ public class BudgetService {
 
 
     public Budget addBudget(Budget budget) {
-        System.out.println("Account from the request: " + budget.getAccount());  // Check if account is null here
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         budget.setUser(userRepository.findByUsername(username)

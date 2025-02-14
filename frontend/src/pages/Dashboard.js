@@ -6,6 +6,7 @@ import { fetchGoalsWithDetails } from '../api/goalsApi';
 import { fetchTransactionsByDateRange } from '../api/transactionsApi';
 import { fetchRecurringTransactions } from '../api/recurringTransactionsApi';
 import { fetchAllAccounts, fetchAccountData } from '../api/accountApi';
+import { fetchAllCategories, addCategory, updateCategory, deleteCategory } from '../api/categoryApi';
 import Navbar from '../components/Navbar';
 import TransactionsSection from '../components/TransactionSection';
 import RecurringTransactionsSection from '../components/RecurringTransactionsSection';
@@ -20,11 +21,18 @@ const Dashboard = () => {
   const [goalsData, setGoalsData] = useState([]);
   const [transactionsData, setTransactionsData] = useState([]);
   const [recurringTransactionsData, setRecurringTransactionsData] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [editingCategoryId, setEditingCategoryId] = useState(null);
+  const [editedCategoryName, setEditedCategoryName] = useState('');
   const [loading, setLoading] = useState(true);
   const [isLogoutModalOpen, setLogoutModalOpen] = useState(false);
   const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [visibleBudgets, setVisibleBudgets] = useState([]);
+  const [isCategoriesPopupOpen, setCategoriesPopupOpen] = useState(false); // State to toggle the category popup
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -42,7 +50,7 @@ const Dashboard = () => {
   };
 
   const handleAccountChange = (selectedAccount) => {
-    localStorage.setItem('selectedAccount', JSON.stringify(selectedAccount)); // ✅ Save to localStorage
+    localStorage.setItem('selectedAccount', JSON.stringify(selectedAccount));
     setCurrentAccount(selectedAccount);
   };
 
@@ -56,19 +64,91 @@ const Dashboard = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    if (!currentAccount) return;
+    try {
+      const categoriesRes = await fetchAllCategories();
+      setCategories(categoriesRes);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const handleAddCategory = async () => {
+    if (!currentAccount || newCategoryName.trim() === '') return; // Guard clause if no currentAccount
+    try {
+      const addedCategory = await addCategory({
+        name: newCategoryName,
+        accountId: currentAccount.id,  // Include the account ID
+      });
+      setCategories([...categories, addedCategory]);
+      setNewCategoryName('');
+    } catch (error) {
+      console.error('Error adding category:', error);
+    }
+  };
+
+  const handleEditCategory = (categoryId, currentName) => {
+    setEditingCategoryId(categoryId);
+    setEditedCategoryName(currentName);
+    setIsEditing(true);
+  };
+
+  const handleSaveEditedCategory = async () => {
+    if (editedCategoryName.trim()) {
+      try {
+        const updatedCategory = await updateCategory(editingCategoryId, {
+                                                       id: editingCategoryId,
+                                                       name: editedCategoryName,
+                                                     });
+
+        // Update the categories list with the modified category
+        const updatedCategories = categories.map(category =>
+          category.id === editingCategoryId ? updatedCategory : category
+        );
+
+        setCategories(updatedCategories);
+
+        console.log('Updated categories:', updatedCategories); // Log after updating categories
+
+        setEditingCategoryId(null);
+        setIsEditing(false);
+        setEditedCategoryName('');
+      } catch (error) {
+        console.error('Error updating category:', error);
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setEditingCategoryId(null); // Reset editing state
+    setEditedCategoryName('');
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    try {
+      await deleteCategory(categoryId);
+      setCategories(categories.filter(category => category.id !== categoryId));
+    } catch (error) {
+      console.error('Error deleting category:', error);
+    }
+  };
+
+  const toggleCategoriesPopup = () => {
+    setCategoriesPopupOpen(!isCategoriesPopupOpen);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const allAccountsRes = await fetchAllAccounts();
-        setAccounts(allAccountsRes); // Update accounts state
+        setAccounts(allAccountsRes);
 
         const savedAccount = localStorage.getItem('selectedAccount');
         if (savedAccount) {
-          setCurrentAccount(JSON.parse(savedAccount)); // ✅ Load from localStorage
+          setCurrentAccount(JSON.parse(savedAccount));
         } else {
-          const allAccountsRes = await fetchAllAccounts();
-          setAccounts(allAccountsRes);
-
           const currentAccountRes = await fetchAccountData();
           if (currentAccountRes) {
             setCurrentAccount(currentAccountRes);
@@ -86,29 +166,18 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-
   useEffect(() => {
     if (!currentAccount) return;
     const fetchData = async () => {
       try {
         const goalsRes = await fetchGoalsWithDetails(currentAccount.id);
-        const storedGoals = JSON.parse(localStorage.getItem('goals')) || [];
-
-              // Merge backend goals with local storage goals to update the state
-              const updatedGoals = goalsRes.map(goal => {
-                const storedGoal = storedGoals.find(stored => stored.id === goal.id);
-                if (storedGoal) {
-                  return { ...goal, isAchieved: storedGoal.isAchieved };
-                }
-                return goal;
-              });
-              setGoalsData(updatedGoals);
         const budgetRes = await fetchBudgetDetails(currentAccount.id);
         const recurringRes = await fetchRecurringTransactions(currentAccount.id);
 
         setGoalsData(goalsRes);
         setBudgetData(budgetRes);
         setRecurringTransactionsData(recurringRes);
+        await fetchCategories();
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -129,19 +198,30 @@ const Dashboard = () => {
 
   useEffect(() => {
     const showOnDashboard = JSON.parse(localStorage.getItem("showOnDashboard")) || {};
-    // Filter the budgets to only show the ones that have showOnDashboard set to true
     const filteredBudgets = (budgetData || []).filter(budget => showOnDashboard[budget.id] === true);
-
-
     setVisibleBudgets(filteredBudgets);
   }, [budgetData]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setIsScrolled(true); // Set to true when scrolled down
+      } else {
+        setIsScrolled(false); // Set to false when scrolled back to top
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup on component unmount
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleGoalAdded = (newGoal) => {
-    setGoalsData((prevGoals) => [...prevGoals, newGoal]); // Update goals in Dashboard
+    setGoalsData((prevGoals) => [...prevGoals, newGoal]);
   };
 
-
-if (loading) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 
@@ -192,6 +272,64 @@ if (loading) {
         </div>
 
         <div className="dashboard-right">
+
+              <div
+                        className={`floating-manage-btn ${isScrolled ? 'scroll-inactive' : ''}`}
+                        onClick={toggleCategoriesPopup}
+                      >
+                        Manage Categories
+                      </div>
+
+              {isCategoriesPopupOpen && (
+                      <>
+                        <div className="modal-overlay" onClick={toggleCategoriesPopup}></div>
+                        <div className="categories-popup">
+                          <div className="categories-popup-content">
+                            <button className="close-popup-btn" onClick={toggleCategoriesPopup}>X</button>
+
+                            <div className="category-input-container">
+                              <input
+                                type="text"
+                                value={newCategoryName}
+                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                placeholder="Enter new category"
+                              />
+                              <button className="add-category-btn" onClick={handleAddCategory}>Add</button>
+                            </div>
+
+                            <h3>Existing Categories</h3>
+                            <ul className="category-list">
+                              {categories.map(category => (
+                                <li key={category.id} className="category-item">
+                                  {editingCategoryId === category.id ? (
+                                    <>
+                                      <input
+                                        type="text"
+                                        value={editedCategoryName}
+                                        onChange={(e) => setEditedCategoryName(e.target.value)}
+                                      />
+                                      <button className="save-edit-btn " onClick={handleSaveEditedCategory}>Save</button>
+                                      <button className="cancel-edit-btn" onClick={handleCancel}>Cancel</button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span>{category.name}</span>
+                                      <div>
+                                        <button className="edit-button" onClick={() => handleEditCategory(category.id, category.name)}>Edit</button>
+                                        <button className="delete-btn" onClick={() => handleDeleteCategory(category.id)}>Delete</button>
+                                      </div>
+                                    </>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+
+
           <div className="widget">
             <h2>Budget Progress</h2>
             {visibleBudgets.length > 0 ? (
@@ -200,7 +338,6 @@ if (loading) {
               <p>No budgets to display on dashboard.</p>
             )}
           </div>
-
 
           <div className="widget">
             <h2>Goal Progress</h2>
