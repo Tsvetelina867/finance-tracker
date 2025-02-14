@@ -120,9 +120,6 @@ public class RecurringTransactionService {
     private RecurringTransactionDTO getRecurringTransactionDTO(RecurringTransaction recurringTransaction, LocalDate date) {
         Category category = recurringTransaction.getCategory();
         String categoryName = (category != null) ? category.getName() : "Unknown";
-        String categoryType = (category != null && category.getType() != null)
-                ? category.getType().toString()
-                : "UNKNOWN";
         return new RecurringTransactionDTO(
                 recurringTransaction.getId(),
                 recurringTransaction.getDescription(),
@@ -130,7 +127,7 @@ public class RecurringTransactionService {
                 recurringTransaction.getStartDate(),
                 recurringTransaction.getEndDate(),
                 recurringTransaction.getFrequency().toString(),
-                new CategoryDTO(category.getId(), categoryName, categoryType),
+                new CategoryDTO(category.getId(), categoryName),
                 new AccountDTO(
                         recurringTransaction.getAccount().getId(),
                         recurringTransaction.getAccount().getName(),
@@ -190,7 +187,6 @@ public class RecurringTransactionService {
         if (updatedRecurringTransactionDTO.getCategory().getName() != null) {
             Category category = categoryRepository.findByName(updatedRecurringTransactionDTO.getCategory().getName())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
-            category.setType(FlowType.valueOf(updatedRecurringTransactionDTO.getCategory().getType()));
             recurringTransaction.setCategory(category);
         } else {
             recurringTransaction.setCategory(null);

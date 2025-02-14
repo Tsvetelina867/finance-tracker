@@ -29,7 +29,6 @@ public class CategoryService {
 
         return categories.stream().map(category -> new CategoryDTO(
                 category.getId(),
-                category.getName(),
-                category.getType().toString())).collect(Collectors.toList());
+                category.getName())).collect(Collectors.toList());
     }
 }

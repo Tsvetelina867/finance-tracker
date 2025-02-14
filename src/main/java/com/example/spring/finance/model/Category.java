@@ -17,8 +17,4 @@ public class Category {
     @NotNull
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private FlowType type;
-
 }
