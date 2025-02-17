@@ -1,61 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import { fetchRecurringTransactions } from '../api/recurringTransactionsApi'; // Fetch active recurring transactions
-import { fetchPastRecurringTransactions } from '../api/recurringTransactionsApi'; // Fetch past recurring transactions
+import { fetchRecurringTransactions, fetchPastRecurringTransactions } from '../api/recurringTransactionsApi';
 import '../styles/RecurringTransactionsSection.css';
 
 const RecurringTransactionsSection = ({ currentAccount }) => {
   const [recurringTransactions, setRecurringTransactions] = useState([]);
-  const [pastTransactions, setPastTransactions] = useState(null); // Set to null initially
+  const [pastTransactions, setPastTransactions] = useState(null);
   const [showPastTransactions, setShowPastTransactions] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // For error messages
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // Utility function to calculate the next payment date
-  const calculateNextPaymentDate = (startDate, frequency) => {
-    let nextDate = new Date(startDate);
-    switch (frequency) {
-      case 'DAILY':
-        nextDate.setDate(nextDate.getDate() + 1);
-        break;
-      case 'WEEKLY':
-        nextDate.setDate(nextDate.getDate() + 7);
-        break;
-      case 'MONTHLY':
-        nextDate.setMonth(nextDate.getMonth() + 1);
-        break;
-      case 'ANNUALLY':
-        nextDate.setFullYear(nextDate.getFullYear() + 1);
-        break;
-      default:
-        break;
-    }
-    return nextDate;
-  };
+  const calculateNextPaymentDate = (startDate, frequency, transactionEndDate) => {
+      let nextDate = new Date(startDate);
+
+      // Add one period (this basic approach assumes you want the NEXT date from the start date)
+      switch (frequency) {
+        case 'DAILY':
+          nextDate.setDate(nextDate.getDate() + 1);
+          break;
+        case 'WEEKLY':
+          nextDate.setDate(nextDate.getDate() + 7);
+          break;
+        case 'MONTHLY':
+          nextDate.setMonth(nextDate.getMonth() + 1);
+          break;
+        case 'ANNUALLY':
+          nextDate.setFullYear(nextDate.getFullYear() + 1);
+          break;
+        default:
+          break;
+      }
+
+      // If there is an end date and the next payment date is after it, return null
+      if (transactionEndDate) {
+        const end = new Date(transactionEndDate);
+        if (nextDate > end) {
+          return null;
+        }
+      }
+
+      return nextDate;
+    };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const parsedDate = new Date(dateString);
     if (isNaN(parsedDate)) {
-      console.warn('Invalid Date:', dateString); // Debugging
+      console.warn('Invalid Date:', dateString);
       return 'Invalid Date';
     }
     return parsedDate.toLocaleDateString();
   };
 
-  // Utility function to check if a transaction is active
   const isActiveTransaction = (transaction) => {
-    const nextPaymentDate = calculateNextPaymentDate(transaction.startDate, transaction.frequency);
-    return nextPaymentDate > new Date(); // Active if next payment date is in the future
-  };
+      const nextPaymentDate = calculateNextPaymentDate(transaction.startDate, transaction.frequency, transaction.endDate);
+      return nextPaymentDate !== null && nextPaymentDate > new Date();
+    };
 
-  // Fetch active recurring transactions
   useEffect(() => {
     const getRecurringTransactions = async () => {
       try {
         if (currentAccount && currentAccount.id) {
           const data = await fetchRecurringTransactions(currentAccount.id);
-          setRecurringTransactions(data.filter(isActiveTransaction) || []); // Filter only active transactions
+          setRecurringTransactions(data.filter(isActiveTransaction) || []);
         }
       } catch (error) {
         console.error('Error fetching recurring transactions:', error);
@@ -68,7 +75,6 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
     }
   }, [currentAccount]);
 
-  // Handle fetching and displaying past recurring transactions
   const handleShowPastTransactions = async () => {
     if (!startDate || !endDate) {
       setErrorMessage('Please select both start and end dates.');
@@ -79,13 +85,12 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
       setErrorMessage('');
       const data = await fetchPastRecurringTransactions(currentAccount.id, startDate, endDate);
 
-      // Filter out active transactions (if any were fetched)
       const pastTransactionsData = data.filter(transaction => !isActiveTransaction(transaction));
 
       if (pastTransactionsData.length > 0) {
         setPastTransactions(pastTransactionsData);
       } else {
-        setPastTransactions([]); // No past transactions found, set to empty array
+        setPastTransactions([]);
       }
 
       setShowPastTransactions(true);
@@ -105,18 +110,16 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
   };
 
   const handleTogglePastTransactions = () => {
-    setShowPastTransactions((prev) => !prev); // Toggle visibility of past transactions
+    setShowPastTransactions((prev) => !prev);
   };
 
   return (
     <div className="recurring-transactions-section">
       <h2>Active Recurring Transactions</h2>
 
-      {/* Show Active Recurring Transactions */}
       <ul className="recurring-transaction-list">
         {recurringTransactions.length > 0 ? (
           recurringTransactions.map((transaction) => {
-            // Calculate next payment date dynamically
             const nextPaymentDate = calculateNextPaymentDate(transaction.startDate, transaction.frequency);
 
             return (
@@ -138,7 +141,6 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
         )}
       </ul>
 
-      {/* Button to show/hide past transactions */}
       <button
         className="view-past-transactions-btn"
         onClick={handleTogglePastTransactions}
@@ -146,7 +148,6 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
         {showPastTransactions ? 'Hide Past Transactions' : 'View Past Transactions'}
       </button>
 
-      {/* Date picker to select the range of past transactions */}
       {showPastTransactions && (
         <div className="date-picker-container">
           <label>
@@ -163,15 +164,13 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
         </div>
       )}
 
-      {/* Error message if dates are not selected */}
       {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-      {/* Show Past Recurring Transactions */}
       {showPastTransactions && (
         <div className="past-transactions-section">
           <h3>Past Recurring Transactions</h3>
           {pastTransactions === null ? (
-            <p>Loading past transactions...</p> // Show loading message until data is fetched
+            <p>Loading past transactions...</p>
           ) : pastTransactions.length > 0 ? (
             <ul className="past-recurring-transaction-list">
               {pastTransactions.map((transaction) => (
@@ -186,7 +185,7 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
               ))}
             </ul>
           ) : (
-            <p>No past transactions found for the selected date range.</p> // Only show if no data is returned
+            <p>No past transactions found for the selected date range.</p>
           )}
         </div>
       )}

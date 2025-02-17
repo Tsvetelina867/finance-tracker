@@ -7,6 +7,7 @@ import { fetchRecurringTransactions, addRecurringTransaction, updateRecurringTra
 import '../styles/TransactionsManagement.css';
 
 const TransactionsManagement = () => {
+
   const location = useLocation();
   const currentAccount = location.state?.currentAccount;
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ const TransactionsManagement = () => {
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
+
+
 
   useEffect(() => {
     if (currentAccount) {
@@ -51,10 +54,32 @@ const TransactionsManagement = () => {
     setIsRecurringModalOpen(true);
   };
 
+   if (!currentAccount) {
+      return (
+        <div>
+         <button onClick={() => navigate(-1)} style={{
+                                                        backgroundColor: '#4CAF50',
+                                                        color: 'white',
+                                                        padding: '10px 20px',
+                                                        border: 'none',
+                                                        borderRadius: '5px',
+                                                        cursor: 'pointer',
+                                                        fontSize: '16px',
+                                                        marginBottom: '20px',
+                                                        textAlign: 'center',
+                                                        display: 'inline-block',
+                                                      }}
+                                                      className="back-button small-button">⬅️ Back to Dashboard</button>
+          <h1>Transactions Management</h1>
+          <p>No account selected. Please select an account to manage transactions.</p>
+        </div>
+      );
+    }
+
   return (
     <div className="transactions-management">
     <h1 className="page-heading">Transactions Management</h1>
-    {/* Back to Dashboard Button */}
+
           <button onClick={() => navigate(-1)} className="back-button small-button">⬅️ Back to Dashboard</button>
       <div className="tabs">
         <button onClick={() => toggleTab('regular')} className={activeTab === 'regular' ? 'active' : ''}>
@@ -65,7 +90,6 @@ const TransactionsManagement = () => {
         </button>
       </div>
 
-      {/* Regular Transactions Section */}
       {activeTab === 'regular' && (
         <div className="regular-transactions-section">
           <h3>Regular Transactions</h3>
@@ -130,7 +154,6 @@ const TransactionsManagement = () => {
         </div>
       )}
 
-      {/* Regular Transaction Modal */}
       <TransactionModal
         isOpen={isTransactionModalOpen}
         onClose={() => setIsTransactionModalOpen(false)}
@@ -142,7 +165,6 @@ const TransactionsManagement = () => {
         currentAccount={currentAccount}
       />
 
-      {/* Recurring Transaction Modal */}
       <RecurringTransactionModal
         isOpen={isRecurringModalOpen}
         onClose={() => setIsRecurringModalOpen(false)}

@@ -1,7 +1,6 @@
 package com.example.spring.finance.model;
 
 import com.example.spring.finance.model.enums.FlowType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;

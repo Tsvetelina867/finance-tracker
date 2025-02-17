@@ -2,70 +2,83 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/Login.css';
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
+
+const API_BASE_URL = 'http://localhost:8080/api';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();  // Add the useNavigate hook
+  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      navigate('/dashboard');
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.get(`${API_BASE_URL}/user/profile`, {
+        headers: { Authorization: token },
+        withCredentials: true,
+      })
+      .then((response) => {
+        navigate('/dashboard', { replace: true });
+      })
+      .catch((error) => {
+        console.error("Invalid token, forcing re-login:", error);
+        localStorage.removeItem('token');
+      });
     }
   }, [navigate]);
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage('');
+    setIsError(false);
 
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/login', {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         username,
         password,
-      });
+      }, { withCredentials: true });
 
-      if (response.data && response.data.token) {
+      if (response.data?.token) {
         localStorage.setItem('token', response.data.token);
-        toast.success('Login successful! Redirecting...', { position: "top-center" });
-
-        console.log('User logged in:', response.data);
-        navigate('/dashboard');
+        setMessage('Login successful! Redirecting...');
+        navigate('/dashboard', { replace: true });
       } else {
-        // Handle the case where there's no token in the response
-        toast.error('No token received. Please try again.', { position: "top-center" });
+        setMessage('No token received. Please try again.');
+        setIsError(true);
+        localStorage.removeItem('token');
       }
     } catch (err) {
-      console.error('Login error:', err);
-      toast.error('Invalid username or password. Please try again.', { position: "top-center" });
+      setMessage('Invalid username or password. Please try again.');
+      setIsError(true);
+      localStorage.removeItem('token');
     }
   };
 
-
   return (
     <div className="login-container">
-        <div className="login-box">
-      <h2>Login</h2>
-      {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-        <p>Don't have an account? <Link to="/register">Register here</Link></p>
-      </form>
+      <div className="login-box">
+        <h2>Login</h2>
+        {message && <p className={isError ? "error" : "success"}>{message}</p>}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit">Login</button>
+          <p>Don't have an account? <Link to="/register">Register here</Link></p>
+        </form>
       </div>
     </div>
   );

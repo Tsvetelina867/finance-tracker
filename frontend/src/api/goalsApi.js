@@ -14,7 +14,6 @@ const requestHeaders = () => ({
 
 export const fetchGoalsWithDetails = async (accountId) => {
   try {
-    // Fetch all goals for the account
     const goalsResponse = await axios.get(`${API_BASE_URL}/account/${accountId}`, {
       headers: requestHeaders(),
       withCredentials: true,
@@ -22,7 +21,6 @@ export const fetchGoalsWithDetails = async (accountId) => {
 
     const goals = goalsResponse.data;
 
-    // Fetch progress & achievement for each goal in parallel
     const goalsWithDetails = await Promise.all(
       goals.map(async (goal) => {
         try {
@@ -112,7 +110,6 @@ export const deleteGoal = async (goalId) => {
   }
 };
 
-
 export default {
   fetchGoalsWithDetails,
   getGoalDetails,
@@ -122,11 +119,9 @@ export default {
 };
 
 export const fetchPastGoals = async () => {
-  const token = localStorage.getItem('token');
-
   try {
     const response = await axios.get(`${API_BASE_URL}/past`, {
-      headers: { 'Authorization': `${token}` }, // Ensure "Bearer" prefix
+      headers: requestHeaders(),
       withCredentials: true,
     });
     return response.data;
@@ -135,6 +130,3 @@ export const fetchPastGoals = async () => {
     return [];
   }
 };
-
-
-

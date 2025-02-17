@@ -20,10 +20,11 @@ body {
   color: #333;
   margin-bottom: 1.5rem;
 }
+
 .profile-container .back-button {
   position: absolute;
-  top: 20px; /* Adjust the distance from the top */
-  left: 20px; /* Adjust the distance from the left */
+  top: 20px;
+  left: 20px;
   padding: 10px 20px;
   background-color: #007bff;
   color: white;
@@ -69,8 +70,8 @@ body {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 1.5rem;
-  border-bottom: 2px solid #ddd; /* Added line */
-    padding-bottom: 1rem; /* Optional: Adds space below the line */
+  border-bottom: 2px solid #ddd;
+    padding-bottom: 1rem;
 }
 
 .profile-container .profile-details p {
@@ -121,9 +122,11 @@ body {
     gap: 10px;
     margin-top: 5px;
 }
+
 .edit-form-buttons .save-button {
     margin-right: 20px;
 }
+
 .profile-container .edit-form input {
   padding: 1rem;
   font-size: 1rem;
@@ -160,12 +163,12 @@ body {
 }
 
 .profile-container .account-form button {
-  padding: 0.5rem 1rem; /* Reduced padding */
+  padding: 0.5rem 1rem;
   background-color: #28a745;
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 0.9rem; /* Smaller font size */
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -183,6 +186,18 @@ body {
 .profile-container .account-list li {
   background-color: white;
   padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.profile-container .account-list input,  .profile-container .account-list select{
+  background-color: white;
+  padding: 2px;
   margin-bottom: 1rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -231,8 +246,8 @@ body {
 
 .profile-container .button-wrapper {
   display: flex;
-  gap: 1rem; /* Add space between the buttons */
-  justify-content: center; /* Center buttons horizontally */
+  gap: 1rem;
+  justify-content: center;
   max-width: 200px;
 }
 
@@ -267,8 +282,8 @@ body {
 .profile-container button.edit-profile-button {
   background-color: #007bff;
   color: white;
-  padding: 0.5rem 1.5rem; /* Reduced padding */
-  font-size: 0.9rem; /* Smaller font size */
+  padding: 0.5rem 1.5rem;
+  font-size: 0.9rem;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;

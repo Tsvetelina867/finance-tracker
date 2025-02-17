@@ -8,17 +8,15 @@ const BudgetProgress = ({ currentAccount }) => {
   const [showOnDashboard, setShowOnDashboard] = useState({});
   const accountId = currentAccount.id;
 
-  // Fetch showOnDashboard from localStorage once when the component mounts
   useEffect(() => {
     const savedShowOnDashboard = localStorage.getItem('showOnDashboard');
     if (savedShowOnDashboard) {
       setShowOnDashboard(JSON.parse(savedShowOnDashboard));
     }
-  }, []);  // This effect runs only once when the component mounts
+  }, []);
 
-  // Fetch budget details based on accountId and showOnDashboard
   useEffect(() => {
-    if (!accountId) return;  // If accountId is not available, stop execution
+    if (!accountId) return;
 
     const getBudgetDetails = async () => {
       setLoading(true);
@@ -40,8 +38,8 @@ const BudgetProgress = ({ currentAccount }) => {
       setLoading(false);
     };
 
-    getBudgetDetails();  // Only fetch budgets if accountId exists
-  }, [accountId, showOnDashboard]);  // Add showOnDashboard as a dependency here
+    getBudgetDetails();
+  }, [accountId, showOnDashboard]);
 
   if (loading) {
     return <div>Loading budgets...</div>;

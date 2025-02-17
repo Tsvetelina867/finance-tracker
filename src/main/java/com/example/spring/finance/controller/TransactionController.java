@@ -40,15 +40,16 @@ public class TransactionController {
                 .body(transactions);
     }
 
-
     @GetMapping("/{id}/single")
     public ResponseEntity<TransactionDTO> getTransaction(@PathVariable Long id) {
         return ResponseEntity.ok(transactionService.getTransactionById(id));
     }
+
     @GetMapping("/search")
     public List<Transaction> searchTransactions(@RequestParam String keyword) {
         return transactionService.searchTransactions(keyword);
     }
+
     @PostMapping
     public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.addTransaction(transaction));

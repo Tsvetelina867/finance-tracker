@@ -39,9 +39,9 @@ public class AuthController {
         String result = authService.registerUser(registrationRequest);
 
         if (result.contains("successfully")) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(result); // 201 status for successful registration
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result); // 400 status for errors
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
         }
     }
 }

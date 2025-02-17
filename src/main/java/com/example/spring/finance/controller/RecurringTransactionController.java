@@ -6,12 +6,9 @@ import com.example.spring.finance.service.RecurringTransactionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -24,14 +21,12 @@ public class RecurringTransactionController {
         this.recurringTransactionService = recurringTransactionService;
     }
 
-    // Get recurring transactions for a specific account
     @GetMapping("/{accountId}")
     public ResponseEntity<List<RecurringTransactionDTO>> processRecurringTransactions(@PathVariable Long accountId) {
         List<RecurringTransactionDTO> transactions = recurringTransactionService.processRecurringTransactions(accountId);
         return ResponseEntity.ok(transactions);
     }
 
-    // Catch up on recurring transactions within a date range, optional filters for frequency and category
     @GetMapping("/catch-up")
     public ResponseEntity<List<RecurringTransactionDTO>> catchUpRecurringTransactions(
             @RequestParam Long accountId,
@@ -43,15 +38,12 @@ public class RecurringTransactionController {
         return ResponseEntity.ok(transactions);
     }
 
-
-    // Create a new recurring transaction
     @PostMapping
     public ResponseEntity<RecurringTransaction> createRecurringTransaction(@RequestBody @Valid RecurringTransaction recurringTransaction) {
         RecurringTransaction createdTransaction = recurringTransactionService.addRecurringTransaction(recurringTransaction);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTransaction);
     }
 
-    // Update an existing recurring transaction
     @PutMapping("/{id}")
     public ResponseEntity<RecurringTransactionDTO> updateRecurringTransaction(
             @PathVariable Long id,
@@ -84,7 +76,6 @@ public class RecurringTransactionController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    // Delete a recurring transaction
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecurringTransaction(@PathVariable Long id) {
         recurringTransactionService.deleteRecurringTransaction(id);

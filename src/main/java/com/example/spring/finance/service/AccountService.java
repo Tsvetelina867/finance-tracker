@@ -6,9 +6,10 @@ import com.example.spring.finance.model.User;
 import com.example.spring.finance.model.enums.AccountType;
 import com.example.spring.finance.repository.AccountRepository;
 import com.example.spring.finance.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +36,7 @@ public class AccountService {
     }
 
     public List<Account> getAllAccountsForUser(String username) {
-        return accountRepository.findByUser_Username(username);  // Using the updated query
+        return accountRepository.findByUser_Username(username);
     }
 
     public Account createAccount(String username, AccountDTO accountDTO) {
@@ -69,5 +70,23 @@ public class AccountService {
             throw new RuntimeException("Account not found with ID: " + id);
         }
         accountRepository.deleteById(id);
+    }
+
+    public List<Account> getAccountsByUser() {
+        String username = getAuthenticatedUsername();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return accountRepository.findByUserId(user.getId());
+    }
+
+    private String getAuthenticatedUsername() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        } else {
+            return principal.toString();
+        }
     }
 }

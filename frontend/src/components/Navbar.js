@@ -1,4 +1,3 @@
-// src/components/Navbar.js
 import "../styles/Navbar.css";
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -13,23 +12,21 @@ const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
     navigate('/login');
   };
 
-
-
   const handleAccountChange = (accountId) => {
     const selectedAccount = accounts.find(acc => acc.id === accountId);
     if (!selectedAccount) {
       console.error("Account not found for ID:", accountId);
       return;
     }
-    onAccountChange(selectedAccount); // ✅ Passing the full object
+    onAccountChange(selectedAccount);
     setShowAccountDropdown(false);
   };
 
   return (
     <div className="navbar">
       <div className="navbar-left">
-        {/* Account Switch Dropdown */}
         <div className="account-dropdown">
+
           <button
             className="switch-account-btn"
             onClick={() => {
@@ -38,7 +35,6 @@ const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
           >
             Switch Account
           </button>
-
 
           {showAccountDropdown && (
             <ul className="dropdown-menu">
@@ -62,8 +58,12 @@ const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
 
         </div>
 
-        {/* Profile and Manage Transactions buttons next to each other */}
-        <button className="profile-btn" onClick={() => navigate('/profile')}>Profile</button>
+        <button
+          className="profile-btn"
+          onClick={() => navigate('/profile', { state: { accounts } })}
+        >
+          Profile
+        </button>
         <Link
           to="/transactions-management"
           state={{ currentAccount }}
@@ -72,13 +72,11 @@ const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
         </Link>
         <Link
           to="/modify-budgets"
-          state={{ currentAccount }} // Pass currentAccount as state here
+          state={{ currentAccount }}
         >
           <button>Modify Budgets</button>
         </Link>
-
       </div>
-
       <div className="navbar-right">
         <button onClick={handleLogout}>Logout</button>
       </div>

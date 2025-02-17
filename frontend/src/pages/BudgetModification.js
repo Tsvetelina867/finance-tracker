@@ -57,15 +57,14 @@ const BudgetModification = () => {
     setIsEditing(true);
     setFormData({
       id: budget.id,
-      startDate: budget.startDate ? new Date(budget.startDate).toISOString().split('T')[0] : '',  // Format date to YYYY-MM-DD
-      endDate: budget.endDate ? new Date(budget.endDate).toISOString().split('T')[0] : '',        // Format date to YYYY-MM-DD
-      category: budget.category ? budget.category.id : '',  // Ensure you're grabbing the category id
-      budgetLimit: budget.budgetLimit || '',                 // Default to empty if no budget limit
-      currentSpending: budget.currentSpending ?? 0,       // Default to empty if no spending data
-      description: budget.description || '',                // Default to empty if no description
+      startDate: budget.startDate ? new Date(budget.startDate).toISOString().split('T')[0] : '',
+      endDate: budget.endDate ? new Date(budget.endDate).toISOString().split('T')[0] : '',
+      category: budget.category ? budget.category.id : '',
+      budgetLimit: budget.budgetLimit || '',
+      currentSpending: budget.currentSpending ?? 0,
+      description: budget.description || '',
     });
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,22 +76,19 @@ const BudgetModification = () => {
         budgetLimit: formData.budgetLimit,
         currentSpending: formData.currentSpending,
         description: formData.description,
-        account: { id: currentAccount.id }, // Add the current account here
+        account: { id: currentAccount.id },
       };
 
       if (formData.id) {
-        // Update existing budget
         await updateBudget(formData.id, budgetData);
         setBudgets(budgets.map(b => b.id === formData.id ? { ...b, ...budgetData } : b));
       } else {
-        // Add new budget
         const addedBudget = await addBudget(budgetData);
         if (addedBudget) {
           setBudgets([...budgets, addedBudget]);
         }
       }
 
-      // Reset form and exit edit mode
       setIsEditing(false);
       setFormData({
         id: null,
@@ -107,10 +103,6 @@ const BudgetModification = () => {
       console.error('Error adding or updating budget:', error);
     }
   };
-
-
-
-
 
   const handleDelete = async (budgetId) => {
     if (window.confirm('Are you sure you want to delete this budget?')) {
@@ -154,8 +146,33 @@ const BudgetModification = () => {
   };
 
   const handleGoBack = () => {
-      navigate('/dashboard'); // Navigate to the dashboard
+      navigate('/dashboard');
     };
+
+    if (!currentAccount) {
+        return (
+          <div>
+            <button
+              onClick={handleGoBack}
+              style={{
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontSize: '16px',
+                marginBottom: '20px',
+              }}
+              className="back-button"
+            >
+              ⬅️ Back to Dashboard
+            </button>
+            <h1>Manage Budgets</h1>
+            <p>No account selected. Please select an account to manage budgets.</p>
+          </div>
+        );
+      }
 
   return (
     <div className="modify-budget-container">
@@ -175,7 +192,7 @@ const BudgetModification = () => {
                   id="startDate"
                   type="date"
                   name="startDate"
-                  value={formData.startDate}  // Should be correctly populated
+                  value={formData.startDate}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                   required
                 />
@@ -187,7 +204,7 @@ const BudgetModification = () => {
                   id="endDate"
                   type="date"
                   name="endDate"
-                  value={formData.endDate}  // Should be correctly populated
+                  value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                   required
                 />
@@ -198,7 +215,7 @@ const BudgetModification = () => {
                 <select
                   id="category"
                   name="category"
-                  value={formData.category}  // Should be correctly populated
+                  value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   required
                 >
@@ -217,7 +234,7 @@ const BudgetModification = () => {
                   id="budgetLimit"
                   type="number"
                   name="budgetLimit"
-                  value={formData.budgetLimit}  // Should be correctly populated
+                  value={formData.budgetLimit}
                   onChange={(e) => setFormData({ ...formData, budgetLimit: e.target.value })}
                   required
                 />
@@ -229,7 +246,7 @@ const BudgetModification = () => {
                   id="currentSpending"
                   type="number"
                   name="currentSpending"
-                  value={formData.currentSpending}  // Should be correctly populated
+                  value={formData.currentSpending}
                   onChange={(e) => setFormData({ ...formData, currentSpending: e.target.value })}
                   required
                 />
@@ -240,7 +257,7 @@ const BudgetModification = () => {
                 <textarea
                   id="description"
                   name="description"
-                  value={formData.description}  // Should be correctly populated
+                  value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows="4"
                   placeholder="Enter a brief description of the budget"

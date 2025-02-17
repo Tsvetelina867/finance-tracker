@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
-import goalsApi from "../api/goalsApi"; // Adjust based on your API structure
+import goalsApi from "../api/goalsApi";
 import '../styles/AddGoalModal.css';
 
 const AddGoalModal = ({ isOpen, onClose, onGoalAdded, currentAccount }) => {
   const [goalData, setGoalData] = useState({
     name: "",
     targetAmount: "",
-    currentAmount: 0, // Default to 0
+    currentAmount: 0,
     deadline: "",
   });
-
 
   const handleChange = (e) => {
     setGoalData({ ...goalData, [e.target.name]: e.target.value });
   };
-
-
 
   const handleSubmit = async () => {
    if (!currentAccount || !currentAccount.id) {
@@ -28,8 +25,8 @@ const AddGoalModal = ({ isOpen, onClose, onGoalAdded, currentAccount }) => {
         account: { id: currentAccount.id },
       });
 
-      onGoalAdded(newGoal); // Update goals in the dashboard
-      onClose(); // Close modal
+      onGoalAdded(newGoal);
+      onClose();
     } catch (error) {
       console.error("Error creating goal:", error);
     }
@@ -61,7 +58,7 @@ const AddGoalModal = ({ isOpen, onClose, onGoalAdded, currentAccount }) => {
         <input
           type="number"
           name="currentAmount"
-          placeholder="Current Amount (optional)"
+          placeholder="Current Amount"
           value={goalData.currentAmount || ""}
           onChange={handleChange}
         />
