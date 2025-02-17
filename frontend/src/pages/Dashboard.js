@@ -6,6 +6,7 @@ import { fetchGoalsWithDetails } from '../api/goalsApi';
 import { fetchTransactionsByDateRange } from '../api/transactionsApi';
 import { fetchRecurringTransactions } from '../api/recurringTransactionsApi';
 import { fetchAllAccounts, fetchAccountData } from '../api/accountApi';
+import { fetchUserProfile } from '../api/userApi';
 import { fetchAllCategories, addCategory, updateCategory, deleteCategory } from '../api/categoryApi';
 import Navbar from '../components/Navbar';
 import TransactionsSection from '../components/TransactionSection';
@@ -15,6 +16,8 @@ import GoalsProgress from '../components/GoalsProgress';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
+  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [currentAccount, setCurrentAccount] = useState(null);
   const [budgetData, setBudgetData] = useState([]);
@@ -30,7 +33,8 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [visibleBudgets, setVisibleBudgets] = useState([]);
-  const [isCategoriesPopupOpen, setCategoriesPopupOpen] = useState(false); // State to toggle the category popup
+  const [isBudgetDataLoaded, setIsBudgetDataLoaded] = useState(false);
+  const [isCategoriesPopupOpen, setCategoriesPopupOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
@@ -49,10 +53,100 @@ const Dashboard = () => {
     setLogoutModalOpen(false);
   };
 
-  const handleAccountChange = (selectedAccount) => {
-    localStorage.setItem('selectedAccount', JSON.stringify(selectedAccount));
-    setCurrentAccount(selectedAccount);
+   const fetchUserData = async () => {
+    try {
+      const userData = await fetchUserProfile();
+      setCurrentUser(userData);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
   };
+
+  useEffect(() => {
+    if (!user) {
+      fetchUserData();
+    }
+}, [user]);
+
+   useEffect(() => {
+     const fetchData = async () => {
+       if (!currentUser || accounts.length > 0) {
+         return;
+       }
+
+       try {
+         const allAccountsRes = await fetchAllAccounts();
+
+         const userAccounts = allAccountsRes.filter(account => account.user.id === currentUser.id);
+
+         if (userAccounts.length === 0) {
+           console.log('No accounts found for the current user');
+           setCurrentAccount(null);
+           localStorage.removeItem('selectedAccount');
+         } else {
+           setAccounts(userAccounts);
+
+           const savedAccount = localStorage.getItem('selectedAccount');
+
+           if (savedAccount) {
+             const savedAccountData = JSON.parse(savedAccount);
+
+             if (savedAccountData.user.id === currentUser.id) {
+               setCurrentAccount(savedAccountData);
+             } else {
+               setCurrentAccount(userAccounts[0]);
+               localStorage.setItem('selectedAccount', JSON.stringify(userAccounts[0]));
+             }
+           } else {
+             setCurrentAccount(userAccounts[0]);
+             localStorage.setItem('selectedAccount', JSON.stringify(userAccounts[0]));
+           }
+         }
+       } catch (error) {
+         console.error('Error fetching accounts:', error);
+       } finally {
+         setLoading(false);
+       }
+     };
+
+     if (currentUser && accounts.length === 0) {
+       fetchData();
+     }
+   }, [currentUser, accounts]);
+
+   useEffect(() => {
+     if (currentAccount) {
+       const fetchData = async () => {
+         try {
+           const goalsRes = await fetchGoalsWithDetails(currentAccount.id);
+           const budgetRes = await fetchBudgetDetails(currentAccount.id);
+           const recurringRes = await fetchRecurringTransactions(currentAccount.id);
+
+           setGoalsData(goalsRes);
+           setBudgetData(budgetRes);
+           setRecurringTransactionsData(recurringRes);
+           await fetchCategories();
+         } catch (error) {
+           console.error('Error fetching data:', error);
+         } finally {
+           setLoading(false);
+         }
+       };
+
+       fetchData();
+     }
+   }, [currentAccount]);
+
+
+  const handleAccountChange = (selectedAccount) => {
+    if (selectedAccount.user.id === currentUser.id) {
+      localStorage.setItem('selectedAccount', JSON.stringify(selectedAccount));
+      setCurrentAccount(selectedAccount);
+    } else {
+      console.warn('Attempted to select an account not belonging to the current user');
+    }
+  };
+
 
   const fetchTransactions = async () => {
     if (!currentAccount) return;
@@ -75,11 +169,11 @@ const Dashboard = () => {
   };
 
   const handleAddCategory = async () => {
-    if (!currentAccount || newCategoryName.trim() === '') return; // Guard clause if no currentAccount
+    if (!currentAccount || newCategoryName.trim() === '') return;
     try {
       const addedCategory = await addCategory({
         name: newCategoryName,
-        accountId: currentAccount.id,  // Include the account ID
+        accountId: currentAccount.id,
       });
       setCategories([...categories, addedCategory]);
       setNewCategoryName('');
@@ -102,14 +196,11 @@ const Dashboard = () => {
                                                        name: editedCategoryName,
                                                      });
 
-        // Update the categories list with the modified category
         const updatedCategories = categories.map(category =>
           category.id === editingCategoryId ? updatedCategory : category
         );
 
         setCategories(updatedCategories);
-
-        console.log('Updated categories:', updatedCategories); // Log after updating categories
 
         setEditingCategoryId(null);
         setIsEditing(false);
@@ -122,7 +213,7 @@ const Dashboard = () => {
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditingCategoryId(null); // Reset editing state
+    setEditingCategoryId(null);
     setEditedCategoryName('');
   };
 
@@ -139,54 +230,6 @@ const Dashboard = () => {
     setCategoriesPopupOpen(!isCategoriesPopupOpen);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const allAccountsRes = await fetchAllAccounts();
-        setAccounts(allAccountsRes);
-
-        const savedAccount = localStorage.getItem('selectedAccount');
-        if (savedAccount) {
-          setCurrentAccount(JSON.parse(savedAccount));
-        } else {
-          const currentAccountRes = await fetchAccountData();
-          if (currentAccountRes) {
-            setCurrentAccount(currentAccountRes);
-          } else if (allAccountsRes.length > 0) {
-            setCurrentAccount(allAccountsRes[0]);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching accounts:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (!currentAccount) return;
-    const fetchData = async () => {
-      try {
-        const goalsRes = await fetchGoalsWithDetails(currentAccount.id);
-        const budgetRes = await fetchBudgetDetails(currentAccount.id);
-        const recurringRes = await fetchRecurringTransactions(currentAccount.id);
-
-        setGoalsData(goalsRes);
-        setBudgetData(budgetRes);
-        setRecurringTransactionsData(recurringRes);
-        await fetchCategories();
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [currentAccount]);
 
   useEffect(() => {
     fetchTransactions();
@@ -205,15 +248,14 @@ const Dashboard = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
-        setIsScrolled(true); // Set to true when scrolled down
+        setIsScrolled(true);
       } else {
-        setIsScrolled(false); // Set to false when scrolled back to top
+        setIsScrolled(false);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
 
-    // Cleanup on component unmount
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -240,8 +282,11 @@ const Dashboard = () => {
       />
 
       <div className="dashboard-header">
-        <h2>Account: {currentAccount?.name}</h2>
-        <h2>Balance: {currentAccount?.balance} {currentAccount?.currency}</h2>
+         <h2>Account: {accounts.length > 0 ? `${accounts[0].name}`
+  : (
+                            <p>No accounts available. Please add an account from the Profile page.</p>
+                          )}</h2>
+         <h2>Balance: {currentAccount ? `${currentAccount.balance} ${currentAccount.currency}` : "No balance available"}</h2>
       </div>
 
       <div className="dashboard-main">
@@ -272,7 +317,6 @@ const Dashboard = () => {
         </div>
 
         <div className="dashboard-right">
-
               <div
                         className={`floating-manage-btn ${isScrolled ? 'scroll-inactive' : ''}`}
                         onClick={toggleCategoriesPopup}
@@ -328,8 +372,6 @@ const Dashboard = () => {
                       </>
                     )}
 
-
-
           <div className="widget">
             <h2>Budget Progress</h2>
             {visibleBudgets.length > 0 ? (
@@ -341,16 +383,18 @@ const Dashboard = () => {
 
           <div className="widget">
             <h2>Goal Progress</h2>
-            {loading ? <p>Loading...</p> : goalsData.length === 0 ? (
-              <p>No active goals</p>
+            {loading ? (
+              <p>Loading...</p>
             ) : (
               <GoalsProgress
                 goals={goalsData}
                 currentAccount={currentAccount}
                 onGoalAdded={handleGoalAdded}
+                emptyStateMessage="No active goals yet. Start adding your goals!"
               />
             )}
           </div>
+
         </div>
       </div>
     </div>

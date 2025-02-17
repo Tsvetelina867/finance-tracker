@@ -1,9 +1,12 @@
 package com.example.spring.finance.controller;
 
 import com.example.spring.finance.dtos.CategoryDTO;
-import com.example.spring.finance.model.Category;
+import com.example.spring.finance.model.User;
 import com.example.spring.finance.service.CategoryService;
+import com.example.spring.finance.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,18 +16,24 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class CategoryController {
     private final CategoryService categoryService;
+    private final UserService userService;
 
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService, UserService userService) {
         this.categoryService = categoryService;
+        this.userService = userService;
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
-        return ResponseEntity.ok(categoryService.addCategory(categoryDTO));
+    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO,
+                                                      @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.getUserByUsername(userDetails.getUsername());
+        return ResponseEntity.ok(categoryService.addCategory(categoryDTO, user.getId()));
     }
-    @GetMapping()
-    public ResponseEntity<List<CategoryDTO>> getCategories() {
-        List<CategoryDTO> categories = categoryService.getCategoriesByAccountId();
+
+    @GetMapping
+    public ResponseEntity<List<CategoryDTO>> getCategories(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.getUserByUsername(userDetails.getUsername());
+        List<CategoryDTO> categories = categoryService.getCategoriesByUserId(user.getId());
         return ResponseEntity.ok(categories);
     }
 

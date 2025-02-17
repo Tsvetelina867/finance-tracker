@@ -1,7 +1,6 @@
 package com.example.spring.finance.controller;
 
 import com.example.spring.finance.dtos.AccountDTO;
-import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.GoalDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Goal;
@@ -24,7 +23,7 @@ public class GoalController {
         this.goalService = goalService;
     }
 
-    @GetMapping("/past") // Make sure this is above "/{id}"
+    @GetMapping("/past")
     public ResponseEntity<List<Goal>> getPastGoals() {
         List<Goal> pastGoals = goalService.getPastGoals();
         return ResponseEntity.ok(pastGoals);
@@ -48,7 +47,6 @@ public class GoalController {
         return ResponseEntity.noContent().build();
     }
 
-
     @GetMapping("account/{accountId}")
     public ResponseEntity<List<GoalDTO>> getGoalsByAccountId(@PathVariable Long accountId) {
         List<GoalDTO> goals = goalService.getGoalsByAccountId(accountId);
@@ -59,9 +57,9 @@ public class GoalController {
     public ResponseEntity<GoalDTO> getGoalById(@PathVariable Long id) {
         GoalDTO goalDTO = goalService.getGoalById(id);
         if (goalDTO != null) {
-            return ResponseEntity.ok(goalDTO);  // Return DTO if goal is found
+            return ResponseEntity.ok(goalDTO);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // Return 404 if goal not found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

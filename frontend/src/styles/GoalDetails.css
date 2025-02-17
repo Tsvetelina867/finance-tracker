@@ -2,40 +2,40 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  max-width: 700px; /* Increased width */
+  max-width: 700px;
   margin: auto;
   padding: 30px;
   font-family: Arial, sans-serif;
-  height: 100vh; /* Full viewport height */
-  overflow-y: auto;  /* Allow scrolling if content overflows */
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .goal-details-container .back-button {
   background: #007bff;
   color: white;
   border: none;
-  padding: 12px 20px; /* Bigger button */
+  padding: 12px 20px;
   font-size: 18px;
   border-radius: 8px;
   cursor: pointer;
   margin-bottom: 15px;
-  align-self: flex-start; /* Align to the start of the container */
+  align-self: flex-start;
 }
 
 .goal-details-container .goal-card {
   background: white;
-  padding: 30px; /* Increased padding */
-  border-radius: 15px; /* More rounded corners */
+  padding: 30px;
+  border-radius: 15px;
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
   text-align: center;
-  margin-top: 20px; /* Add some space between the button and the card */
+  margin-top: 20px;
   margin-bottom: 20px;
-  overflow-y: auto;  /* Allow scrolling if content overflows */
-  flex: unset; /* Allow the goal card to take the available space */
+  overflow-y: auto;
+  flex: unset;
 }
 
 .goal-details-container .goal-info p {
-  font-size: 20px; /* Increased font size */
+  font-size: 20px;
   margin: 15px 0;
 }
 
@@ -53,13 +53,13 @@
 }
 
 .goal-details-container .progress-container label {
-  font-size: 20px; /* Bigger label */
+  font-size: 20px;
   font-weight: bold;
 }
 
 .goal-details-container .progress-bar {
   width: 100%;
-  height: 20px; /* Thicker bar */
+  height: 20px;
   background: #ddd;
   border-radius: 10px;
   overflow: hidden;
@@ -81,11 +81,23 @@
 }
 
 .goal-details-container button {
-  padding: 14px 18px; /* Bigger buttons */
+  padding: 14px 18px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 18px;
+}
+
+.add-goal-button {
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  margin-top: 15px;
 }
 
 .goal-details-container .edit-button {

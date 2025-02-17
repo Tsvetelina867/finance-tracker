@@ -5,7 +5,6 @@ import com.example.spring.finance.dtos.BudgetDTO;
 import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Budget;
-import com.example.spring.finance.repository.BudgetRepository;
 import com.example.spring.finance.service.BudgetService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/finance/budgets")
@@ -37,12 +35,6 @@ public class BudgetController {
         List<BudgetDTO> budgets = budgetService.getBudgetsByAccountId(accountId);
         return ResponseEntity.ok(budgets);
     }
-//    @GetMapping("/{id}")
-//    public ResponseEntity<BudgetDTO> getBudgetById(@PathVariable Long id) {
-//        System.out.println("Fetching budget with ID: " + id);
-//        BudgetDTO budget = budgetService.getBudgetById(id);
-//        return ResponseEntity.ok(budget);
-//    }
 
     @GetMapping("/{budgetId}/progress")
     public ResponseEntity<BigDecimal> getBudgetProgress(@PathVariable Long budgetId) {

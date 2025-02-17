@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -25,7 +24,7 @@ public class TransactionDTO {
     private UserDTO user;
     private String currency;
 
-    public TransactionDTO(Transaction transaction) { //this is for the reoccurring transactions
+    public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();
         this.description = transaction.getDescription();
         this.amount = transaction.getAmount();

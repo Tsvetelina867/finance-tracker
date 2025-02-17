@@ -1,6 +1,5 @@
 package com.example.spring.finance.model;
 
-import com.example.spring.finance.model.enums.FlowType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,5 +19,9 @@ public class Category {
 
     @NotNull
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
 }

@@ -1,11 +1,9 @@
 package com.example.spring.finance.service;
 
 import com.example.spring.finance.dtos.AccountDTO;
-import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.GoalDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Account;
-import com.example.spring.finance.model.Category;
 import com.example.spring.finance.model.Goal;
 import com.example.spring.finance.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,7 +15,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -147,7 +144,7 @@ public class GoalService {
         List<Goal> goals = goalRepository.findByAccountId(accountId);
 
         if (goals.isEmpty()) {
-            throw new EntityNotFoundException("No goals found for this account.");
+            return List.of();
         }
 
         return goals.stream().map(goal -> new GoalDTO(
@@ -157,25 +154,29 @@ public class GoalService {
                 goal.getCurrentAmount(),
                 goal.getDeadline(),
                 new UserDTO(goal.getUser().getId(), goal.getUser().getUsername(), goal.getUser().getEmail()),
-                new AccountDTO(goal.getAccount().getId(), goal.getAccount().getName(), goal.getAccount().getBalance(),
-                        goal.getAccount().getCurrency(), goal.getAccount().getType().toString())
+                new AccountDTO(
+                        goal.getAccount().getId(),
+                        goal.getAccount().getName(),
+                        goal.getAccount().getBalance(),
+                        goal.getAccount().getCurrency(),
+                        goal.getAccount().getType().toString()
+                )
         )).collect(Collectors.toList());
     }
+
 
     public GoalDTO getGoalById(Long id) {
         Goal goal = goalRepository.findById(id).orElse(null);
         if (goal != null) {
-            // Return the mapped DTO
             return mapGoalToDTO(goal);
         }
-        return null;  // Return null or throw an exception if goal is not found
+        return null;
     }
 
-    // Mapping Goal entity to GoalDTO
     private GoalDTO mapGoalToDTO(Goal goal) {
-        UserDTO userDTO = new UserDTO(goal.getUser().getId(), goal.getUser().getUsername(), goal.getUser().getEmail());  // Example mapping
+        UserDTO userDTO = new UserDTO(goal.getUser().getId(), goal.getUser().getUsername(), goal.getUser().getEmail());
         AccountDTO accountDTO = new AccountDTO(goal.getAccount().getId(), goal.getAccount().getName(), goal.getAccount().getBalance(),
-                goal.getAccount().getCurrency(), goal.getAccount().getType().toString());  // Example mapping
+                goal.getAccount().getCurrency(), goal.getAccount().getType().toString());
 
         return new GoalDTO(
                 goal.getId(),

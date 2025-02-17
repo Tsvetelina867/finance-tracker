@@ -1,4 +1,3 @@
-/* Dashboard.css */
 * {
   margin: 0;
   padding: 0;
@@ -10,7 +9,7 @@ body, html {
   font-family: Arial, sans-serif;
 }
 
-/* src/styles/Dashboard.css */
+
 .dashboard-container .modal-overlay {
   position: fixed;
   top: 0;
@@ -60,7 +59,7 @@ body, html {
   background-color: #f1f1f1;
   border-radius: 8px;
   margin-bottom: 20px;
-  flex-shrink: 0; /* Prevent header from shrinking */
+  flex-shrink: 0;
 }
 
 .dashboard-container .dashboard-header h2 {
@@ -73,11 +72,11 @@ body, html {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  flex: 1; /* Make sure it takes up remaining space */
+  flex: 1;
 }
 
 .dashboard-container .dashboard-left, .dashboard-container .dashboard-right {
-  width: 48%; /* 48% width to make them side by side */
+  width: 48%;
 }
 
 .dashboard-container .transactions-navigation {
@@ -99,8 +98,6 @@ body, html {
 .dashboard-container .transactions-button:hover {
   background-color: #45a049;
 }
-
-/* src/styles/RecurringWidget.css */
 
 .dashboard-container .widget-recurring {
   padding: 20px;
@@ -196,10 +193,10 @@ body, html {
 }
 
 .dashboard-container .widget-container {
-  background-color: #f5f5f5;  /* Soft light background for the whole section */
-  border-radius: 16px;  /* Round corners for the section */
+  background-color: #f5f5f5;
+  border-radius: 16px;
   padding: 30px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);  /* Soft shadow around the whole section */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
 }
 
@@ -213,8 +210,8 @@ body, html {
 }
 
 .dashboard-container .total-spending-widget {
-  background-color: #eafaf0; /* Light greenish background */
-  border-left: 6px solid #4caf50; /* Accent border on the left */
+  background-color: #eafaf0;
+  border-left: 6px solid #4caf50;
 }
 
 .dashboard-container .total-spending-amount {
@@ -226,8 +223,8 @@ body, html {
 }
 
 .dashboard-container .transactions-widget {
-  background-color: #f9f9f9; /* Slightly off-white background */
-  border-left: 6px solid #2196f3; /* Accent border in blue */
+  background-color: #f9f9f9;
+  border-left: 6px solid #2196f3;
 }
 
 .dashboard-container .widget p {
@@ -235,7 +232,6 @@ body, html {
   color: #555;
 }
 
-/* Transaction List Design - kept as per your provided CSS */
 .dashboard-container .transaction-list li {
   padding: 15px 20px;
   margin-bottom: 15px;
@@ -265,7 +261,6 @@ body, html {
   letter-spacing: 1px;
 }
 
-/* Additional Hover Effects for Amounts and Text */
 .dashboard-container .transaction-list li:hover .amount {
   color: #388e3c;
 }
@@ -289,7 +284,6 @@ body, html {
   z-index: 999;
 }
 
-/* Change opacity when scrolling */
 .floating-manage-btn.scroll-inactive {
   opacity: 0.6;
 }
@@ -302,7 +296,6 @@ body, html {
   outline: none;
 }
 
-/* Styling for the popup */
 .close-popup-btn {
   position: absolute;
   top: 10px;
@@ -319,14 +312,15 @@ body, html {
 .close-popup-btn:hover {
   color: red;
 }
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-  z-index: 1000; /* Make sure it's on top */
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
 .categories-popup {
@@ -339,7 +333,7 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1001; /* Ensure it's above the overlay */
+  z-index: 1001;
 }
 
 .categories-popup-content {
@@ -350,15 +344,14 @@ body, html {
   max-width: 500px;
   width: 100%;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  background: linear-gradient(135deg, #f7f8fc, #ffffff); /* Soft gradient */
-  transition: all 0.3s ease-in-out; /* Smooth transition for scaling */
+  background: linear-gradient(135deg, #f7f8fc, #ffffff);
+  transition: all 0.3s ease-in-out;
 }
 
 .categories-popup-content:hover {
-  transform: translateY(-5px); /* Lift effect on hover */
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
 }
-
 
 .category-input-container {
   display: flex;
@@ -377,10 +370,11 @@ body, html {
 }
 
 .category-input-container input:focus {
-  border-color: #4caf50; /* Highlight input on focus */
+  border-color: #4caf50;
   outline: none;
 }
-category-list {
+
+.category-list {
   list-style: none;
   padding: 0;
   margin-top: 15px;
@@ -421,8 +415,9 @@ category-list {
 
 .delete-btn:hover {
   background-color: #d32f2f;
-  transform: scale(1.05); /* Slight zoom on hover */
+  transform: scale(1.05);
 }
+
 .edit-button {
   background-color: purple;
   color: white;
@@ -434,9 +429,9 @@ category-list {
   margin-right: 10px;
 }
 .edit-button:hover {
-  transform: scale(1.05); /* Slight zoom on hover */
+  transform: scale(1.05);
 }
-/* Add a 'new category' button */
+
 .add-category-btn {
   padding: 12px 20px;
   background-color: #4caf50;
@@ -447,9 +442,8 @@ category-list {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   margin-top: 15px;
-
 }
-/* Styling for the Save and Cancel buttons */
+
 .save-edit-btn, .cancel-edit-btn {
   padding: 8px 16px;
   font-size: 14px;
@@ -480,7 +474,7 @@ category-list {
 
 .add-category-btn:hover {
   background-color: #45a049;
-  transform: scale(1.05); /* Slight zoom effect */
+  transform: scale(1.05);
 }
 
 .category-item input {
@@ -492,7 +486,6 @@ category-list {
     transition: border-color 0.3s ease;
 }
 
-/* Styling for when we add graphs later */
 .dashboard-container .dashboard-graphs {
   display: flex;
   justify-content: space-between;

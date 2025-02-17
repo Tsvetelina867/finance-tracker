@@ -2,7 +2,7 @@ import axios from '../utils/axiosConfig';
 
 export const fetchAccountData = async () => {
   try {
-    const response = await axios.get('/accounts/current'); // Adjust the endpoint based on your backend
+    const response = await axios.get('/accounts/current');
     return response.data;
   } catch (error) {
     console.error('Error fetching account data:', error);
@@ -12,7 +12,7 @@ export const fetchAccountData = async () => {
 
 export const fetchAllAccounts = async () => {
   try {
-    const response = await axios.get('/accounts'); // Endpoint to fetch all accounts for the logged-in use
+    const response = await axios.get('/accounts');
     return response.data;
   } catch (error) {
     console.error('Error fetching all accounts:', error);
