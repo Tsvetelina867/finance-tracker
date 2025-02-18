@@ -1,5 +1,5 @@
 import "../styles/Navbar.css";
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
@@ -78,6 +78,7 @@ const Navbar = ({ onLogout, accounts, currentAccount, onAccountChange }) => {
         </Link>
       </div>
       <div className="navbar-right">
+
         <button onClick={handleLogout}>Logout</button>
       </div>
     </div>

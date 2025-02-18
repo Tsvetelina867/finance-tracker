@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -180,4 +181,16 @@ public class TransactionService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+    public Map<String, Double> getTransactionSummary(Long accountId) {
+        List<TransactionDTO> transactionDTOs = getTransactionsForAccount(accountId, null, null);
+
+        return transactionDTOs.stream().collect(
+                Collectors.groupingBy(
+                        t -> t.getDate().getMonth().toString(),
+                        Collectors.summingDouble(t -> t.getAmount().doubleValue())
+                )
+        );
+    }
+
 }

@@ -5,15 +5,13 @@ import { fetchBudgetDetails } from '../api/budgetApi';
 const BudgetProgress = ({ currentAccount }) => {
   const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showOnDashboard, setShowOnDashboard] = useState({});
-  const accountId = currentAccount.id;
 
-  useEffect(() => {
-    const savedShowOnDashboard = localStorage.getItem('showOnDashboard');
-    if (savedShowOnDashboard) {
-      setShowOnDashboard(JSON.parse(savedShowOnDashboard));
-    }
-  }, []);
+  const [showOnDashboard, setShowOnDashboard] = useState(() => {
+    const saved = localStorage.getItem('showOnDashboard');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const accountId = currentAccount.id;
 
   useEffect(() => {
     if (!accountId) return;
@@ -22,12 +20,8 @@ const BudgetProgress = ({ currentAccount }) => {
       setLoading(true);
       try {
         const fetchedBudgets = await fetchBudgetDetails(accountId);
-
         if (fetchedBudgets) {
-          const visibleBudgets = fetchedBudgets.filter(budget => {
-            const shouldShow = showOnDashboard && showOnDashboard[budget.id];
-            return shouldShow === true;
-          });
+          const visibleBudgets = fetchedBudgets.filter(budget => showOnDashboard[budget.id]);
           setBudgets(visibleBudgets);
         } else {
           console.log('No budgets returned from API');
