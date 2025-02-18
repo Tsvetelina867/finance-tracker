@@ -33,16 +33,14 @@ public class ExchangeRateService {
 
         if (response.getStatusCode().is2xxSuccessful()) {
             Map<String, Object> body = response.getBody();
-            if (body != null && body.containsKey("data")) {
-                @SuppressWarnings("unchecked")
-                Map<String, Double> rates = (Map<String, Double>) body.get("data");
-                if (rates.containsKey(toCurrency) && rates.containsKey(fromCurrency)) {
-                    BigDecimal targetRate = BigDecimal.valueOf(rates.get(toCurrency));
-                    BigDecimal baseRate = BigDecimal.valueOf(rates.get(fromCurrency));
+            Map<String, Object> rates = (Map<String, Object>) body.get("data");
+            if (rates.containsKey(toCurrency) && rates.containsKey(fromCurrency)) {
+                BigDecimal targetRate = new BigDecimal(rates.get(toCurrency).toString());
+                BigDecimal baseRate = new BigDecimal(rates.get(fromCurrency).toString());
 
-                    return targetRate.divide(baseRate, 4, RoundingMode.HALF_UP); // Use RoundingMode instead of ROUND_HALF_UP
-                }
+                return targetRate.divide(baseRate, 4, RoundingMode.HALF_UP);
             }
+
         }
 
         throw new RuntimeException("Failed to fetch exchange rate");

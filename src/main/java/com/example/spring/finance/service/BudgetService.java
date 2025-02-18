@@ -7,8 +7,6 @@ import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Account;
 import com.example.spring.finance.model.Budget;
 import com.example.spring.finance.model.Category;
-import com.example.spring.finance.model.User;
-import com.example.spring.finance.model.enums.FlowType;
 import com.example.spring.finance.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -97,8 +95,6 @@ public class BudgetService {
         return budgetRepository.save(budget);
     }
 
-
-
     public Budget addBudget(Budget budget) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -120,7 +116,6 @@ public class BudgetService {
         return budgetRepository.save(budget);
     }
 
-
     public void deleteBudget(Long id) {
         this.budgetRepository.deleteById(id);
     }
@@ -128,7 +123,7 @@ public class BudgetService {
         List<Budget> budgets = budgetRepository.findAllByAccountId(accountId);
 
         if (budgets.isEmpty()) {
-            throw new EntityNotFoundException("No budgets found for account ID: " + accountId);
+            return List.of();
         }
 
         return budgets.stream().map(budget -> {
@@ -143,7 +138,6 @@ public class BudgetService {
                 totalSpending = BigDecimal.ZERO;
             }
 
-            // Handle null Category
             CategoryDTO categoryDTO = null;
             if (budget.getCategory() != null) {
                 categoryDTO = new CategoryDTO(
@@ -152,20 +146,23 @@ public class BudgetService {
                 );
             }
 
-            // Handle null User and Account
             UserDTO userDTO = (budget.getUser() != null) ?
-                    new UserDTO(budget.getUser().getId(), budget.getUser().getUsername(), budget.getUser().getEmail()) :
-                    null;
+                    new UserDTO(budget.getUser().getId(), budget.getUser().getUsername(), budget.getUser().getEmail()) : null;
 
             AccountDTO accountDTO = (budget.getAccount() != null) ?
-                    new AccountDTO(budget.getAccount().getId(), budget.getAccount().getName(), budget.getAccount().getBalance(), budget.getAccount().getCurrency(), budget.getAccount().getType().toString()) :
-                    null;
+                    new AccountDTO(
+                            budget.getAccount().getId(),
+                            budget.getAccount().getName(),
+                            budget.getAccount().getBalance(),
+                            budget.getAccount().getCurrency(),
+                            budget.getAccount().getType().toString()
+                    ) : null;
 
             return new BudgetDTO(
                     budget.getId(),
                     budget.getDescription(),
                     budget.getBudgetLimit(),
-                    totalSpending, // Current spending
+                    totalSpending,
                     budget.getStartDate(),
                     budget.getEndDate(),
                     categoryDTO,
@@ -174,8 +171,6 @@ public class BudgetService {
             );
         }).collect(Collectors.toList());
     }
-
-
 
     public BudgetDTO getBudgetByAccountId(Long accountId) {
         Optional<Budget> budgetOpt = budgetRepository.findByAccountId(accountId);

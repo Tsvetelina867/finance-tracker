@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchUserProfile } from '../api/userApi';
 import { fetchAllAccounts, addAccount, updateAccount, deleteAccount } from '../api/accountApi';
 import "../styles/Profile.css";
@@ -12,50 +12,61 @@ const AccountTypes = [
 ];
 
 const Profile = () => {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
+  const location = useLocation();
   const [profileData, setProfileData] = useState({ username: '', email: '' });
   const [isEditing, setIsEditing] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const [accounts, setAccounts] = useState([]);
+  const [accounts, setAccounts] = useState(location.state?.accounts || []);
   const [newAccount, setNewAccount] = useState({ name: '', balance: '', currency: '', type: 'BANK_ACCOUNT' });
   const [editingAccount, setEditingAccount] = useState(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetchUserProfile();
-        setProfileData(res || { username: '', email: '' });
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching profile data:', error);
-        setLoading(false);
-      }
-    };
-
-    const loadAccounts = async () => {
-      try {
-        const data = await fetchAllAccounts();
-        setAccounts(data);
-      } catch (error) {
-        console.error('Error loading accounts:', error);
-      }
-    };
-
-    fetchProfile();
-    loadAccounts();
+  const fetchProfile = useCallback(async () => {
+    try {
+      const res = await fetchUserProfile();
+      setProfileData(res || { username: '', email: '' });
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+      setLoading(false);
+    }
   }, []);
 
+  const loadAccounts = useCallback(async () => {
+    try {
+      const data = await fetchAllAccounts();
+      if (data.length === 0) {
+        console.log('No accounts found for the user.');
+        setAccounts([]);
+      } else {
+        setAccounts(data);
+      }
+    } catch (error) {
+      console.error('Error loading accounts:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProfile();
+    loadAccounts();
+  }, [fetchProfile, loadAccounts]);
 
   const handleCreateAccount = async () => {
     if (!newAccount.name || !newAccount.balance || !newAccount.currency || !newAccount.type) return;
+
+    if (parseFloat(newAccount.balance) < 0) {
+      setMessage('Balance cannot be negative.');
+      return;
+    }
 
     try {
       await addAccount(newAccount);
       setNewAccount({ name: '', balance: '', currency: '', type: 'BANK_ACCOUNT' });
       const data = await fetchAllAccounts();
       setAccounts(data);
+      setMessage('');
     } catch (error) {
       console.error('Error creating account:', error);
     }
@@ -87,7 +98,7 @@ const Profile = () => {
   };
 
   const handleGoBack = () => {
-    navigate('/dashboard'); // Navigate to the dashboard
+    navigate('/dashboard');
   };
 
   if (loading) {
@@ -96,7 +107,7 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      <button onClick={handleGoBack} className="back-button">⬅️ Back to Dashboard</button> {/* Back to Dashboard button */}
+      <button onClick={handleGoBack} className="back-button">⬅️ Back to Dashboard</button>
       <h1>Profile</h1>
       <div className="profile-details">
         <p><strong>Username:</strong> {profileData.username || 'N/A'}</p>
@@ -104,6 +115,8 @@ const Profile = () => {
       </div>
 
       <h2>Manage Your Accounts</h2>
+
+      {message && <div className="message">{message}</div>}
 
       <div className="account-form">
         <input

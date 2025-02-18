@@ -5,16 +5,14 @@ import '../styles/GoalCard.css';
 const GoalCard = ({ goal }) => {
   const { id, name, targetAmount, currentAmount, progress, status, deadline, account } = goal;
 
-  // Calculate progress percentage and ensure it doesn't exceed 100%, rounded to the nearest whole number
   const progressPercentage = Math.min(Math.round((currentAmount / targetAmount) * 100), 100);
 
-  // Automatically set status to 'Completed' if progress is 100%
   const goalStatus = progressPercentage === 100 ? 'Completed' : status || 'In Progress';
 
   const navigate = useNavigate();
 
   const handleViewDetails = () => {
-    navigate(`/goals/${id}`); // Navigate to goal details page
+    navigate(`/goals/${id}`);
   };
 
   return (

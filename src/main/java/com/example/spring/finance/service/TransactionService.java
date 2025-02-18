@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,10 @@ public class TransactionService {
         validateAndSetAccountAndCategory(transaction, transaction);
         BigDecimal convertedAmount = convertToAccountCurrency(transaction);
         transaction.setAmount(convertedAmount);
-
+        if (transaction.getAmount() == null || transaction.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative or null");
+        }
+        transaction.setCurrency(transaction.getAccount().getCurrency());
 
         return transactionRepository.save(transaction);
     }
@@ -93,7 +97,6 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-
     public TransactionDTO getTransactionById(Long id) {
         Optional<Transaction> transaction = transactionRepository.findById(id);
             return transaction.map(t -> new TransactionDTO(
@@ -122,7 +125,6 @@ public class TransactionService {
 
     }
 
-
     public void deleteTransaction(Long id) {
         this.transactionRepository.deleteById(id);
     }
@@ -131,17 +133,18 @@ public class TransactionService {
         return transactionRepository.searchTransactions(keyword);
     }
 
-    public BigDecimal convertToAccountCurrency(Transaction transaction) {
+    private BigDecimal convertToAccountCurrency(Transaction transaction) {
         String accountCurrency = transaction.getAccount().getCurrency();
-        String transactionCurrency = transaction.getCurrency();  // You can optionally store the transaction currency if needed
+        String transactionCurrency = transaction.getCurrency();
 
-        if (!transactionCurrency.equals(accountCurrency)) {
-            BigDecimal exchangeRate = exchangeRateService.getExchangeRate(transactionCurrency, accountCurrency);
-            return transaction.getAmount().multiply(exchangeRate);
-        } else {
+        if (accountCurrency.equalsIgnoreCase(transactionCurrency)) {
             return transaction.getAmount();
         }
+
+        BigDecimal exchangeRate = exchangeRateService.getExchangeRate(transactionCurrency, accountCurrency);
+        return transaction.getAmount().multiply(exchangeRate);
     }
+
     private TransactionDTO convertToDTO(Transaction transaction) {
         Category category = transaction.getCategory();
         String categoryName = (category != null) ? category.getName() : "Unknown";
@@ -169,8 +172,6 @@ public class TransactionService {
         );
     }
 
-
-
     public List<TransactionDTO> getTransactionsForAccount(Long accountId, String startDate, String endDate) {
         LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
         LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : LocalDate.now();
@@ -180,4 +181,16 @@ public class TransactionService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+    public Map<String, Double> getTransactionSummary(Long accountId) {
+        List<TransactionDTO> transactionDTOs = getTransactionsForAccount(accountId, null, null);
+
+        return transactionDTOs.stream().collect(
+                Collectors.groupingBy(
+                        t -> t.getDate().getMonth().toString(),
+                        Collectors.summingDouble(t -> t.getAmount().doubleValue())
+                )
+        );
+    }
+
 }

@@ -4,14 +4,14 @@ import '../styles/TransactionsSection.css';
 
 const TransactionsSection = ({ currentAccount }) => {
   const [transactions, setTransactions] = useState([]);
-  const [startDate, setStartDate] = useState(getPastDate(30)); // Default: 30 days ago
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]); // Today
+  const [startDate, setStartDate] = useState(getPastDate(30));
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
     if (currentAccount) {
-      fetchTransactions(); // Call on initial load
+      fetchTransactions();
     }
-  }, [currentAccount]); // Trigger on mount only
+  }, [currentAccount]);
 
   const fetchTransactions = async () => {
     try {
@@ -54,7 +54,6 @@ const TransactionsSection = ({ currentAccount }) => {
   );
 };
 
-// Helper function to get past date
 function getPastDate(days) {
   const date = new Date();
   date.setDate(date.getDate() - days);

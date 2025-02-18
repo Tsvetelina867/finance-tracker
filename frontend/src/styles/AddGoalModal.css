@@ -1,4 +1,3 @@
-/* Modal Background */
 .goal-modal {
   position: fixed;
   top: 0;
@@ -8,12 +7,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.6); /* Darker overlay */
+  background: rgba(0, 0, 0, 0.6);
   z-index: 99999;
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* Modal Content Box */
 .goal-modal-content {
   background: #fff;
   padding: 30px;
@@ -22,7 +20,7 @@
   max-width: 90%;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease;
-  transform: translateY(-50px); /* Start from slightly off-screen */
+  transform: translateY(-50px);
 }
 
 .goal-modal-content h2 {
@@ -33,7 +31,6 @@
   text-align: center;
 }
 
-/* Input Fields */
 .goal-modal-content input {
   width: 100%;
   padding: 12px 15px;
@@ -50,7 +47,6 @@
   outline: none;
 }
 
-/* Label for deadline */
 .goal-modal label {
   font-size: 1rem;
   color: #333;
@@ -59,7 +55,6 @@
   margin-top: 10px;
 }
 
-/* Buttons */
 .goal-modal button {
   width: 100%;
   padding: 12px 15px;
@@ -73,7 +68,7 @@
 }
 
 .goal-modal button:first-child {
-  background-color: #28a745; /* Green for Create Goal */
+  background-color: #28a745;
 }
 
 .goal-modal button:first-child:hover {
@@ -81,19 +76,18 @@
 }
 
 .goal-modal button:last-child {
-  background-color: #dc3545; /* Red for Cancel */
+  background-color: #dc3545;
 }
 
 .goal-modal button:last-child:hover {
   background-color: #c82333;
 }
 
-/* Modal Fade-in Animation */
 .goal-modal .modal.show {
   opacity: 1;
   visibility: visible;
 }
 
 .goal-modal .modal-content.show {
-  transform: translateY(0); /* Animate to center */
+  transform: translateY(0);
 }

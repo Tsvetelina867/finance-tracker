@@ -1,34 +1,43 @@
 import axios from 'axios';
 
-const jwtToken = localStorage.getItem('token'); // Should only get the token, not 'Bearer '
-console.log('JWT Token:', jwtToken);
+const API_BASE_URL = 'http://localhost:8080/api';
+
+const getToken = () => localStorage.getItem('token');
+
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+});
+
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers['Authorization'] = `${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 
 export const updateUserProfile = async (updateData) => {
-  const response = await axios.put('http://localhost:8080/api/user/update', updateData, {
-  headers: {
-              'Authorization': `${jwtToken}`,
-          },
-    withCredentials: true, // Allow sending credentials (cookies, etc.)
-  });
-  return response.data;
+  try {
+    const response = await axiosInstance.put('/user/update', updateData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    throw error;
+  }
 };
 
-// Ensure no 'Bearer ' is stored
-
-// Function to fetch user profile data from the backend
 export const fetchUserProfile = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/user/profile', {
-        headers: {
-            'Authorization': `${jwtToken}`,
-        },
-        withCredentials: true,
-    });
-
+    const response = await axiosInstance.get('/user/profile');
     return response.data;
   } catch (error) {
     console.error('Error fetching profile data:', error);
     throw error;
   }
 };
-

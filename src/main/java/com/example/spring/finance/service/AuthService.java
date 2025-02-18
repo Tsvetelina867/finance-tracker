@@ -3,8 +3,8 @@ package com.example.spring.finance.service;
 import com.example.spring.finance.dtos.RegistrationRequest;
 import com.example.spring.finance.model.User;
 import com.example.spring.finance.repository.UserRepository;
+import com.example.spring.finance.util.InvalidCredentialsException;
 import com.example.spring.finance.util.JwtUtil;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,22 +26,18 @@ public class AuthService {
         Optional<User> userOptional = userRepository.findByUsername(username);
 
         if (userOptional.isEmpty()) {
-            return "Invalid username or password"; // Username doesn't exist
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
         User user = userOptional.get();
 
-        // Check if the plain password matches the encoded password in the database
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            return "Invalid username or password"; // Invalid password
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        // Generate JWT token
         String token = jwtUtil.generateToken(user.getUsername());
-        return "Bearer " + token; // Return token with Bearer prefix
+        return "Bearer " + token;
     }
-
-
 
     public String registerUser(RegistrationRequest registrationRequest) {
         if (userRepository.findByUsername(registrationRequest.getUsername()).isPresent()) {

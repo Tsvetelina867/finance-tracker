@@ -60,6 +60,17 @@ const GoalDetails = () => {
   };
 
   const handleSaveClick = async () => {
+      const targetAmount = parseFloat(updatedGoal.targetAmount);
+      const currentAmount = parseFloat(updatedGoal.currentAmount);
+
+      if (isNaN(targetAmount) || isNaN(currentAmount)) {
+        alert("Please enter valid numbers for the amounts.");
+        return;
+      }
+      if (targetAmount < 0 || currentAmount < 0) {
+        alert("Target and current amounts must be non-negative.");
+        return;
+      }
     try {
       await goalsApi.updateGoal(goalId, updatedGoal);
       setGoal(updatedGoal);
@@ -74,7 +85,14 @@ const GoalDetails = () => {
   };
 
   const handleAddFunds = () => {
-    const newAmount = goal.currentAmount + parseFloat(amountToAdd);
+    const amount = parseFloat(amountToAdd);
+
+    if (isNaN(amount) || amount <= 0) {
+      alert("Please enter a valid positive amount.");
+      return;
+    }
+
+    const newAmount = goal.currentAmount + amount;
     const updatedGoal = { ...goal, currentAmount: newAmount };
 
     setGoal(updatedGoal);
@@ -87,10 +105,10 @@ const GoalDetails = () => {
     setAmountToAdd('');
   };
 
+
   const handleDeleteGoal = () => {
     goalsApi.deleteGoal(goalId)
       .then(() => {
-        console.log('Goal deleted');
         navigate('/dashboard');
       })
       .catch(error => console.error('Error deleting goal:', error));
@@ -99,7 +117,6 @@ const GoalDetails = () => {
   if (loading) return <p>Loading...</p>;
   if (!goal) return <p>Goal not found.</p>;
 
-  // Cap progress percentage at 100%
   const progressPercentage = Math.min(Math.round((goal.currentAmount / goal.targetAmount) * 100), 100);
   const goalStatus = progressPercentage === 100 ? 'Achieved 🎉' : goal.isAchieved ? 'Achieved 🎉' : 'In Progress';
 

@@ -5,31 +5,23 @@ import { fetchBudgetDetails } from '../api/budgetApi';
 const BudgetProgress = ({ currentAccount }) => {
   const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showOnDashboard, setShowOnDashboard] = useState({});
+
+  const [showOnDashboard, setShowOnDashboard] = useState(() => {
+    const saved = localStorage.getItem('showOnDashboard');
+    return saved ? JSON.parse(saved) : {};
+  });
+
   const accountId = currentAccount.id;
 
-  // Fetch showOnDashboard from localStorage once when the component mounts
   useEffect(() => {
-    const savedShowOnDashboard = localStorage.getItem('showOnDashboard');
-    if (savedShowOnDashboard) {
-      setShowOnDashboard(JSON.parse(savedShowOnDashboard));
-    }
-  }, []);  // This effect runs only once when the component mounts
-
-  // Fetch budget details based on accountId and showOnDashboard
-  useEffect(() => {
-    if (!accountId) return;  // If accountId is not available, stop execution
+    if (!accountId) return;
 
     const getBudgetDetails = async () => {
       setLoading(true);
       try {
         const fetchedBudgets = await fetchBudgetDetails(accountId);
-
         if (fetchedBudgets) {
-          const visibleBudgets = fetchedBudgets.filter(budget => {
-            const shouldShow = showOnDashboard && showOnDashboard[budget.id];
-            return shouldShow === true;
-          });
+          const visibleBudgets = fetchedBudgets.filter(budget => showOnDashboard[budget.id]);
           setBudgets(visibleBudgets);
         } else {
           console.log('No budgets returned from API');
@@ -40,8 +32,8 @@ const BudgetProgress = ({ currentAccount }) => {
       setLoading(false);
     };
 
-    getBudgetDetails();  // Only fetch budgets if accountId exists
-  }, [accountId, showOnDashboard]);  // Add showOnDashboard as a dependency here
+    getBudgetDetails();
+  }, [accountId, showOnDashboard]);
 
   if (loading) {
     return <div>Loading budgets...</div>;

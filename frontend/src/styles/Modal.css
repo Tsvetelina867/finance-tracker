@@ -12,11 +12,12 @@
   visibility: hidden;
   transition: 0.3s;
 }
+
 .modal-content label {
-    display: block;
-    font-weight: bold;
-    text-align: left;
-    margin-bottom: 2px;
+  display: block;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 2px;
 }
 
 .modal.open {
@@ -56,42 +57,39 @@
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
   margin-top: 10px;
-  display: block; /* Ensure it appears as a block element */
+  display: block;
 }
 
 .modal-content {
-  max-height: 80vh; /* Ensure content doesn't overflow the modal */
-  overflow-y: auto; /* Add scroll for overflow */
+  max-height: 80vh;
+  overflow-y: auto;
 }
-
 
 .modal button:hover {
-  transform: scale(1.05); /* Slightly enlarge the button */
+  transform: scale(1.05);
 }
 
-/* Primary button style */
 .modal button:first-child {
-  background: #007bff; /* Blue background for the primary button */
-  color: white; /* White text */
-  border: 2px solid #0056b3; /* Add border to make the button more distinct */
+  background: #007bff;
+  color: white;
+  border: 2px solid #0056b3;
 }
 
 .modal button:first-child:hover {
-  background: #0056b3; /* Darker blue on hover */
-  border-color: #003f7f; /* Darker border on hover */
+  background: #0056b3;
+  border-color: #003f7f;
 }
 
-/* Secondary button (last child) style */
 .modal button:last-child {
-  background: #dc3545; /* Red background for the cancel button */
+  background: #dc3545;
 }
 
 .modal button:last-child:hover {
-  background: #b02a37; /* Darker red on hover */
+  background: #b02a37;
 }
 
 .modal button:focus {
   outline: none;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Blue glow on focus */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 

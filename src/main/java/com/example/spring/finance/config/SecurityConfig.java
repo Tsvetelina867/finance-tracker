@@ -30,14 +30,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF if necessary
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Allow public endpoints
-                        .requestMatchers("/api/finance/recurring-transactions/**").authenticated() // Public endpoints
-                        .anyRequest().authenticated() // Secure other requests
+                        .requestMatchers("/register", "/api/auth/**").permitAll()
+                        .requestMatchers("/api/finance/recurring-transactions/**", "/api/accounts/**").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Apply CORS configuration
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
     }
@@ -45,22 +45,22 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // Allow frontend origin
-        configuration.addAllowedMethod("GET"); // Allow GET requests
-        configuration.addAllowedMethod("POST"); // Allow POST requests
-        configuration.addAllowedMethod("PUT"); // Allow PUT requests
-        configuration.addAllowedMethod("DELETE"); // Allow DELETE requests
-        configuration.addAllowedHeader("*"); // Allow all headers
-        configuration.setAllowCredentials(true); // Allow credentials (cookies, authorization headers)
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedMethod("GET");
+        configuration.addAllowedMethod("POST");
+        configuration.addAllowedMethod("PUT");
+        configuration.addAllowedMethod("DELETE");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Apply CORS configuration globally
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Password encoder
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

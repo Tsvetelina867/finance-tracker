@@ -33,9 +33,9 @@
   font-size: 16px;
   padding: 10px 20px;
 }
-/* Add button style */
+
 .transactions-management .add-button {
-  background-color: #007bff; /* Blue background */
+  background-color: #007bff;
   color: white;
   font-size: 16px;
   padding: 10px 20px;
@@ -43,20 +43,21 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
-  margin: 5px auto 10px; /* Center the button */
-  white-space: nowrap; /* Prevent text from wrapping into multiple lines */
+  margin: 5px auto 10px;
+  white-space: nowrap;
   display: block;
 }
 
 .transactions-management .add-button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
-  transform: scale(1.05); /* Slightly enlarge the button */
+  background-color: #0056b3;
+  transform: scale(1.05);
 }
 
 .transactions-management .add-button:focus {
-  outline: none; /* Remove focus outline */
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Light blue glow effect on focus */
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+
 .transactions-management h1 {
   padding: 15px;
   text-align: center;

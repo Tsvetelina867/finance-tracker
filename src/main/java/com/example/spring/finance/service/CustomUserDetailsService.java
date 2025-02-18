@@ -2,12 +2,14 @@ package com.example.spring.finance.service;
 
 import com.example.spring.finance.model.User;
 import com.example.spring.finance.repository.UserRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     public CustomUserDetailsService(UserRepository userRepository) {

@@ -10,10 +10,8 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    //TODO: go to application.properties and change secret key
     @Value("${jwt.secret}")
     private String secretKey;
-
 
     @Value("${jwt.expirationTime:86400000}")
     private long expirationTime;

@@ -1,4 +1,3 @@
-/* General Styles */
 .goal-card {
   background-color: #fff;
   border-radius: 8px;
@@ -23,6 +22,11 @@
 .goal-card-header h3 {
   font-size: 1.2rem;
   margin: 0;
+}
+
+
+.add-goal-button:hover {
+  background-color: #45a049;
 }
 
 .goal-card-status {
@@ -53,7 +57,6 @@
   margin: 20px;
 }
 
-/* Progress Bar */
 .goal-card .progress-bar {
   width: 100%;
   background-color: #e0e0e0;
@@ -69,7 +72,6 @@
   transition: width 0.3s ease-in-out;
 }
 
-/* Goal Card Footer */
 .goal-card-footer {
   padding: 10px;
   display: flex;

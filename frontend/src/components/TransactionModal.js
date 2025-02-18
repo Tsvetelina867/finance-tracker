@@ -9,14 +9,13 @@ const TransactionModal = ({ isOpen, onClose, onSave, transaction, currentAccount
   const [currency, setCurrency] = useState(currentAccount?.currency || '');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [type, setType] = useState('expense');
-  const [categories, setCategories] = useState([]);  // State for categories
+  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // Update the form fields when the modal opens
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const categoryList = await fetchAllCategories(); // Fetch categories
+        const categoryList = await fetchAllCategories();
         setCategories(categoryList);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -24,7 +23,7 @@ const TransactionModal = ({ isOpen, onClose, onSave, transaction, currentAccount
     };
 
     fetchCategories();
-  }, []); // ✅ This should be a standalone effect
+  }, []);
 
   useEffect(() => {
     if (transaction) {
@@ -34,27 +33,33 @@ const TransactionModal = ({ isOpen, onClose, onSave, transaction, currentAccount
       setDate(transaction.date ? new Date(transaction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
       setSelectedCategory(transaction.category || '');
     } else {
-      // If it's a new transaction, set default values
       setDescription('');
       setAmount('');
       setCurrency(currentAccount.currency || '');
-      setDate(new Date().toISOString().split('T')[0]); // ✅ Set today's date
+      setDate(new Date().toISOString().split('T')[0]);
       setSelectedCategory('');
     }
-  }, [transaction, currentAccount]); // ✅ This should be another standalone effect
+  }, [transaction, currentAccount]);
 
   useEffect(() => {
     if (currentAccount?.id) {
       fetchAllTransactions(currentAccount.id);
     }
-  }, [currentAccount]); // ✅ Another standalone effect
+  }, [currentAccount]);
 
-
-  // Handling save for updating transaction
   const handleSave = async () => {
+    if (!type) {
+      alert('Please select a transaction type.');
+      return;
+    }
     try {
+     if (amount < 0) {
+          console.error('❌ Amount cannot be negative');
+          alert('Amount cannot be negative');
+          return;
+        }
+
       if (transaction) {
-        // Editing existing transaction
         const updatedTransaction = {
           id: transaction.id,
           description,
@@ -68,32 +73,32 @@ const TransactionModal = ({ isOpen, onClose, onSave, transaction, currentAccount
 
         const updated = await updateTransaction(transaction.id, updatedTransaction);
         if (updated) {
-          onSave(); // Refresh list in parent component
-          fetchAllTransactions(currentAccount.id);  // Fetch updated transactions
+          onSave();
+          fetchAllTransactions(currentAccount.id);
         } else {
           console.error('❌ Error updating transaction');
         }
       } else {
         const newTransaction = {
                 description,
-                amount: parseFloat(amount), // Ensure amount is a number
+                amount: parseFloat(amount),
                 date,
                 type: type.toUpperCase(),
                 currency,
                 category: selectedCategory,
-                account: currentAccount, // Make sure you're passing the account ID
+                account: currentAccount,
               };
 
-              const addedTransaction = await addTransaction(newTransaction); // Call the API function
+              const addedTransaction = await addTransaction(newTransaction);
 
               if (addedTransaction) {
-                onSave(); // Refresh list in parent component
-                fetchAllTransactions(currentAccount.id); // Refresh the list
+                onSave();
+                fetchAllTransactions(currentAccount.id);
               } else {
                 console.error('❌ Error adding new transaction');
               }
     }
-     onClose(); // Close modal
+     onClose();
       } catch (error) {
         console.error('❌ Error saving transaction:', error);
       }
@@ -118,19 +123,25 @@ const TransactionModal = ({ isOpen, onClose, onSave, transaction, currentAccount
 
         <label>Type:</label>
         <select value={type} onChange={(e) => setType(e.target.value)}>
+        <option value="" disabled hidden>
+                  </option>
           <option value="income">Income</option>
           <option value="expense">Expense</option>
         </select>
 
         <label>Category:</label>
+
                 <select
                   value={selectedCategory ? selectedCategory.id : ''}
                   onChange={(e) => {
-                    const selectedCategoryId = Number(e.target.value);  // Convert to number if category.id is a number
-                    const category = categories.find(c => c.id === selectedCategoryId); // Find the full category object by id
-                    setSelectedCategory(category); // Set the full category object
+                    const selectedCategoryId = Number(e.target.value);
+                    const category = categories.find(c => c.id === selectedCategoryId);
+                    setSelectedCategory(category);
                   }}
                 >
+                <option value="" disabled hidden>
+
+                                  </option>
 
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>

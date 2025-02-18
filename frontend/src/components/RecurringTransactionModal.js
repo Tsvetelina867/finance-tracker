@@ -53,9 +53,19 @@ const RecurringTransactionModal = ({ isOpen, onClose, onSave, transaction, curre
     }, [currentAccount]);
 
  const handleSave = async () => {
+    if(!frequency) {
+    alert('Please select a transaction frequency.');
+        return;
+    }
+
      try {
+     if (amount < 0) {
+               console.error('❌ Amount cannot be negative');
+               alert('Amount cannot be negative');
+               return;
+             }
+
        if (transaction) {
-         // Editing existing transaction
          const updatedTransaction = {
            id: transaction.id,
            description,
@@ -70,33 +80,33 @@ const RecurringTransactionModal = ({ isOpen, onClose, onSave, transaction, curre
 
          const updated = await updateRecurringTransaction(transaction.id, updatedTransaction);
          if (updated) {
-           onSave(); // Refresh list in parent component
-           fetchRecurringTransactions(currentAccount.id);  // Fetch updated transactions
+           onSave();
+           fetchRecurringTransactions(currentAccount.id);
          } else {
            console.error('❌ Error updating transaction');
          }
        } else {
          const newTransaction = {
                  description,
-                 amount: parseFloat(amount), // Ensure amount is a number
+                 amount: parseFloat(amount),
                  currency,
                  startDate,
                  endDate,
                  frequency: frequency.toUpperCase(),
                  category: selectedCategory,
-                 account: currentAccount, // Make sure you're passing the account ID
+                 account: currentAccount,
                };
 
-               const addedTransaction = await addRecurringTransaction(newTransaction); // Call the API function
+               const addedTransaction = await addRecurringTransaction(newTransaction);
 
                if (addedTransaction) {
-                 onSave(); // Refresh list in parent component
-                 fetchRecurringTransactions(currentAccount.id); // Refresh the list
+                 onSave();
+                 fetchRecurringTransactions(currentAccount.id);
                } else {
                  console.error('❌ Error adding new transaction');
                }
      }
-      onClose(); // Close modal
+      onClose();
        } catch (error) {
          console.error('❌ Error saving transaction:', error);
        }
@@ -123,6 +133,8 @@ const RecurringTransactionModal = ({ isOpen, onClose, onSave, transaction, curre
         <input type="date" value={endDate || ''} onChange={(e) => setEndDate(e.target.value)} />
 
         <label>Frequency:</label>
+        <option value="" disabled hidden>
+                                  </option>
         <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
           <option value="Daily">Daily</option>
           <option value="Weekly">Weekly</option>
@@ -139,6 +151,9 @@ const RecurringTransactionModal = ({ isOpen, onClose, onSave, transaction, curre
             setSelectedCategory(category);
           }}
         >
+        <option value="" disabled hidden>
+
+                          </option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
