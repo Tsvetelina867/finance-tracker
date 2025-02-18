@@ -48,6 +48,10 @@ const TransactionModal = ({ isOpen, onClose, onSave, transaction, currentAccount
   }, [currentAccount]);
 
   const handleSave = async () => {
+    if (!type) {
+      alert('Please select a transaction type.');
+      return;
+    }
     try {
      if (amount < 0) {
           console.error('❌ Amount cannot be negative');
@@ -119,11 +123,14 @@ const TransactionModal = ({ isOpen, onClose, onSave, transaction, currentAccount
 
         <label>Type:</label>
         <select value={type} onChange={(e) => setType(e.target.value)}>
+        <option value="" disabled hidden>
+                  </option>
           <option value="income">Income</option>
           <option value="expense">Expense</option>
         </select>
 
         <label>Category:</label>
+
                 <select
                   value={selectedCategory ? selectedCategory.id : ''}
                   onChange={(e) => {
@@ -132,6 +139,9 @@ const TransactionModal = ({ isOpen, onClose, onSave, transaction, currentAccount
                     setSelectedCategory(category);
                   }}
                 >
+                <option value="" disabled hidden>
+
+                                  </option>
 
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>

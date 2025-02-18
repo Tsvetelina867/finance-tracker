@@ -219,7 +219,9 @@ const BudgetModification = () => {
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   required
                 >
-                  <option value="">Select a category</option>
+                  <option value="" disabled hidden>
+                      Select a category
+                    </option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}

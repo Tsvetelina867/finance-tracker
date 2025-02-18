@@ -28,8 +28,12 @@ export const fetchBudgetDetails = async (accountId) => {
 
         const budgetDetailsPromises = budgets.map(async (budget) => {
             const [progressResponse, exceededResponse] = await Promise.all([
-                axios.get(`${API_BASE_URL}/budgets/${budget.id}/progress`, { headers: requestHeaders(), credentials: 'include' }),
-                axios.get(`${API_BASE_URL}/budgets/${budget.id}/exceeded`, { headers: requestHeaders(), credentials: 'include' })
+                axios.get(`${API_BASE_URL}/budgets/${budget.id}/progress`,
+                    {
+                        headers: requestHeaders(), credentials: 'include' }),
+                        axios.get(`${API_BASE_URL}/budgets/${budget.id}/exceeded`,
+                     {
+                        headers: requestHeaders(), credentials: 'include' })
             ]);
 
             return {

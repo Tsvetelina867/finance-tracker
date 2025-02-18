@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/finance/transactions")
@@ -45,9 +46,10 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTransactionById(id));
     }
 
-    @GetMapping("/search")
-    public List<Transaction> searchTransactions(@RequestParam String keyword) {
-        return transactionService.searchTransactions(keyword);
+    @GetMapping("/summary")
+    public ResponseEntity<Map<String, Double>> getTransactionSummary(@RequestParam Long accountId) {
+        Map<String, Double> summary = transactionService.getTransactionSummary(accountId);
+        return ResponseEntity.ok(summary);
     }
 
     @PostMapping

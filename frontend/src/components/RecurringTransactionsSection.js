@@ -11,9 +11,10 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const calculateNextPaymentDate = (startDate, frequency, transactionEndDate) => {
-      let nextDate = new Date(startDate);
+    let nextDate = new Date(startDate);
+    const today = new Date();
 
-      // Add one period (this basic approach assumes you want the NEXT date from the start date)
+    while (nextDate < today) {
       switch (frequency) {
         case 'DAILY':
           nextDate.setDate(nextDate.getDate() + 1);
@@ -28,19 +29,20 @@ const RecurringTransactionsSection = ({ currentAccount }) => {
           nextDate.setFullYear(nextDate.getFullYear() + 1);
           break;
         default:
-          break;
-      }
-
-      // If there is an end date and the next payment date is after it, return null
-      if (transactionEndDate) {
-        const end = new Date(transactionEndDate);
-        if (nextDate > end) {
           return null;
-        }
       }
+    }
 
-      return nextDate;
-    };
+    if (transactionEndDate) {
+      const end = new Date(transactionEndDate);
+      if (nextDate > end) {
+        return null;
+      }
+    }
+
+    return nextDate;
+  };
+
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';

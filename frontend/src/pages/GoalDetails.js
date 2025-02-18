@@ -60,11 +60,9 @@ const GoalDetails = () => {
   };
 
   const handleSaveClick = async () => {
-  // Convert values to numbers for validation
       const targetAmount = parseFloat(updatedGoal.targetAmount);
       const currentAmount = parseFloat(updatedGoal.currentAmount);
 
-      // Validate that target and current amounts are non-negative
       if (isNaN(targetAmount) || isNaN(currentAmount)) {
         alert("Please enter valid numbers for the amounts.");
         return;
@@ -89,7 +87,6 @@ const GoalDetails = () => {
   const handleAddFunds = () => {
     const amount = parseFloat(amountToAdd);
 
-    // Check if the amount is a valid positive number
     if (isNaN(amount) || amount <= 0) {
       alert("Please enter a valid positive amount.");
       return;

@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Register from './pages/Register';
@@ -17,7 +16,6 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Root route: immediately redirect based on auth */}
         <Route
           path="/"
           element={
@@ -25,11 +23,9 @@ const App = () => {
           }
         />
 
-        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
@@ -71,10 +67,9 @@ const App = () => {
           }
         />
 
-        {/* Catch-all: Redirect to root which will then redirect appropriately */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </Router>
+     </Router>
   );
 };
 

@@ -53,6 +53,11 @@ const RecurringTransactionModal = ({ isOpen, onClose, onSave, transaction, curre
     }, [currentAccount]);
 
  const handleSave = async () => {
+    if(!frequency) {
+    alert('Please select a transaction frequency.');
+        return;
+    }
+
      try {
      if (amount < 0) {
                console.error('❌ Amount cannot be negative');
@@ -128,6 +133,8 @@ const RecurringTransactionModal = ({ isOpen, onClose, onSave, transaction, curre
         <input type="date" value={endDate || ''} onChange={(e) => setEndDate(e.target.value)} />
 
         <label>Frequency:</label>
+        <option value="" disabled hidden>
+                                  </option>
         <select value={frequency} onChange={(e) => setFrequency(e.target.value)}>
           <option value="Daily">Daily</option>
           <option value="Weekly">Weekly</option>
@@ -144,6 +151,9 @@ const RecurringTransactionModal = ({ isOpen, onClose, onSave, transaction, curre
             setSelectedCategory(category);
           }}
         >
+        <option value="" disabled hidden>
+
+                          </option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}

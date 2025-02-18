@@ -13,6 +13,8 @@ import TransactionsSection from '../components/TransactionSection';
 import RecurringTransactionsSection from '../components/RecurringTransactionsSection';
 import BudgetProgress from '../components/BudgetProgress';
 import GoalsProgress from '../components/GoalsProgress';
+import SpendingChart from "../components/SpendingChart";
+import useTransactionData from "../api/useTransactionData";
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
@@ -59,14 +61,14 @@ const Dashboard = () => {
       setCurrentUser(userData);
     } catch (error) {
       console.error('Error fetching user data:', error);
-    }
-  };
+      }
+    };
 
   useEffect(() => {
     if (!user) {
       fetchUserData();
     }
-}, [user]);
+  }, [user]);
 
    useEffect(() => {
      const fetchData = async () => {
@@ -169,7 +171,10 @@ const Dashboard = () => {
   };
 
   const handleAddCategory = async () => {
-    if (!currentAccount || newCategoryName.trim() === '') return;
+    if (newCategoryName.trim() === '') {
+        alert('Category name cannot be empty.');
+        return;
+      }
     try {
       const addedCategory = await addCategory({
         name: newCategoryName,
@@ -230,7 +235,6 @@ const Dashboard = () => {
     setCategoriesPopupOpen(!isCategoriesPopupOpen);
   };
 
-
   useEffect(() => {
     fetchTransactions();
   }, [startDate, endDate]);
@@ -262,6 +266,8 @@ const Dashboard = () => {
   const handleGoalAdded = (newGoal) => {
     setGoalsData((prevGoals) => [...prevGoals, newGoal]);
   };
+
+  const transactionData = useTransactionData(currentAccount ? currentAccount.id : null);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -314,6 +320,14 @@ const Dashboard = () => {
             </p>
             <RecurringTransactionsSection currentAccount={currentAccount} />
           </div>
+
+          <div className="spending-chart-container">
+            <h2 className="chart-title">Spending Over Time (Regular Transactions)</h2>
+            <div className="chart-wrapper">
+              <SpendingChart data={transactionData} />
+            </div>
+          </div>
+
         </div>
 
         <div className="dashboard-right">

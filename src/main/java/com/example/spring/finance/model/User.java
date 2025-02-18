@@ -30,6 +30,6 @@ public class User {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")  // Ensure a default value
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
     private boolean enabled = true;
 }
