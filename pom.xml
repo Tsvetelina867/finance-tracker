@@ -8,7 +8,7 @@
 		<version>3.4.0</version>
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>spring</artifactId>
+	<artifactId>finance-tracker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spring</name>
 	<description>Spring boot for finance tracker</description>
@@ -62,9 +62,8 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<version>3.18.1</version>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
 		</dependency>
 
 
