@@ -40,6 +40,8 @@ const Dashboard = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+  const userId = currentUser ? currentUser.id : null;
+
 
   const handleLogout = () => {
     setLogoutModalOpen(true);
@@ -178,7 +180,7 @@ const Dashboard = () => {
     try {
       const addedCategory = await addCategory({
         name: newCategoryName,
-        accountId: currentAccount.id,
+        userId: currentUser.id,
       });
       setCategories([...categories, addedCategory]);
       setNewCategoryName('');
@@ -288,11 +290,14 @@ const Dashboard = () => {
       />
 
       <div className="dashboard-header">
-         <h2>Account: {accounts.length > 0 ? `${accounts[0].name}`
-  : (
-                            <p>No accounts available. Please add an account from the Profile page.</p>
-                          )}</h2>
-         <h2>Balance: {currentAccount ? `${currentAccount.balance} ${currentAccount.currency}` : "No balance available"}</h2>
+         {currentAccount ? (
+             <>
+               <h2>Account: {currentAccount.name}</h2>
+               <h2>Balance: {currentAccount.balance} {currentAccount.currency}</h2>
+             </>
+           ) : (
+             <p>No accounts available. Please add an account from the Profile page.</p>
+           )}
       </div>
 
       <div className="dashboard-main">
