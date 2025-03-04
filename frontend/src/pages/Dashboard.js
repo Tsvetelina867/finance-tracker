@@ -306,9 +306,9 @@ const Dashboard = () => {
             <div className="widget total-spending-widget">
               <h2 className="widget-title">Total Spending</h2>
               <p className="total-spending-amount">
-                ${Array.isArray(transactionsData)
+                {Array.isArray(transactionsData)
                   ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0).toFixed(2)
-                  : 0}
+                  : 0} {currentAccount.currency}
               </p>
             </div>
 
@@ -321,7 +321,7 @@ const Dashboard = () => {
           <div className="widget-recurring">
             <h2>Recurring Spending</h2>
             <p>
-              ${recurringTransactionsData.reduce((acc, transaction) => acc + transaction.amount, 0)}
+              {recurringTransactionsData.reduce((acc, transaction) => acc + transaction.amount, 0)} {currentAccount.currency}
             </p>
             <RecurringTransactionsSection currentAccount={currentAccount} />
           </div>
