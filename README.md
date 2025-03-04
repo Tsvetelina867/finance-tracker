@@ -15,6 +15,15 @@ This is a **Personal Finance Tracker Application** designed to help users track 
 
 ---
 
+## Project Dashboard
+
+Here is a screenshot of the project dashboard:
+
+![Dashboard Screenshot 1](screenshots/dashboard1.png)
+
+![Dashboard Screenshot 2](screenshots/dashboard2.png)
+
+---
 
 ## Technologies Used
 ### Frontend
