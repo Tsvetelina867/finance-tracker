@@ -290,14 +290,14 @@ const Dashboard = () => {
       />
 
       <div className="dashboard-header">
-         {currentAccount ? (
-             <>
-               <h2>Account: {currentAccount.name}</h2>
-               <h2>Balance: {currentAccount.balance} {currentAccount.currency}</h2>
-             </>
-           ) : (
-             <p>No accounts available. Please add an account from the Profile page.</p>
-           )}
+        {currentAccount ? (
+          <>
+            <h2>Account: {currentAccount.name}</h2>
+            <h2>Balance: {currentAccount.balance} {currentAccount.currency}</h2>
+          </>
+        ) : (
+          <p>No accounts available. Please add an account from the Profile page.</p>
+        )}
       </div>
 
       <div className="dashboard-main">
@@ -306,9 +306,15 @@ const Dashboard = () => {
             <div className="widget total-spending-widget">
               <h2 className="widget-title">Total Spending</h2>
               <p className="total-spending-amount">
-                {Array.isArray(transactionsData)
-                  ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0).toFixed(2)
-                  : 0} {currentAccount.currency}
+                {currentAccount ? (
+                  <>
+                    {Array.isArray(transactionsData)
+                      ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0).toFixed(2)
+                      : 0} {currentAccount.currency}
+                  </>
+                ) : (
+                  "No account selected"
+                )}
               </p>
             </div>
 
@@ -321,9 +327,15 @@ const Dashboard = () => {
           <div className="widget-recurring">
             <h2>Recurring Spending</h2>
             <p>
-              {recurringTransactionsData.reduce((acc, transaction) => acc + transaction.amount, 0)} {currentAccount.currency}
+              {currentAccount ? (
+                <>
+                  {recurringTransactionsData.reduce((acc, transaction) => acc + transaction.amount, 0)} {currentAccount.currency}
+                </>
+              ) : (
+                "No account selected"
+              )}
             </p>
-            <RecurringTransactionsSection currentAccount={currentAccount} />
+            {currentAccount && <RecurringTransactionsSection currentAccount={currentAccount} />}
           </div>
 
           <div className="spending-chart-container">

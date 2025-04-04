@@ -61,7 +61,7 @@ const BudgetModification = () => {
       endDate: budget.endDate ? new Date(budget.endDate).toISOString().split('T')[0] : '',
       category: budget.category ? budget.category.id : '',
       budgetLimit: budget.budgetLimit || '',
-      currentSpending: budget.currentSpending ?? 0,
+      currentSpending: budget.currentSpending || 0,
       description: budget.description || '',
     });
   };
@@ -80,8 +80,8 @@ const BudgetModification = () => {
       };
 
       if (formData.id) {
-        await updateBudget(formData.id, budgetData);
-        setBudgets(budgets.map(b => b.id === formData.id ? { ...b, ...budgetData } : b));
+        const updatedBudget = await updateBudget(formData.id, budgetData);
+        setBudgets(budgets.map(b => b.id === formData.id ? updatedBudget : b));
       } else {
         const addedBudget = await addBudget(budgetData);
         if (addedBudget) {
@@ -103,6 +103,7 @@ const BudgetModification = () => {
       console.error('Error adding or updating budget:', error);
     }
   };
+
 
   const handleDelete = async (budgetId) => {
     if (window.confirm('Are you sure you want to delete this budget?')) {
