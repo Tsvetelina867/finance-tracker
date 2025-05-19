@@ -52,22 +52,19 @@ Follow these steps to set up the project locally:
    git clone https://github.com/Tsvetelina867/finance-tracker.git
 2. Navigate to the project directory:
    cd finance-tracker
-3. Configure the database:
-- Create a MySQL database named *finance_db*.
-- Update the application.properties file with your database credentials:
-spring.datasource.url=jdbc:mysql://localhost:3306/finance_db
-spring.datasource.username=your-username
-spring.datasource.password=your-password
+3. Configure your environment variables (see Environment Variables below).
+4. Update src/main/resources/application.properties or provide environment variables with your DB credentials and API keys.
 
-4. Build the backend using the Maven Wrapper
-- On Windows:
-mvnw.cmd clean install
-- On macOS/Linux:
-./mvnw clean install
-5. Run the backend application
-- On Windows: mvnw.cmd spring-boot:run
-- On macOS/Linux: ./mvnw spring-boot:run
+5. Build and run the backend:
+Windows:
+``mvnw.cmd clean install
+mvnw.cmd spring-boot:run``
 
+macOS/Linux:
+``./mvnw clean install
+./mvnw spring-boot:run``
+
+Backend runs on http://localhost:8080 by default.
 
 ---
 
@@ -83,7 +80,22 @@ npm start
 
 
 ----
+## Environment Variables
 
+Before running the backend, configure the following environment variables to connect your database, set security keys, and API keys:
+
+| Variable Name      | Purpose                                 | Default Value or Example                                                                                 |
+|--------------------|-----------------------------------------|----------------------------------------------------------------------------------------------------------|
+| `DB_URL`           | MySQL JDBC connection URL                | `jdbc:mysql://localhost:3306/finance_tracker?allowPublicKeyRetrieval=true&useSSL=false`                   |
+| `DB_USERNAME`      | MySQL username                          | `root`                                                                                                   |
+| `DB_PASSWORD`      | MySQL password                          | *(empty by default)*                                                                                      |
+| `JWT_SECRET`       | Secret key used to sign JWT tokens      | `changeme`                                                                                               |
+| `JWT_EXPIRATION`   | JWT token expiration time in milliseconds | `2592000000` (30 days)                                                                                   |
+| `EXCHANGE_API_BASE`| Base URL for currency exchange API      | `https://api.freecurrencyapi.com/v1/latest`                                                              |
+| `EXCHANGE_API_KEY` | API key for currency exchange API       | `demo_key`                                                                                               |
+
+
+----
 
 ## API Documentation
 The backend API is documented using Swagger. After running the backend, you can access the API documentation at: http://localhost:8080/swagger-ui.html  
