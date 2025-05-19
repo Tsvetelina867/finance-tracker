@@ -11,7 +11,6 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -38,6 +37,11 @@ public class Goal {
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private User user;
+
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     public BigDecimal getProgress() {
         return this.currentAmount.divide(this.targetAmount, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));

@@ -3,8 +3,8 @@ package com.example.spring.finance.service;
 import com.example.spring.finance.dtos.RegistrationRequest;
 import com.example.spring.finance.model.User;
 import com.example.spring.finance.repository.UserRepository;
+import com.example.spring.finance.util.InvalidCredentialsException;
 import com.example.spring.finance.util.JwtUtil;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,13 +24,15 @@ public class AuthService {
 
     public String loginUser(String username, String password) {
         Optional<User> userOptional = userRepository.findByUsername(username);
-        if (userRepository.findByUsername(username).isEmpty()) {
-            return "Invalid username or password";
+
+        if (userOptional.isEmpty()) {
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
         User user = userOptional.get();
+
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            return "Invalid username or password";
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
         String token = jwtUtil.generateToken(user.getUsername());

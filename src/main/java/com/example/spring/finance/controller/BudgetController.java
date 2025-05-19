@@ -1,9 +1,10 @@
 package com.example.spring.finance.controller;
 
+import com.example.spring.finance.dtos.AccountDTO;
 import com.example.spring.finance.dtos.BudgetDTO;
+import com.example.spring.finance.dtos.CategoryDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Budget;
-import com.example.spring.finance.repository.BudgetRepository;
 import com.example.spring.finance.service.BudgetService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -11,16 +12,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/finance/budgets")
+@CrossOrigin(origins = "http://localhost:3000")
 public class BudgetController {
     private final BudgetService budgetService;
 
 
     public BudgetController(BudgetService budgetService) {
         this.budgetService = budgetService;
+    }
+
+    @GetMapping("/{accountId}/single")
+    public ResponseEntity<BudgetDTO> getBudgetForAccount(@PathVariable Long accountId) {
+        BudgetDTO budget = budgetService.getBudgetByAccountId(accountId);
+        return ResponseEntity.ok(budget);
+    }
+    @GetMapping("/{accountId}")
+    public ResponseEntity<List<BudgetDTO>> getBudgetsForAccount(@PathVariable Long accountId) {
+        List<BudgetDTO> budgets = budgetService.getBudgetsByAccountId(accountId);
+        return ResponseEntity.ok(budgets);
     }
 
     @GetMapping("/{budgetId}/progress")
@@ -47,13 +60,23 @@ public class BudgetController {
         Budget budget = budgetService.updateBudget(id, updatedBudgetDTO);
 
         BudgetDTO responseDTO = new BudgetDTO(
+                budget.getId(),
                 budget.getDescription(),
                 budget.getBudgetLimit(),
                 budget.getCurrentSpending(),
                 budget.getStartDate(),
                 budget.getEndDate(),
-                budget.getCategory() != null ? budget.getCategory().getId() : null,
-                budget.getAccount().getId(),
+                new CategoryDTO(
+                        budget.getCategory().getId(),
+                        budget.getCategory().getName()
+                ),
+                new AccountDTO(
+                        budget.getAccount().getId(),
+                        budget.getAccount().getName(),
+                        budget.getAccount().getBalance(),
+                        budget.getAccount().getCurrency(),
+                        budget.getAccount().getType().toString()
+                ),
                 new UserDTO(
                         budget.getUser().getId(),
                         budget.getUser().getUsername(),

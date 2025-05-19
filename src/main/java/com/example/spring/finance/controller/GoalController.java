@@ -1,5 +1,6 @@
 package com.example.spring.finance.controller;
 
+import com.example.spring.finance.dtos.AccountDTO;
 import com.example.spring.finance.dtos.GoalDTO;
 import com.example.spring.finance.dtos.UserDTO;
 import com.example.spring.finance.model.Goal;
@@ -10,14 +11,56 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/finance/goals")
+@CrossOrigin(origins = "http://localhost:3000")
 public class GoalController {
     private final GoalService goalService;
 
     public GoalController(GoalService goalService) {
         this.goalService = goalService;
+    }
+
+    @GetMapping("/past")
+    public ResponseEntity<List<Goal>> getPastGoals() {
+        List<Goal> pastGoals = goalService.getPastGoals();
+        return ResponseEntity.ok(pastGoals);
+    }
+
+    @GetMapping("/{goalId}/status")
+    public ResponseEntity<String> getGoalStatus(@PathVariable Long goalId) {
+        String status = goalService.getGoalStatus(goalId);
+        return ResponseEntity.ok(status);
+    }
+
+    @GetMapping("/{goalId}/estimate-completion")
+    public ResponseEntity<String> getEstimatedCompletionTime(@PathVariable Long goalId) {
+        String timeEstimate = goalService.estimateCompletionTime(goalId);
+        return ResponseEntity.ok(timeEstimate);
+    }
+
+    @PutMapping("/{goalId}/boost")
+    public ResponseEntity<Void> boostGoalProgress(@PathVariable Long goalId, @RequestParam BigDecimal contribution) {
+        goalService.boostGoalProgress(goalId, contribution);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("account/{accountId}")
+    public ResponseEntity<List<GoalDTO>> getGoalsByAccountId(@PathVariable Long accountId) {
+        List<GoalDTO> goals = goalService.getGoalsByAccountId(accountId);
+        return ResponseEntity.ok(goals);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GoalDTO> getGoalById(@PathVariable Long id) {
+        GoalDTO goalDTO = goalService.getGoalById(id);
+        if (goalDTO != null) {
+            return ResponseEntity.ok(goalDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @GetMapping("/{goalId}/progress")
@@ -43,6 +86,7 @@ public class GoalController {
         Goal goal = goalService.updateGoal(id, goalDTO);
 
         GoalDTO responseDTO = new GoalDTO(
+                goal.getId(),
                 goal.getName(),
                 goal.getTargetAmount(),
                 goal.getCurrentAmount(),
@@ -51,7 +95,15 @@ public class GoalController {
                         goal.getUser().getId(),
                         goal.getUser().getUsername(),
                         goal.getUser().getEmail()
+                ),
+                new AccountDTO(
+                        goal.getAccount().getId(),
+                        goal.getAccount().getName(),
+                        goal.getAccount().getBalance(),
+                        goal.getAccount().getCurrency(),
+                        goal.getAccount().getType().toString()
                 )
+
         );
 
         return ResponseEntity.ok(responseDTO);

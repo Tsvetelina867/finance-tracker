@@ -1,0 +1,178 @@
+.transactions-management {
+  max-height: 700px;
+  width: 800px;
+  margin: auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
+  overflow-y: auto;
+}
+
+.transactions-management .back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 10px;
+  max-width: 220px;
+  background-color: #007bff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.transactions-management .back-button:hover {
+  background-color: #0056b3;
+}
+
+.transactions-management .small-button {
+  font-size: 16px;
+  padding: 10px 20px;
+}
+
+.transactions-management .add-button {
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: 5px auto 10px;
+  white-space: nowrap;
+  display: block;
+}
+
+.transactions-management .add-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.transactions-management .add-button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.transactions-management h1 {
+  padding: 15px;
+  text-align: center;
+}
+
+.transactions-management .transaction-list li,
+.transactions-management .recurring-transaction-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s, transform 0.3s;
+  max-width: 730px;
+  margin-left: 10px;
+}
+
+.transactions-management .transaction-list li:hover,
+.transactions-management .recurring-transaction-list li:hover {
+  background: #e0f7fa;
+  transform: scale(1.02);
+}
+
+.transactions-management .transaction-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.transactions-management .transaction-header {
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+  flex: 1;
+}
+
+.transactions-management .transaction-details {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.transactions-management .transaction-date {
+  font-size: 14px;
+  color: #888;
+}
+
+.transactions-management .transaction-amount {
+  font-size: 16px;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.transactions-management .transaction-frequency {
+  font-size: 14px;
+  color: #777;
+}
+
+
+.transactions-management .button-container button.edit-button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  min-width: 100px;
+  transition: background 0.3s;
+  margin-right: 10px;
+}
+
+.transactions-management .button-container button.edit-button:hover {
+  background: #218838;
+}
+
+.transactions-management .button-container button.delete-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  min-width: 100px;
+  transition: background 0.3s;
+}
+
+.transactions-management .button-container button.delete-button:hover {
+  background: #c82333;
+}
+
+.transactions-management .tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.transactions-management .tabs button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+  background: #f0f0f0;
+}
+
+.transactions-management .tabs button.active {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+}

@@ -11,15 +11,14 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class BudgetDTO {
+    private Long id;
     private String description;
     private BigDecimal budgetLimit;
     private BigDecimal currentSpending;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Long categoryId;
-    private Long accountId;
+    private CategoryDTO category;
+    private AccountDTO account;
     private UserDTO user;
-
-
 
 }

@@ -1,0 +1,83 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333333;
+}
+
+.navbar .navbar-left {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.navbar .navbar-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.navbar .navbar-left button,
+.navbar .navbar-right button {
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  width: auto;
+  white-space: nowrap;
+}
+
+.navbar .switch-account-btn {
+  background-color: #FF9800;
+  color: white;
+}
+
+.navbar .dropdown-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  z-index: 1000;
+  width: 150px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar  .dropdown-menu li {
+  cursor: pointer;
+  padding: 5px 10px;
+  borderBottom: 1px solid #ddd;
+  transition: background 0.3s;
+}
+
+ .navbar .dropdown-menu li:hover {
+  background: #f0f0f0;
+}
+
+.navbar .profile-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.navbar .manage-transactions-button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  background-color: purple;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.navbar .navbar-right button {
+  background-color: #f44336;
+  color: white;
+}
+
+.navbar .navbar-left button:hover,
+.navbar .navbar-right button:hover {
+  opacity: 0.8;
+}

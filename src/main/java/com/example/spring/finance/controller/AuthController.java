@@ -3,17 +3,16 @@ package com.example.spring.finance.controller;
 import com.example.spring.finance.dtos.LoginRequest;
 import com.example.spring.finance.dtos.RegistrationRequest;
 import com.example.spring.finance.service.AuthService;
+import com.example.spring.finance.util.AuthResponse;
 import com.example.spring.finance.util.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
@@ -27,12 +26,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        String result = authService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
+        String token = authService.loginUser(loginRequest.getUsername(), loginRequest.getPassword());
 
-        if (result.startsWith("Bearer")) {
-            return ResponseEntity.ok(result);
+        if (token != null) {
+            return ResponseEntity.ok(new AuthResponse(token));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid credentials");
         }
     }
     @PostMapping("/register")
@@ -40,9 +39,9 @@ public class AuthController {
         String result = authService.registerUser(registrationRequest);
 
         if (result.contains("successfully")) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(result); // 201 status for successful registration
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result); // 400 status for errors
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
         }
     }
 }

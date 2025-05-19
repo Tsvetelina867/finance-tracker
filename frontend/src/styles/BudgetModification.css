@@ -1,0 +1,244 @@
+.modify-budget-container {
+  max-width: 1200px;
+  max-height: 95vh;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.modify-budget-container h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modify-budget-container h3 {
+  margin-top: 60px;
+}
+
+.budget-form {
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.budget-form h3 {
+  margin-top: 10px;
+  margin-bottom: 15px;
+  font-size: 22px;
+  color: #444;
+}
+
+.budget-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 50px;
+}
+
+.budget-item {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.budget-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modify-budget-container .add-btn {
+  margin-top: 20px;
+}
+
+.modify-budget-container .form-group label {
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #555;
+  margin-right: 10px;
+}
+
+.modify-budget-container .form-group input,
+.modify-budget-container .form-group select,
+.modify-budget-container .form-group textarea {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  width: 100%;
+  transition: border-color 0.3s;
+}
+
+.modify-budget-container .form-group input[type="date"] {
+  max-width: 180px;
+}
+
+.modify-budget-container .form-group input:focus,
+.modify-budget-container .form-group select:focus,
+.modify-budget-container .form-group textarea:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+.modify-budget-container .submit-btn,
+.modify-budget-container .add-btn,
+.modify-budget-container .cancel-btn {
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.modify-budget-container .submit-btn,
+.modify-budget-container .add-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.modify-budget-container .submit-btn:hover,
+.modify-budget-container .add-btn:hover {
+  background-color: #45a049;
+}
+
+.modify-budget-container .cancel-btn {
+  background-color: #ff4500;
+  color: white;
+}
+
+.modify-budget-container .cancel-btn:hover {
+  background-color: #e63c00;
+}
+
+.modify-budget-container .budget-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 30px;
+}
+.modify-budget-container .back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  max-width: 490px;
+}
+
+.modify-budget-container .back-button:hover {
+  background-color: #0056b3;
+}
+
+.modify-budget-container .budget-item {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.modify-budget-container .budget-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modify-budget-container .budget-details {
+  flex: 1;
+  gap:15px;
+}
+
+.modify-budget-container .budget-details strong {
+  font-size: 18px;
+  color: #333;
+}
+
+.modify-budget-container .budget-details em {
+  color: #666;
+}
+
+.modify-budget-container .progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.modify-budget-container .progress {
+  height: 100%;
+  background-color: #4CAF50;
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+.modify-budget-container .budget-description {
+  margin-top: 10px;
+  font-style: italic;
+  color: #777;
+}
+
+.modify-budget-container .actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modify-budget-container .actions label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #555;
+}
+
+.modify-budget-container .actions button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.modify-budget-container .edit-btn {
+  background-color: #ffa500;
+  color: white;
+}
+
+.modify-budget-container .delete-btn {
+  background-color: #ff4500;
+  color: white;
+}
+
+.modify-budget-container .delete-btn:hover,
+.modify-budget-container .edit-btn:hover {
+  opacity: 0.8;
+}
+
+.modify-budget-container .loading {
+  text-align: center;
+  font-size: 20px;
+  color: #333;
+}

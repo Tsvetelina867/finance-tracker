@@ -1,0 +1,93 @@
+.goal-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 99999;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.goal-modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  transform: translateY(-50px);
+}
+
+.goal-modal-content h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.goal-modal-content input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.3s ease;
+}
+
+.goal-modal-content input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.goal-modal label {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 5px;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.goal-modal button {
+  width: 100%;
+  padding: 12px 15px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: black;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.goal-modal button:first-child {
+  background-color: #28a745;
+}
+
+.goal-modal button:first-child:hover {
+  background-color: #218838;
+}
+
+.goal-modal button:last-child {
+  background-color: #dc3545;
+}
+
+.goal-modal button:last-child:hover {
+  background-color: #c82333;
+}
+
+.goal-modal .modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.goal-modal .modal-content.show {
+  transform: translateY(0);
+}

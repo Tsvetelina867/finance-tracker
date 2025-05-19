@@ -1,0 +1,121 @@
+.goal-details-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: 700px;
+  margin: auto;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.goal-details-container .back-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  align-self: flex-start;
+}
+
+.goal-details-container .goal-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  overflow-y: auto;
+  flex: unset;
+}
+
+.goal-details-container .goal-info p {
+  font-size: 20px;
+  margin: 15px 0;
+}
+
+.goal-details-container input {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  margin-top: 5px;
+}
+
+.goal-details-container .progress-container {
+  margin-top: 20px;
+}
+
+.goal-details-container .progress-container label {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.goal-details-container .progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.goal-details-container .progress-fill {
+  height: 100%;
+  background: #4caf50;
+  transition: width 0.4s ease-in-out;
+}
+
+.goal-details-container .goal-actions {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.goal-details-container button {
+  padding: 14px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.add-goal-button {
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  margin-top: 15px;
+}
+
+.goal-details-container .edit-button {
+  background: #ffc107;
+  color: black;
+}
+
+.goal-details-container .save-button {
+  background: #28a745;
+  color: white;
+}
+
+.goal-details-container .cancel-button {
+  background: #dc3545;
+  color: white;
+}
+
+.goal-details-container .mark-achieved-button {
+  background: #17a2b8;
+  color: white;
+}

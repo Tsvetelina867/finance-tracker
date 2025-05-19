@@ -1,0 +1,510 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+
+.dashboard-container .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard-container .modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.dashboard-container .modal-content button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #f5a623;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.dashboard-container .modal-content button:hover {
+  background-color: #e5941d;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.dashboard-container .dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f1f1f1;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.dashboard-container .dashboard-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.dashboard-container .dashboard-main {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.dashboard-container .dashboard-left, .dashboard-container .dashboard-right {
+  width: 48%;
+}
+
+.dashboard-container .transactions-navigation {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.dashboard-container .transactions-button {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dashboard-container .transactions-button:hover {
+  background-color: #45a049;
+}
+
+.dashboard-container .widget-recurring {
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  width: 100%;
+  max-width: 900px;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-container .widget-recurring:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-container .widget-recurring h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.dashboard-container .widget-recurring p {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #4caf50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.dashboard-container .widget-recurring .recurring-transactions-section {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.dashboard-container .widget-recurring .recurring-transactions-section h2 {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.dashboard-container .widget-recurring .view-past-transactions-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-container .widget-recurring .view-past-transactions-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+.dashboard-container .widget-recurring .date-picker-container {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: space-between;
+}
+
+.dashboard-container .widget-recurring .submit-date-range-btn {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.dashboard-container .widget-recurring .submit-date-range-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+.dashboard-container .widget {
+  background-color: #ffffff;
+  padding: 15px;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.dashboard-container .widget-container {
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.dashboard-container .widget-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dashboard-container .total-spending-widget {
+  background-color: #eafaf0;
+  border-left: 6px solid #4caf50;
+}
+
+.dashboard-container .total-spending-amount {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #4caf50;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.dashboard-container .transactions-widget {
+  background-color: #f9f9f9;
+  border-left: 6px solid #2196f3;
+}
+
+.dashboard-container .widget p {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.dashboard-container .transaction-list li {
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-container .transaction-list li:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-container .transaction-list li span {
+  font-weight: 600;
+  color: #333;
+}
+
+.dashboard-container .transaction-list li .amount {
+  color: #4caf50;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dashboard-container .transaction-list li:hover .amount {
+  color: #388e3c;
+}
+
+.dashboard-container .transaction-list li:hover span {
+  color: #2c2c2c;
+}
+
+.floating-manage-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #f5a623;
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  z-index: 999;
+}
+
+.floating-manage-btn.scroll-inactive {
+  opacity: 0.6;
+}
+
+.floating-manage-btn:hover {
+  background-color: #0056b3;
+}
+
+.floating-manage-btn:focus {
+  outline: none;
+}
+
+.close-popup-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  color: #333;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-popup-btn:hover {
+  color: red;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.categories-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.categories-popup-content {
+  position: relative;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #f7f8fc, #ffffff);
+  transition: all 0.3s ease-in-out;
+}
+
+.categories-popup-content:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.category-input-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.category-input-container input {
+  padding: 12px 16px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  width: 70%;
+  transition: border-color 0.3s ease;
+}
+
+.category-input-container input:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 15px;
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+  padding: 15px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-item:hover {
+  background-color: #f0f0f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.category-item span {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+  transform: scale(1.05);
+}
+
+.edit-button {
+  background-color: purple;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-right: 10px;
+}
+
+.edit-button:hover {
+  transform: scale(1.05);
+}
+
+.add-category-btn {
+  padding: 12px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 15px;
+}
+
+.save-edit-btn, .cancel-edit-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.save-edit-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.save-edit-btn:hover {
+  background-color: #45a049;
+}
+
+.cancel-edit-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.cancel-edit-btn:hover {
+  background-color: #e53935;
+}
+
+.add-category-btn:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.category-item input {
+  padding: 12px 16px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 70%;
+    transition: border-color 0.3s ease;
+}
+
+.spending-chart-container {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.chart-title {
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.chart-wrapper {
+  height: 300px;
+  width: 100%;
+  position: relative;
+}
+
