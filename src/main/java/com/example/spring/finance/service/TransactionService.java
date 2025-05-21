@@ -65,6 +65,15 @@ public class TransactionService {
         }
         transaction.setCurrency(transaction.getAccount().getCurrency());
 
+        Account account = transaction.getAccount();
+        if (transaction.getType() == FlowType.INCOME) {
+            account.setBalance(account.getBalance().add(transaction.getAmount()));
+        } else if (transaction.getType() == FlowType.EXPENSE) {
+            account.setBalance(account.getBalance().subtract(transaction.getAmount()));
+        }
+        accountRepository.save(account);
+
+
         return transactionRepository.save(transaction);
     }
 
@@ -78,21 +87,22 @@ public class TransactionService {
         transaction.setType(FlowType.valueOf(updatedTransactionDTO.getType()));
         transaction.setCurrency(updatedTransactionDTO.getCurrency());
 
-        if (updatedTransactionDTO.getCategory() != null && updatedTransactionDTO.getCategory().getName() != null) {
-            Category category = categoryRepository.findByName(updatedTransactionDTO.getCategory().getName())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+        if (updatedTransactionDTO.getCategory() != null && updatedTransactionDTO.getCategory().getId() != null) {
+            Category category = categoryRepository.findById(updatedTransactionDTO.getCategory().getId())
+                    .orElseThrow(() -> new RuntimeException("Category not found with ID: " + updatedTransactionDTO.getCategory().getId()));
             transaction.setCategory(category);
         } else {
             transaction.setCategory(null);
         }
 
-        if (updatedTransactionDTO.getAccount() != null && updatedTransactionDTO.getAccount().getName() != null) {
-            Account account = accountRepository.findByName(updatedTransactionDTO.getAccount().getName())
-                    .orElseThrow(() -> new RuntimeException("Account not found"));
+        if (updatedTransactionDTO.getAccount() != null && updatedTransactionDTO.getAccount().getId() != null) {
+            Account account = accountRepository.findById(updatedTransactionDTO.getAccount().getId())
+                    .orElseThrow(() -> new RuntimeException("Account not found with ID: " + updatedTransactionDTO.getAccount().getId()));
             transaction.setAccount(account);
         } else {
             throw new RuntimeException("Account cannot be null.");
         }
+
 
         return transactionRepository.save(transaction);
     }
@@ -127,10 +137,6 @@ public class TransactionService {
 
     public void deleteTransaction(Long id) {
         this.transactionRepository.deleteById(id);
-    }
-
-    public List<Transaction> searchTransactions(String keyword) {
-        return transactionRepository.searchTransactions(keyword);
     }
 
     private BigDecimal convertToAccountCurrency(Transaction transaction) {

@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface GoalRepository extends JpaRepository<Goal, Long> {
     List<Goal> findByAccountId(Long accountId);
-    List<Goal> findByDeadlineBefore(LocalDate date);
+    List<Goal> findByUserIdAndDeadlineBefore(Long id, LocalDate date);
 }

@@ -24,8 +24,13 @@ public class GoalController {
     }
 
     @GetMapping("/past")
-    public ResponseEntity<List<Goal>> getPastGoals() {
-        List<Goal> pastGoals = goalService.getPastGoals();
+    public ResponseEntity<List<Goal>> getPastGoals(@RequestParam(required = false) Long userId) {
+        List<Goal> pastGoals;
+        if (userId != null) {
+            pastGoals = goalService.getPastGoals(userId);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         return ResponseEntity.ok(pastGoals);
     }
 

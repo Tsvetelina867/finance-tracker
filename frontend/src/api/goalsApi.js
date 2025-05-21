@@ -88,7 +88,6 @@ export const updateGoal = async (goalId, goalData) => {
       headers: requestHeaders(),
       withCredentials: true,
     });
-
     return response.data;
   } catch (error) {
     console.error("Error updating goal:", error);
@@ -118,12 +117,15 @@ export default {
   deleteGoal,
 };
 
-export const fetchPastGoals = async () => {
+export const fetchPastGoals = async (userId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/past`, {
+    const url = userId ? `${API_BASE_URL}/past?userId=${userId}` : `${API_BASE_URL}/past`;
+
+    const response = await axios.get(url, {
       headers: requestHeaders(),
       withCredentials: true,
     });
+
     return response.data;
   } catch (error) {
     console.error("Error fetching past goals:", error.response?.data || error);

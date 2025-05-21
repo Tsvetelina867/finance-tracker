@@ -80,14 +80,14 @@ const BudgetModification = () => {
       };
 
       if (formData.id) {
-        const updatedBudget = await updateBudget(formData.id, budgetData);
-        setBudgets(budgets.map(b => b.id === formData.id ? updatedBudget : b));
+        await updateBudget(formData.id, budgetData);
       } else {
-        const addedBudget = await addBudget(budgetData);
-        if (addedBudget) {
-          setBudgets([...budgets, addedBudget]);
-        }
+        await addBudget(budgetData);
       }
+
+      const refreshedBudgets = await fetchAllBudgets(currentAccount.id);
+      console.log("Fetched After Update:", refreshedBudgets);
+      setBudgets(refreshedBudgets);
 
       setIsEditing(false);
       setFormData({
@@ -99,11 +99,11 @@ const BudgetModification = () => {
         currentSpending: '',
         description: '',
       });
+
     } catch (error) {
       console.error('Error adding or updating budget:', error);
     }
   };
-
 
   const handleDelete = async (budgetId) => {
     if (window.confirm('Are you sure you want to delete this budget?')) {
@@ -250,7 +250,7 @@ const BudgetModification = () => {
                   type="number"
                   name="currentSpending"
                   value={formData.currentSpending}
-                  onChange={(e) => setFormData({ ...formData, currentSpending: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, currentSpending: parseFloat(e.target.value) || 0 })}
                   required
                 />
               </div>

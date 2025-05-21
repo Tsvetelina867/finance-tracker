@@ -87,8 +87,8 @@ public class GoalService {
         goalRepository.save(goal);
     }
 
-    public List<Goal> getPastGoals() {
-        return goalRepository.findByDeadlineBefore(LocalDate.now());
+    public List<Goal> getPastGoals(Long userId) {
+        return goalRepository.findByUserIdAndDeadlineBefore(userId, LocalDate.now());
     }
     public BigDecimal calculateGoalProgress(Long goalId) {
         Goal goal = goalRepository.findById(goalId)
@@ -127,7 +127,7 @@ public class GoalService {
         goal.setCurrentAmount(goalDTO.getCurrentAmount());
         goal.setDeadline(goalDTO.getDeadline());
         if (goalDTO.getAccount() != null) {
-            Account account = accountRepository.findByName(goalDTO.getAccount().getName())
+            Account account = accountRepository.findById(goalDTO.getAccount().getId())
                     .orElseThrow(() -> new RuntimeException("Account not found"));
             goal.setAccount(account);
         }

@@ -167,17 +167,21 @@ public class RecurringTransactionService {
         recurringTransaction.setFrequency(FrequencyType.valueOf(updatedRecurringTransactionDTO.getFrequency()));
         recurringTransaction.setCurrency(updatedRecurringTransactionDTO.getCurrency());
 
-        if (updatedRecurringTransactionDTO.getCategory().getName() != null) {
-            Category category = categoryRepository.findByName(updatedRecurringTransactionDTO.getCategory().getName())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+        if (updatedRecurringTransactionDTO.getCategory() != null && updatedRecurringTransactionDTO.getCategory().getId() != null) {
+            Category category = categoryRepository.findById(updatedRecurringTransactionDTO.getCategory().getId())
+                    .orElseThrow(() -> new RuntimeException("Category not found with ID: " + updatedRecurringTransactionDTO.getCategory().getId()));
             recurringTransaction.setCategory(category);
         } else {
             recurringTransaction.setCategory(null);
         }
 
-        Account account = accountRepository.findByName(updatedRecurringTransactionDTO.getAccount().getName())
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        recurringTransaction.setAccount(account);
+        if (updatedRecurringTransactionDTO.getAccount() != null && updatedRecurringTransactionDTO.getAccount().getId() != null) {
+            Account account = accountRepository.findById(updatedRecurringTransactionDTO.getAccount().getId())
+                    .orElseThrow(() -> new RuntimeException("Account not found with ID: " + updatedRecurringTransactionDTO.getAccount().getId()));
+            recurringTransaction.setAccount(account);
+        } else {
+            throw new RuntimeException("Account cannot be null.");
+        }
 
         return recurringTransactionRepository.save(recurringTransaction);
     }
