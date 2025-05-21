@@ -43,6 +43,19 @@ const Dashboard = () => {
   const userId = currentUser ? currentUser.id : null;
 
 
+  const refreshAccountBalance = async () => {
+    if (!currentAccount) return;
+    try {
+      const updatedAccount = await fetchAccountData(currentAccount.id);
+      setCurrentAccount(updatedAccount);
+      setAccounts((prevAccounts) =>
+        prevAccounts.map(acc => acc.id === updatedAccount.id ? updatedAccount : acc)
+      );
+    } catch (error) {
+      console.error("Error refreshing account data:", error);
+    }
+  };
+
   const handleLogout = () => {
     setLogoutModalOpen(true);
   };
@@ -130,6 +143,7 @@ const Dashboard = () => {
            setBudgetData(budgetRes);
            setRecurringTransactionsData(recurringRes);
            await fetchCategories();
+           await refreshAccountBalance();
          } catch (error) {
            console.error('Error fetching data:', error);
          } finally {
@@ -151,16 +165,16 @@ const Dashboard = () => {
     }
   };
 
-
-  const fetchTransactions = async () => {
-    if (!currentAccount) return;
-    try {
-      const transactionsRes = await fetchTransactionsByDateRange(currentAccount.id, startDate, endDate);
-      setTransactionsData(transactionsRes);
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-    }
-  };
+    const fetchTransactions = async () => {
+          if (!currentAccount) return;
+          try {
+            const transactionsRes = await fetchTransactionsByDateRange(currentAccount.id, startDate, endDate);
+            setTransactionsData(transactionsRes);
+            await refreshAccountBalance();
+          } catch (error) {
+            console.error('Error fetching transactions:', error);
+          }
+        };
 
   const fetchCategories = async () => {
     if (!currentAccount) return;
@@ -309,7 +323,10 @@ const Dashboard = () => {
                 {currentAccount ? (
                   <>
                     {Array.isArray(transactionsData)
-                      ? transactionsData.reduce((acc, transaction) => acc + transaction.amount, 0).toFixed(2)
+                      ? transactionsData
+                                    .filter(transaction => transaction.type === 'EXPENSE')
+                                    .reduce((acc, transaction) => acc + transaction.amount, 0)
+                                    .toFixed(2)
                       : 0} {currentAccount.currency}
                   </>
                 ) : (
@@ -338,12 +355,7 @@ const Dashboard = () => {
             {currentAccount && <RecurringTransactionsSection currentAccount={currentAccount} />}
           </div>
 
-          <div className="spending-chart-container">
-            <h2 className="chart-title">Spending Over Time (Regular Transactions)</h2>
-            <div className="chart-wrapper">
-              <SpendingChart data={transactionData} />
-            </div>
-          </div>
+
 
         </div>
 
@@ -425,7 +437,12 @@ const Dashboard = () => {
               />
             )}
           </div>
-
+            <div className="spending-chart-container">
+                        <h2 className="chart-title">Spending Over Time (Regular Transactions)</h2>
+                        <div className="chart-wrapper">
+                          <SpendingChart data={transactionData} />
+                        </div>
+                      </div>
         </div>
       </div>
     </div>

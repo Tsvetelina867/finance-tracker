@@ -10,6 +10,8 @@ const TransactionsManagement = () => {
 
   const location = useLocation();
   const currentAccount = location.state?.currentAccount;
+  const [account, setAccount] = useState(currentAccount);
+;
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('regular');
@@ -22,22 +24,22 @@ const TransactionsManagement = () => {
 
 
   useEffect(() => {
-    if (currentAccount) {
+    if (account) {
       fetchTransactions();
       fetchRecurringTransactionsData();
     }
-  }, [currentAccount]);
+  }, [account]);
 
   const fetchTransactions = async () => {
-    if (currentAccount) {
-      const data = await fetchAllTransactions(currentAccount.id);
+    if (account) {
+      const data = await fetchAllTransactions(account.id);
       setTransactions(data);
     }
   };
 
   const fetchRecurringTransactionsData = async () => {
-    if (currentAccount) {
-      const data = await fetchRecurringTransactions(currentAccount.id);
+    if (account) {
+      const data = await fetchRecurringTransactions(account.id);
       setRecurringTransactions(data);
     }
   };
@@ -45,16 +47,20 @@ const TransactionsManagement = () => {
   const toggleTab = (tab) => setActiveTab(tab);
 
   const handleOpenTransactionModal = (transaction = null) => {
-    setEditingTransaction(transaction);
-    setIsTransactionModalOpen(true);
+    setEditingTransaction(null);
+    setTimeout(() => {
+      setEditingTransaction(transaction);
+      setIsTransactionModalOpen(true);
+    }, 0);
   };
+
 
   const handleOpenRecurringModal = (transaction = null) => {
     setEditingTransaction(transaction);
     setIsRecurringModalOpen(true);
   };
 
-   if (!currentAccount) {
+   if (!account) {
       return (
         <div>
          <button onClick={() => navigate(-1)} style={{
@@ -107,7 +113,7 @@ const TransactionsManagement = () => {
                     <div className="transaction-details">
                       <span className="transaction-date">{new Date(transaction.date).toLocaleDateString()}</span>
                       <span className="transaction-amount">
-                        {transaction.amount} {transaction.currency || currentAccount.currency}
+                        {transaction.amount} {transaction.currency || account.currency}
                       </span>
                     </div>
                     <div className="button-container">
@@ -139,7 +145,7 @@ const TransactionsManagement = () => {
                     <div className="transaction-details">
                       <span className="transaction-date">{transaction.frequency}</span>
                       <span className="transaction-amount">
-                        {transaction.amount} {transaction.currency || currentAccount.currency}
+                        {transaction.amount} {transaction.currency || account.currency}
                       </span>
                     </div>
                     <div className="button-container">
@@ -162,7 +168,13 @@ const TransactionsManagement = () => {
           fetchTransactions();
         }}
         transaction={editingTransaction}
-        currentAccount={currentAccount}
+        currentAccount={account}
+        updateAccountBalance={(newBalance) => {
+            setAccount(prev => ({
+              ...prev,
+              balance: newBalance,
+            }));
+        }}
       />
 
       <RecurringTransactionModal
@@ -173,7 +185,7 @@ const TransactionsManagement = () => {
           fetchRecurringTransactionsData();
         }}
         transaction={editingTransaction}
-        currentAccount={currentAccount}
+        currentAccount={account}
       />
     </div>
   );

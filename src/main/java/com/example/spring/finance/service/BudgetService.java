@@ -207,41 +207,6 @@ public class BudgetService {
         );
     }
 
-    public BudgetDTO getBudgetById(Long id) {
-        Optional<Budget> budgetOpt = budgetRepository.findById(id);
-
-        if (budgetOpt.isEmpty()) {
-            throw new EntityNotFoundException("No budget found with this id.");
-        }
-
-        Budget budget = budgetOpt.get();
-        return new BudgetDTO(
-                budget.getId(),
-                budget.getDescription(),
-                budget.getBudgetLimit(),
-                budget.getCurrentSpending(),
-                budget.getStartDate(),
-                budget.getEndDate(),
-                new CategoryDTO(
-                        budget.getCategory().getId(),
-                        budget.getCategory().getName()
-                ),
-                new AccountDTO(
-                        budget.getAccount().getId(),
-                        budget.getAccount().getName(),
-                        budget.getAccount().getBalance(),
-                        budget.getAccount().getCurrency(),
-                        budget.getAccount().getType().toString()
-                ),
-                new UserDTO(
-                        budget.getUser().getId(),
-                        budget.getUser().getUsername(),
-                        budget.getUser().getEmail()
-                )
-
-        );
-    }
-
 }
 
 

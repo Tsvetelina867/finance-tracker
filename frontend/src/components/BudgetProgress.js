@@ -54,7 +54,7 @@ const BudgetProgress = ({ currentAccount }) => {
               <h3>{budget.description}</h3>
               <div className="budget-details">
                 <p>Budget Limit: {budget.budgetLimit} {currentAccount?.currency}</p>
-                <p>Current Spending: {budget.currentSpending} {currentAccount?.currency}</p>
+                <p>Current Spending: {parseFloat(budget.currentSpending)} {currentAccount?.currency}</p>
                 <p className={isBudgetExceeded ? "exceeded" : "remaining"}>
                   {isBudgetExceeded
                     ? `Exceeded by ${Math.abs(remainingBudget).toFixed(2)} ${currentAccount?.currency}`

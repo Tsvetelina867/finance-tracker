@@ -58,13 +58,18 @@ const RecurringTransactionModal = ({ isOpen, onClose, onSave, transaction, curre
         return;
     }
 
-     try {
-     if (amount < 0) {
-               console.error('❌ Amount cannot be negative');
-               alert('Amount cannot be negative');
-               return;
-             }
+    const parsedAmount = parseFloat(amount);
+      if (isNaN(parsedAmount) || parsedAmount <= 0) {
+        alert('Please enter a valid positive amount.');
+        return;
+      }
 
+      if (parsedAmount > parseFloat(currentAccount?.balance || 0)) {
+        alert(`Insufficient balance to cover the first ${frequency.toLowerCase()} payment of this recurring expense.`);
+        return;
+      }
+
+     try {
        if (transaction) {
          const updatedTransaction = {
            id: transaction.id,
