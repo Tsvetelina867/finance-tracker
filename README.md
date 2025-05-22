@@ -14,6 +14,12 @@ This is a **Personal Finance Tracker Application** designed to help users track 
 
 
 ---
+## Dashboard Screenshots
+
+![Dashboard Screenshot 1](./assets/screenshot1.png)
+![Dashboard Screenshot 2](./assets/screenshot2.png)
+
+---
 
 
 ## Technologies Used
