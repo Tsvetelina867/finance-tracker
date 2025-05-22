@@ -14,6 +14,7 @@ This is a **Personal Finance Tracker Application** designed to help users track 
 
 
 ---
+
 ## Dashboard Screenshots
 
 ![Dashboard Screenshot 1](./assets/screenshot1.png)
@@ -29,6 +30,7 @@ This is a **Personal Finance Tracker Application** designed to help users track 
 - **JavaScript**: Used alongside React for frontend logic and interactions.
 - **CSS**: For styling the application.
 
+
 ### Backend
 - **Java**: Primary programming language.
 - **Spring Framework**: For building the backend API.
@@ -36,6 +38,7 @@ This is a **Personal Finance Tracker Application** designed to help users track 
 - **MySQL**: Relational database for storing data.
 - **JWT (JSON Web Tokens)**: For secure user authentication.
 - **Exchange Rates API**: For currency conversion.
+
 
 ### Tools
 - **Git**: Version control.
@@ -48,10 +51,12 @@ This is a **Personal Finance Tracker Application** designed to help users track 
 ## Installation
 Follow these steps to set up the project locally:
 
+
 ### Prerequisites
 - Java Development Kit (JDK) 21.
 - MySQL Server.
 - Node.js and npm (for the frontend).
+- 
 
 ### Backend Setup
 1. Clone the repository:
@@ -105,4 +110,3 @@ Before running the backend, configure the following environment variables to con
 
 ## API Documentation
 The backend API is documented using Swagger. After running the backend, you can access the API documentation at: http://localhost:8080/swagger-ui.html  
-The Swagger UI provides a detailed view of all the available endpoints 
