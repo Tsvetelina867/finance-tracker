@@ -2,37 +2,32 @@ import React, { useState, useEffect } from "react";
 import GoalCard from "./GoalCard";
 import AddGoalModal from "./AddGoalModal";
 
-const GoalsProgress = ({ goals, currentAccount, onGoalAdded }) => {
+const GoalsProgress = ({ goals = [], loading, onAddGoal, currentAccount }) => {
   const [showAddGoalModal, setShowAddGoalModal] = useState(false);
 
   const updateGoalProgress = (goal) => {
     const progressPercent = (goal.currentAmount / goal.targetAmount) * 100;
-
     const cappedProgress = Math.min(progressPercent, 100);
 
-    if (cappedProgress === 100) {
-      goal.status = 'Completed';
-    }
-
-    goal.progress = cappedProgress;
-
-    return goal;
+    return {
+      ...goal,
+      progress: cappedProgress,
+      status: cappedProgress === 100 ? "Completed" : goal.status,
+    };
   };
 
-  const getUpdatedGoals = () => {
-    return goals.map((goal) => {
-      if (goal.status !== 'Completed') {
-        return updateGoalProgress(goal);
-      }
-      return goal;
-    });
-  };
-
-  const updatedGoals = getUpdatedGoals();
+  const updatedGoals = Array.isArray(goals)
+    ? goals.map((goal) =>
+        goal.status !== "Completed" ? updateGoalProgress(goal) : goal,
+      )
+    : [];
 
   return (
     <div className="goals-container">
-      <button className="add-goal-button" onClick={() => setShowAddGoalModal(true)}>
+      <button
+        className="add-goal-button"
+        onClick={() => setShowAddGoalModal(true)}
+      >
         ➕ Add New Goal
       </button>
 
@@ -49,7 +44,7 @@ const GoalsProgress = ({ goals, currentAccount, onGoalAdded }) => {
       <AddGoalModal
         isOpen={showAddGoalModal}
         onClose={() => setShowAddGoalModal(false)}
-        onGoalAdded={onGoalAdded}
+        onGoalAdded={onAddGoal}
         currentAccount={currentAccount}
       />
     </div>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import goalsApi from "../api/goalsApi";
-import '../styles/AddGoalModal.css';
+import "../styles/AddGoalModal.css";
 
 const AddGoalModal = ({ isOpen, onClose, onGoalAdded, currentAccount }) => {
   const [goalData, setGoalData] = useState({
@@ -9,26 +9,51 @@ const AddGoalModal = ({ isOpen, onClose, onGoalAdded, currentAccount }) => {
     currentAmount: 0,
     deadline: "",
   });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setGoalData({ ...goalData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
-   if (!currentAccount || !currentAccount.id) {
-      console.error("Account is not selected");
+    if (!currentAccount?.id) {
+      setError("No account selected.");
       return;
     }
+    if (!goalData.name.trim()) {
+      setError("Please enter a goal name.");
+      return;
+    }
+    const target = parseFloat(goalData.targetAmount);
+    if (isNaN(target) || target <= 0) {
+      setError("Please enter a valid target amount.");
+      return;
+    }
+    if (!goalData.deadline) {
+      setError("Please select a deadline.");
+      return;
+    }
+
+    setError("");
+
     try {
       const newGoal = await goalsApi.addGoal({
         ...goalData,
+        targetAmount: target,
+        currentAmount: parseFloat(goalData.currentAmount) || 0,
         account: { id: currentAccount.id },
       });
-
       onGoalAdded(newGoal);
       onClose();
-    } catch (error) {
-      console.error("Error creating goal:", error);
+      setGoalData({
+        name: "",
+        targetAmount: "",
+        currentAmount: 0,
+        deadline: "",
+      });
+    } catch (err) {
+      console.error("Error creating goal:", err);
+      setError("Failed to create goal. Please try again.");
     }
   };
 
@@ -39,6 +64,8 @@ const AddGoalModal = ({ isOpen, onClose, onGoalAdded, currentAccount }) => {
       <div className="goal-modal-content">
         <h2>Create a New Goal</h2>
 
+        {error && <p className="error-message">{error}</p>}
+
         <input
           type="text"
           name="name"
@@ -46,7 +73,6 @@ const AddGoalModal = ({ isOpen, onClose, onGoalAdded, currentAccount }) => {
           value={goalData.name}
           onChange={handleChange}
         />
-
         <input
           type="number"
           name="targetAmount"
@@ -54,7 +80,6 @@ const AddGoalModal = ({ isOpen, onClose, onGoalAdded, currentAccount }) => {
           value={goalData.targetAmount}
           onChange={handleChange}
         />
-
         <input
           type="number"
           name="currentAmount"
@@ -62,7 +87,6 @@ const AddGoalModal = ({ isOpen, onClose, onGoalAdded, currentAccount }) => {
           value={goalData.currentAmount || ""}
           onChange={handleChange}
         />
-
         <label htmlFor="deadline">Deadline</label>
         <input
           type="date"

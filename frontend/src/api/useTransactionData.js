@@ -8,16 +8,19 @@ const useTransactionData = (accountId) => {
       return;
     }
 
-    fetch(`http://localhost:8080/api/finance/transactions/summary?accountId=${accountId}`, {
-      headers: {
-        "Authorization": `${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Pragma": "no-cache",
-        "Expires": "0",
+    fetch(
+      `http://localhost:8080/api/finance/transactions/summary?accountId=${accountId}`,
+      {
+        headers: {
+          Authorization: `${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+        credentials: "include",
       },
-      credentials: "include",
-    })
+    )
       .then((res) => {
         if (!res.ok) {
           console.error("Response status:", res.status);
@@ -26,10 +29,12 @@ const useTransactionData = (accountId) => {
         return res.json();
       })
       .then((summary) => {
-        const formattedData = Object.entries(summary).map(([month, amount]) => ({
-          month,
-          amount,
-        }));
+        const formattedData = Object.entries(summary).map(
+          ([month, amount]) => ({
+            month,
+            amount,
+          }),
+        );
         setData(formattedData);
       })
       .catch((error) => {

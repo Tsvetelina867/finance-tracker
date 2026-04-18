@@ -3,16 +3,20 @@ const API_BASE_URL = "http://localhost:8080/api/finance";
 const getToken = () => localStorage.getItem("token");
 
 const requestHeaders = () => ({
-  "Authorization": `${getToken()}`,
+  Authorization: `${getToken()}`,
   "Content-Type": "application/json",
   "Cache-Control": "no-cache, no-store, must-revalidate",
-  "Pragma": "no-cache",
-  "Expires": "0",
+  Pragma: "no-cache",
+  Expires: "0",
 });
 
-export const fetchRecurringTransactions = async (accountId, frequency = null, category = null) => {
+export const fetchRecurringTransactions = async (
+  accountId,
+  frequency = null,
+  category = null,
+) => {
   try {
-    if (!getToken()) throw new Error('No token found');
+    if (!getToken()) throw new Error("No token found");
 
     let url = `${API_BASE_URL}/recurring-transactions/${accountId}`;
     const params = new URLSearchParams();
@@ -32,16 +36,22 @@ export const fetchRecurringTransactions = async (accountId, frequency = null, ca
 
     if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
-    return await response.json() || [];
+    return (await response.json()) || [];
   } catch (error) {
     console.error("Error fetching recurring transactions:", error);
     return [];
   }
 };
 
-export const fetchPastRecurringTransactions = async (accountId, startDate, endDate, frequency = null, category = null) => {
+export const fetchPastRecurringTransactions = async (
+  accountId,
+  startDate,
+  endDate,
+  frequency = null,
+  category = null,
+) => {
   try {
-    if (!getToken()) throw new Error('No token found');
+    if (!getToken()) throw new Error("No token found");
 
     const url = new URL(`${API_BASE_URL}/recurring-transactions/catch-up`);
     const params = { accountId, startDate, endDate, frequency, category };
@@ -58,7 +68,7 @@ export const fetchPastRecurringTransactions = async (accountId, startDate, endDa
 
     if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
-    return await response.json() || [];
+    return (await response.json()) || [];
   } catch (error) {
     console.error("Error fetching past recurring transactions:", error);
     return [];
@@ -82,13 +92,19 @@ export const addRecurringTransaction = async (transaction) => {
   }
 };
 
-export const updateRecurringTransaction = async (transactionId, transaction) => {
+export const updateRecurringTransaction = async (
+  transactionId,
+  transaction,
+) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/recurring-transactions/${transactionId}`, {
-      method: "PUT",
-      headers: requestHeaders(),
-      body: JSON.stringify(transaction),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/recurring-transactions/${transactionId}`,
+      {
+        method: "PUT",
+        headers: requestHeaders(),
+        body: JSON.stringify(transaction),
+      },
+    );
 
     if (!response.ok) throw new Error("Failed to update recurring transaction");
 
@@ -101,10 +117,13 @@ export const updateRecurringTransaction = async (transactionId, transaction) => 
 
 export const deleteRecurringTransaction = async (transactionId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/recurring-transactions/${transactionId}`, {
-      method: "DELETE",
-      headers: requestHeaders(),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/recurring-transactions/${transactionId}`,
+      {
+        method: "DELETE",
+        headers: requestHeaders(),
+      },
+    );
 
     if (!response.ok) throw new Error("Failed to delete recurring transaction");
 

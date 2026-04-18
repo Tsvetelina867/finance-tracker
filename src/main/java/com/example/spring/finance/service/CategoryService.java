@@ -67,7 +67,7 @@ public class CategoryService {
         List<Category> categories = categoryRepository.findAllByUserId(userId);
 
         if (categories == null || categories.isEmpty()) {
-            throw new EntityNotFoundException("No categories found for this user.");
+            return List.of();
         }
 
         return categories.stream()

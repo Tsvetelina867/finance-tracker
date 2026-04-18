@@ -1,28 +1,28 @@
-import axios from '../utils/axiosConfig';
+import axios from "../utils/axiosConfig";
 
 export const fetchAccountData = async () => {
   try {
-    const response = await axios.get('/accounts/current');
+    const response = await axios.get("/accounts/current");
     return response.data;
   } catch (error) {
-    console.error('Error fetching account data:', error);
+    console.error("Error fetching account data:", error);
     throw error;
   }
 };
 
 export const fetchAllAccounts = async () => {
   try {
-    const response = await axios.get('/accounts');
+    const response = await axios.get("/accounts");
     return response.data;
   } catch (error) {
-    console.error('Error fetching all accounts:', error);
+    console.error("Error fetching all accounts:", error);
     throw error;
   }
 };
 
 export const addAccount = async (accountData) => {
-    const response = await axios.post('/accounts', accountData);
-    return response.data;
+  const response = await axios.post("/accounts", accountData);
+  return response.data;
 };
 
 export const updateAccount = async (accountId, updatedData) => {

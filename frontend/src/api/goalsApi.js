@@ -1,23 +1,25 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:8080/api/finance/goals';
-
+const API_BASE_URL = "http://localhost:8080/api/finance/goals";
 const getToken = () => localStorage.getItem("token");
 
 const requestHeaders = () => ({
-  "Authorization": `${getToken()}`,
+  Authorization: `${getToken()}`,
   "Content-Type": "application/json",
   "Cache-Control": "no-cache, no-store, must-revalidate",
-  "Pragma": "no-cache",
-  "Expires": "0",
+  Pragma: "no-cache",
+  Expires: "0",
 });
 
 export const fetchGoalsWithDetails = async (accountId) => {
   try {
-    const goalsResponse = await axios.get(`${API_BASE_URL}/account/${accountId}`, {
-      headers: requestHeaders(),
-      withCredentials: true,
-    });
+    const goalsResponse = await axios.get(
+      `${API_BASE_URL}/account/${accountId}`,
+      {
+        headers: requestHeaders(),
+        withCredentials: true,
+      },
+    );
 
     const goals = goalsResponse.data;
 
@@ -34,7 +36,6 @@ export const fetchGoalsWithDetails = async (accountId) => {
               withCredentials: true,
             }),
           ]);
-
           return {
             ...goal,
             progress: progressResponse.data,
@@ -44,12 +45,12 @@ export const fetchGoalsWithDetails = async (accountId) => {
           console.error(`Error fetching details for goal ${goal.id}:`, error);
           return { ...goal, progress: 0, isAchieved: false };
         }
-      })
+      }),
     );
 
     return goalsWithDetails;
   } catch (error) {
-    console.error('Error fetching goals:', error);
+    console.error("Error fetching goals:", error);
     return [];
   }
 };
@@ -60,10 +61,9 @@ export const getGoalDetails = async (goalId) => {
       headers: requestHeaders(),
       withCredentials: true,
     });
-
     return response.data;
   } catch (error) {
-    console.error('Error fetching goal details:', error);
+    console.error("Error fetching goal details:", error);
     throw error;
   }
 };
@@ -74,7 +74,6 @@ export const addGoal = async (goalData) => {
       headers: requestHeaders(),
       withCredentials: true,
     });
-
     return response.data;
   } catch (error) {
     console.error("Error adding goal:", error);
@@ -97,11 +96,10 @@ export const updateGoal = async (goalId, goalData) => {
 
 export const deleteGoal = async (goalId) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/${goalId}`, {
+    await axios.delete(`${API_BASE_URL}/${goalId}`, {
       headers: requestHeaders(),
       withCredentials: true,
     });
-
     return true;
   } catch (error) {
     console.error("Error deleting goal:", error);
@@ -109,7 +107,23 @@ export const deleteGoal = async (goalId) => {
   }
 };
 
-export default {
+export const fetchPastGoals = async (userId) => {
+  try {
+    const url = userId
+      ? `${API_BASE_URL}/past?userId=${userId}`
+      : `${API_BASE_URL}/past`;
+    const response = await axios.get(url, {
+      headers: requestHeaders(),
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching past goals:", error.response?.data || error);
+    return [];
+  }
+};
+
+const goalsApi = {
   fetchGoalsWithDetails,
   getGoalDetails,
   addGoal,
@@ -117,18 +131,4 @@ export default {
   deleteGoal,
 };
 
-export const fetchPastGoals = async (userId) => {
-  try {
-    const url = userId ? `${API_BASE_URL}/past?userId=${userId}` : `${API_BASE_URL}/past`;
-
-    const response = await axios.get(url, {
-      headers: requestHeaders(),
-      withCredentials: true,
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching past goals:", error.response?.data || error);
-    return [];
-  }
-};
+export default goalsApi;
